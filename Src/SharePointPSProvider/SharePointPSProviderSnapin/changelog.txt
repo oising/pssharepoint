@@ -1,0 +1,92 @@
+Todo:
+	* respect PS filters
+	* support sps -- e.g. recognize areas versus webs
+	* implement last item cache
+	* implement shouldprocess etc
+	
+Outstanding bugs/features:
+	* doesn't recognize sps areas, gets access denied, but can still navigate stuff
+	* path resolution is not case-sensitive; need to allow for case-sensitive behaviour 
+	* only supports drive-qualified operation, need to implement SharePoint::\\server\path\ syntax
+
+Ideas:
+	* ...
+	
+Cmdlets:
+	
+
+CHANGELOG:
+
+20060428
+========
+	* added some dynamic assembly loading code to SharePointObjectModel, courtesy of http://blog.magenic.com/brante/archive/2006/01/03/2183.aspx
+	  this will be used later to dynamically load the LocalSharePointObjectModel. This allows the provider to load on a non-sharepoint box,
+	  which is needed for the remote objectmodel functionality to work.
+	* moved the generic BaseStoreProvider code to Nivot.PowerShell namespace; was previously lumped in with Nivot.PowerShell.SharePoint
+	* appended .Commands to Cmdlet namespace, as per Microsoft recommendations
+
+20060426
+========
+	* "PowerShelled" everything
+	* replaced custom Adder and Remover delegates with newly discovered System.Action<T> delegate
+	
+20060407
+========
+	* started work on two cmdlets: import-listitem & export-listitem
+	* renamed base namespace to Nivot.Monad.SharePoint
+	
+20060404
+========
+	* applied new BSD license to source ( http://www.opensource.org/licenses/bsd-license.php )
+	
+20060403
+========
+	* added StoreItemFlags for allowing certain items to tab complete but not be sent to pipe and vice-versa
+	* changed path resolution to be case-insenstive
+	* added multiple adder/removers for storeitem wrapper classes
+	* added default child items for various wrappers classes, e.g. role default child is users
+		  
+20060401
+========
+	* complete refactor -- finished. much simpler design.
+	* now supports infinitely nested paths, even circular ones
+	* new containers, new items
+	
+20060331
+========
+	* merge projects back together -- snapin doesn't work?! need single assembly?
+
+20060328
+========
+	* major reorganizing of codebase, split into two projects
+	* wrapper classes are now responsible for getting childitems
+
+20060327
+========
+Fixes:
+	* getitem now returns spweb instead of its webs collection
+
+20060326
+========
+Fixes:
+	* bug in GetItem for leaf nodes with directsharepointobjectmodel (now back to localspobj*)
+	* openweb in getitem for webs wasn't throwing exception on non-existant web, fixed with hack
+
+20060324
+========
+Fixes:
+	* changed initialization of sppathctx to have collectioname of "Webs" for root \
+		...(SPItemType.Webs, "\\", "Webs", "");
+
+20060323
+========
+Added:
+	* new DirectSharePointObjectModel - replaces Local*, renamed to Test*
+	* GetDirectWrapper method, IStoreItem interface (object NativeObject, ChildName)
+	* explicit object NativeObject member on SharePointItemT, through IStoreItem
+	
+
+(no previous changelog kept)
+
+(notes)
+set-property HKLM:\SOFTWARE\Microsoft\Msh\1\ShellIds\Microsoft.Management.Automation.msh -property ExecutionPolicy -value RemoteSigned
