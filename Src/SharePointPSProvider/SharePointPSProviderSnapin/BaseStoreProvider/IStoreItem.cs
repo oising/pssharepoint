@@ -56,7 +56,7 @@ namespace Nivot.PowerShell {
 
 		/// <summary>
 		/// Final path chunk identifying this item, e.g. "web" in "/site/web"
-		/// <remarks>Assumes ChildName is unique in its namespace, so implementers beware!</remarks>
+		/// <remarks>Assumes ChildName is unique in its namespace, as is expected in filesystem-like providers.</remarks>
 		/// </summary>
 		string ChildName {
 			get;

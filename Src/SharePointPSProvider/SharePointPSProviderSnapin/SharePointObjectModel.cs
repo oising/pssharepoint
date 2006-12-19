@@ -32,6 +32,10 @@ namespace Nivot.PowerShell.SharePoint {
 	/// </summary>
 	public class SharePointObjectModel : IStoreObjectModel {
 
+		// FIXME: needs to understand provider-qualified paths
+		// e.g. 
+		//   sharepoint::\\server\site\web (virtual server qualified, search local [then remote])
+		//   sharepoint::[\]site\web (default server, local)
 		private static Regex s_pathRegex = new Regex(@"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?", RegexOptions.IgnoreCase);
 		private Uri m_virtualServer;
 
@@ -98,7 +102,7 @@ namespace Nivot.PowerShell.SharePoint {
 		}
 
 		public virtual IStoreItem GetItem(string path) {
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 		#endregion
 

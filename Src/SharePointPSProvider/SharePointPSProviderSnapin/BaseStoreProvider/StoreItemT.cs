@@ -20,8 +20,8 @@ using System.Text;
 using System.Management.Automation;
 
 namespace Nivot.PowerShell {
-
-     /// <summary>
+	
+    /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -110,7 +110,7 @@ namespace Nivot.PowerShell {
 					return true;
 
 				} catch (Exception exception) {
-					throw new ApplicationFailedException("AddItem: Native Store Error.", exception);
+					throw new ApplicationFailedException("SharePoint Error", exception);
 				}
 			}
 			// no adder found
@@ -129,7 +129,7 @@ namespace Nivot.PowerShell {
 					return true;
 
 				} catch (Exception exception) {
-					throw new ApplicationFailedException("RemoveItem: Native Store Error.", exception);
+					throw new ApplicationFailedException("SharePoint Error", exception);
 				}
 			}
 			// no remover found

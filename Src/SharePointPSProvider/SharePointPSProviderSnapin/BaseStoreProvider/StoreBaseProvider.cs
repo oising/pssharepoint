@@ -23,9 +23,12 @@ using System.Text.RegularExpressions;
 
 namespace Nivot.PowerShell {
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public abstract class StoreBaseProvider : NavigationCmdletProvider {
 
-		public const string PathSeparator = "\\"; // DOS is dead; long live DOS.
+		public const char PathSeparator = '\\'; // DOS is dead; long live DOS.
 
 		/// <summary>
 		/// Provides a handle to the runtime object model of the backing store
@@ -258,7 +261,7 @@ namespace Nivot.PowerShell {
 
 		[Conditional("DEBUG")]
 		public static void Dump(string format, params object[] parameters) {
-			Debug.WriteLine(string.Format(format, parameters), "MSH");
+			Debug.WriteLine(string.Format(format, parameters), "StoreBaseProvider");
 		}
 
 		/// <summary>
@@ -282,7 +285,7 @@ namespace Nivot.PowerShell {
 
 			// ensure drive is rooted
 			if (path == String.Empty) {
-				path = PathSeparator;
+				path = PathSeparator.ToString();
 			}
 
 			Dump("Normalized to '{0}'", path);
