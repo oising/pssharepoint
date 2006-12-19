@@ -22,6 +22,7 @@ namespace Nivot.PowerShell.SharePoint {
 
 	/// <summary>
 	/// This class will never be used since the !Webs container is implicit with this provider's paths.
+	/// <remarks>This is here only for completeness' sake and to explain where !Webs really is used.</remarks>
 	/// </summary>
 	class SharePointWebs : StoreItem<SPWebCollection> {
 

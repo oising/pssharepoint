@@ -19,7 +19,7 @@ using System.Collections.ObjectModel;
 namespace Nivot.PowerShell {
     
 	/// <summary>
-	/// 
+	/// Interface for backing-store provider.
 	/// </summary>
     public interface IStoreObjectModel {
 		bool IsValidPath(string path);

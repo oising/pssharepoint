@@ -17,6 +17,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Management.Automation;
 using System.Text;
 
@@ -35,11 +36,11 @@ namespace Nivot.PowerShell.SharePoint {
 		public override IStoreItem GetItem(string path) {
 			
 			// always a minimum of '\'
-			string[] chunks = path.Split(SharePointPSProvider.PathSeparator[0]);
+			string[] chunks = path.Split(SharePointPSProvider.PathSeparator);
 			
 			// start at root SPWeb
 			IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
-			if (path == SharePointPSProvider.PathSeparator) {
+			if (path == SharePointPSProvider.PathSeparator.ToString()) {
 				return storeItem; // at root
 			}
 
