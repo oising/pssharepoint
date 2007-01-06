@@ -51,9 +51,9 @@
   <ItemGroup>
     <Compile Include="BaseStoreProvider\IStoreItem.cs" />
     <Compile Include="BaseStoreProvider\IStoreObjectModel.cs" />
-    <Compile Include="Cmdlets\CmdletExportListItem.cs" />
-    <Compile Include="Cmdlets\CmdletImportListItem.cs" />
-    <Compile Include="Cmdlets\NativeMethods.cs" />
+    <Compile Include="Commands\ExportListItemCommand.cs" />
+    <Compile Include="Commands\ImportListItemCommand.cs" />
+    <Compile Include="Commands\NativeMethods.cs" />
     <Compile Include="RemoteObjectModel\RemoteSharePointObjectModel.cs" />
     <Compile Include="LocalObjectModel\SharePointListItem.cs" />
     <Compile Include="LocalObjectModel\SharePointWebs.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="LocalObjectModel\SharePointWeb.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="Scripts\SharePoint.Format.ps1xml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -95,7 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="changelog.txt" />
-    <Content Include="Cmdlets\readme.txt" />
+    <Content Include="Commands\readme.txt" />
     <Content Include="LocalObjectModel\readme.txt" />
     <Content Include="RemoteObjectModel\readme.txt" />
     <Content Include="Scripts\readme.txt" />
