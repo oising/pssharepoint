@@ -20,6 +20,6 @@ using System.Management.Automation;
 
 namespace Nivot.PowerShell.SharePoint.Commands {
 	[Cmdlet("import", "listitem")]
-	class CmdletImportListItem : Cmdlet {
+	class ImportListItemCommand : Cmdlet {
 	}
 }

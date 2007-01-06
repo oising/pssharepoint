@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharePoint PSProvider Snapin for PSH RC2")]
+[assembly: AssemblyTitle("SharePoint PSProvider Snapin for PSH 1.0 RTM")]
 [assembly: AssemblyDescription("PSProvider for MSSPAT WSS & SPS 2003")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nivot Inc")]
@@ -50,5 +50,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.5.3.0")]
-[assembly: AssemblyFileVersion("0.5.3.0")]
+[assembly: AssemblyVersion("0.5.4.0")]
+[assembly: AssemblyFileVersion("0.5.4.0")]

@@ -21,6 +21,6 @@ using System.Management.Automation.Provider;
 
 namespace Nivot.PowerShell.SharePoint.Commands {
 	[Cmdlet("export","listitem")]
-	class CmdletExportListItem : Cmdlet {
+	class ExportListItemCommand : Cmdlet {
 	}
 }
