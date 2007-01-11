@@ -1,4 +1,5 @@
 #region BSD License Header
+
 /*
  * Copyright (c) 2006, Oisin Grehan @ Nivot Inc (www.nivot.org)
  * All rights reserved.
@@ -10,53 +11,53 @@
  * Neither the name of Nivot Incorporated nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint {
-
-	class SharePointList : StoreItem<SPList> {
+namespace Nivot.PowerShell.SharePoint
+{
+	internal class SharePointList : StoreItem<SPList>
+	{
 		public SharePointList(SPList list)
-			: base(list) {
-
+			: base(list)
+		{
 			// remove SPListItem
 			RegisterRemover<SPListItem>(new Action<IStoreItem>(
-				delegate(IStoreItem item) {
-					SPListItem listItem = (SPListItem)item.NativeObject;
-					NativeObject.Items.DeleteItemById(listItem.ID);
-				}
-			));
+			                            	delegate(IStoreItem item)
+			                            		{
+			                            			SPListItem listItem = (SPListItem) item.NativeObject;
+			                            			NativeObject.Items.DeleteItemById(listItem.ID);
+			                            		}
+			                            	));
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator() {
-
+		public override IEnumerator<IStoreItem> GetEnumerator()
+		{
 			// default child item for SPList is SPListItem
-			foreach (SPListItem listItem in NativeObject.Items) {
+			foreach (SPListItem listItem in NativeObject.Items)
+			{
 				yield return new SharePointListItem(listItem);
 			}
 		}
 
-		public override bool IsContainer {
-			get {
-				return true;
-			}
+		public override bool IsContainer
+		{
+			get { return true; }
 		}
 
-		public override string ChildName {
-			get {
-				return NativeObject.Title;
-			}
+		public override string ChildName
+		{
+			get { return NativeObject.Title; }
 		}
 
-		public override StoreItemFlags ItemFlags {
-			get {
-				return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem;
-			}
+		public override StoreItemFlags ItemFlags
+		{
+			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
 		}
 	}
 }

@@ -1,4 +1,5 @@
 #region BSD License Header
+
 /*
  * Copyright (c) 2006, Oisin Grehan @ Nivot Inc (www.nivot.org)
  * All rights reserved.
@@ -10,6 +11,7 @@
  * Neither the name of Nivot Incorporated nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #endregion
 
 // MSDN Magazine January 2006 ; http://msdn.microsoft.com/msdnmag/issues/06/01/NETMatters/
@@ -23,92 +25,111 @@ using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace Nivot.PowerShell.SharePoint.Commands {
-
-	internal class NativeMethods {
-
+namespace Nivot.PowerShell.SharePoint.Commands
+{
+	internal class NativeMethods
+	{
 		#region DllImports
+
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		private static extern SafeFileHandle CreateFile(string lpFileName,
-			FileAccess dwDesiredAccess, FileShare dwShareMode, IntPtr lpSecurityAttributes,
-			FileMode dwCreationDisposition, Int32 dwFlagsAndAttributes, IntPtr hTemplateFile);
+		                                                FileAccess dwDesiredAccess, FileShare dwShareMode,
+		                                                IntPtr lpSecurityAttributes,
+		                                                FileMode dwCreationDisposition, Int32 dwFlagsAndAttributes,
+		                                                IntPtr hTemplateFile);
 
 		[DllImport("kernel32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
+		[return : MarshalAs(UnmanagedType.Bool)]
 		private static extern bool BackupRead(SafeFileHandle hFile, IntPtr lpBuffer,
-			uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead,
-			[MarshalAs(UnmanagedType.Bool)] bool bAbort,
-			[MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
-			ref IntPtr lpContext);
+		                                      uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead,
+		                                      [MarshalAs(UnmanagedType.Bool)] bool bAbort,
+		                                      [MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
+		                                      ref IntPtr lpContext);
 
 		[DllImport("kernel32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
+		[return : MarshalAs(UnmanagedType.Bool)]
 		private static extern bool BackupSeek(SafeFileHandle hFile,
-			uint dwLowBytesToSeek, uint dwHighBytesToSeek,
-			out uint lpdwLowByteSeeked, out uint lpdwHighByteSeeked,
-			ref IntPtr lpContext);
+		                                      uint dwLowBytesToSeek, uint dwHighBytesToSeek,
+		                                      out uint lpdwLowByteSeeked, out uint lpdwHighByteSeeked,
+		                                      ref IntPtr lpContext);
+
 		#endregion
 
-		internal static FileStream CreateFileStream(string path, FileAccess access, FileMode mode, FileShare share) {
+		internal static FileStream CreateFileStream(string path, FileAccess access, FileMode mode, FileShare share)
+		{
 			SafeFileHandle handle = CreateFile(path, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
-			if (handle.IsInvalid) {
+			if (handle.IsInvalid)
+			{
 				throw new IOException(String.Format("Could not open file stream '{0}'.", path));
 			}
 			return new FileStream(handle, access);
 		}
 
-		internal static string ReadAllText(string path) {
-			using (StreamReader reader = new StreamReader(CreateFileStream(path, FileAccess.Read, FileMode.Open, FileShare.Read))) {
+		internal static string ReadAllText(string path)
+		{
+			using (StreamReader reader = new StreamReader(CreateFileStream(path, FileAccess.Read, FileMode.Open, FileShare.Read))
+				)
+			{
 				return reader.ReadToEnd();
 			}
 		}
 
-		internal static IEnumerable<StreamInfo> GetStreams(FileInfo file) {
+		internal static IEnumerable<StreamInfo> GetStreams(FileInfo file)
+		{
 			const int bufferSize = 4096;
 
-			using (FileStream fs = file.OpenRead()) {
+			using (FileStream fs = file.OpenRead())
+			{
 				IntPtr context = IntPtr.Zero;
 				IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
-			
-				try {	
-					while (true) {
+
+				try
+				{
+					while (true)
+					{
 						uint numRead;
 
 						if (!BackupRead(fs.SafeFileHandle, buffer,
-							(uint)Marshal.SizeOf(typeof(Win32StreamID)),
-							out numRead, false, true, ref context)) {
-
+						                (uint) Marshal.SizeOf(typeof (Win32StreamID)),
+						                out numRead, false, true, ref context))
+						{
 							throw new Win32Exception();
 						}
-						
-						if (numRead > 0) {
-							
-							Win32StreamID streamID = (Win32StreamID)Marshal.PtrToStructure(
-								buffer,	typeof(Win32StreamID));
+
+						if (numRead > 0)
+						{
+							Win32StreamID streamID = (Win32StreamID) Marshal.PtrToStructure(
+							                                         	buffer, typeof (Win32StreamID));
 							string name = null;
 
-							if (streamID.dwStreamNameSize > 0) {
-								if (!BackupRead(fs.SafeFileHandle, buffer, (uint)Math.Min(bufferSize, streamID.dwStreamNameSize),
-									out numRead, false, true, ref context)) throw new Win32Exception();
-								name = Marshal.PtrToStringUni(buffer, (int)numRead / 2);
+							if (streamID.dwStreamNameSize > 0)
+							{
+								if (!BackupRead(fs.SafeFileHandle, buffer, (uint) Math.Min(bufferSize, streamID.dwStreamNameSize),
+								                out numRead, false, true, ref context)) throw new Win32Exception();
+								name = Marshal.PtrToStringUni(buffer, (int) numRead/2);
 							}
 
 							yield return new StreamInfo(name, streamID.dwStreamId, streamID.Size);
 
-							if (streamID.Size > 0) {
+							if (streamID.Size > 0)
+							{
 								uint lo, hi;
 								BackupSeek(fs.SafeFileHandle, uint.MaxValue, int.MaxValue, out lo, out hi, ref context);
 							}
-						} else {
+						}
+						else
+						{
 							break;
 						}
 					}
-				} finally {
-
+				}
+				finally
+				{
 					Marshal.FreeHGlobal(buffer);
 					uint numRead;
-					
-					if (!BackupRead(fs.SafeFileHandle, IntPtr.Zero, 0, out numRead, true, false, ref context)) {
+
+					if (!BackupRead(fs.SafeFileHandle, IntPtr.Zero, 0, out numRead, true, false, ref context))
+					{
 						throw new Win32Exception();
 					}
 				}
@@ -117,7 +138,8 @@ namespace Nivot.PowerShell.SharePoint.Commands {
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public struct Win32StreamID {
+	public struct Win32StreamID
+	{
 		public StreamType dwStreamId;
 		public int dwStreamAttributes;
 		public long Size;
@@ -125,7 +147,8 @@ namespace Nivot.PowerShell.SharePoint.Commands {
 		// WCHAR cStreamName[1]; 
 	}
 
-	public enum StreamType {
+	public enum StreamType
+	{
 		Data = 1,
 		ExternalData = 2,
 		SecurityData = 3,
@@ -137,12 +160,15 @@ namespace Nivot.PowerShell.SharePoint.Commands {
 		SparseDock = 9
 	}
 
-	public struct StreamInfo {
-		public StreamInfo(string name, StreamType type, long size) {
+	public struct StreamInfo
+	{
+		public StreamInfo(string name, StreamType type, long size)
+		{
 			Name = name;
 			Type = type;
 			Size = size;
 		}
+
 		public readonly string Name;
 		public readonly StreamType Type;
 		public readonly long Size;
