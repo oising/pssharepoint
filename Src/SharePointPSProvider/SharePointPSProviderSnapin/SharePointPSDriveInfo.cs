@@ -1,4 +1,5 @@
 #region BSD License Header
+
 /*
  * Copyright (c) 2006, Oisin Grehan @ Nivot Inc (www.nivot.org)
  * All rights reserved.
@@ -10,6 +11,7 @@
  * Neither the name of Nivot Incorporated nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #endregion
 
 using System;
@@ -19,18 +21,18 @@ using System.Text;
 
 //using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint {
-
+namespace Nivot.PowerShell.SharePoint
+{
 	// FIXME: this class is currently redundant
-	public class SharePointPSDriveInfo : PSDriveInfo, IDisposable {
-
+	public class SharePointPSDriveInfo : PSDriveInfo, IDisposable
+	{
 		private SharePointObjectModel m_sharePointObjectModel = null;
 
 		protected bool IsDisposed = false;
 
 		public SharePointPSDriveInfo(PSDriveInfo PSDriveInfo)
-			: base(PSDriveInfo) {
-
+			: base(PSDriveInfo)
+		{
 			// intialize to root, e.g. DRIVENAME:\
 
 			// get a reference to sharepoint object model
@@ -45,11 +47,15 @@ namespace Nivot.PowerShell.SharePoint {
 
 		#region IDisposable Members
 
-		protected virtual void Dispose(bool disposing) {
-			if (!IsDisposed) {
-				if (disposing) {
-					if (m_sharePointObjectModel is IDisposable) {
-						((IDisposable)m_sharePointObjectModel).Dispose();
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!IsDisposed)
+			{
+				if (disposing)
+				{
+					if (m_sharePointObjectModel is IDisposable)
+					{
+						((IDisposable) m_sharePointObjectModel).Dispose();
 					}
 					IsDisposed = true;
 				}
@@ -58,12 +64,14 @@ namespace Nivot.PowerShell.SharePoint {
 			}
 		}
 
-		public void Dispose() {
+		public void Dispose()
+		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		~SharePointPSDriveInfo() {
+		~SharePointPSDriveInfo()
+		{
 			Dispose(false);
 		}
 

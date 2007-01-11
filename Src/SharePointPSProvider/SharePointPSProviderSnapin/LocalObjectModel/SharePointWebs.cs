@@ -1,4 +1,5 @@
 #region BSD License Header
+
 /*
  * Copyright (c) 2006, Oisin Grehan @ Nivot Inc (www.nivot.org)
  * All rights reserved.
@@ -10,43 +11,41 @@
  * Neither the name of Nivot Incorporated nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint {
-
+namespace Nivot.PowerShell.SharePoint
+{
 	/// <summary>
 	/// This class will never be used since the !Webs container is implicit with this provider's paths.
 	/// <remarks>This is here only for completeness' sake and to explain where !Webs really is used.</remarks>
 	/// </summary>
-	class SharePointWebs : StoreItem<SPWebCollection> {
-
+	internal class SharePointWebs : StoreItem<SPWebCollection>
+	{
 		public SharePointWebs(SPWebCollection webs)
-			: base(webs) {
+			: base(webs)
+		{
 			Debug.Assert(false, "SharePointWebs ???");
 		}
 
-		public override bool IsContainer {
-			get {
-				return true;
-			}
+		public override bool IsContainer
+		{
+			get { return true; }
 		}
 
-		public override string ChildName {
-			get {
-				return "!Webs";
-			}
+		public override string ChildName
+		{
+			get { return "!Webs"; }
 		}
 
-		public override StoreItemFlags ItemFlags {
-			get {
-				return StoreItemFlags.None;
-			}
+		public override StoreItemFlags ItemFlags
+		{
+			get { return StoreItemFlags.None; }
 		}
 	}
 }
