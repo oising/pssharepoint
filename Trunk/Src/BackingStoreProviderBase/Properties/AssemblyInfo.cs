@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("BackingStoreProviderBase")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Morgan Stanley")]
+[assembly: AssemblyCompany("Nivot Inc.")]
 [assembly: AssemblyProduct("BackingStoreProviderBase")]
-[assembly: AssemblyCopyright("Copyright © Morgan Stanley 2007")]
+[assembly: AssemblyCopyright("Copyright © Oisin Grehan 2006,2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.*.*")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
