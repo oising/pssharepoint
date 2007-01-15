@@ -86,7 +86,6 @@
     <Compile Include="LocalObjectModel\SharePointWeb.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="Scripts\SharePoint.Format.ps1xml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
