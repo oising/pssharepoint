@@ -42,6 +42,8 @@ namespace Nivot.PowerShell
 		{
 		}
 
+        // ...
+
 		#region CmdletProvider Overrides
 
 		/// <summary>
@@ -107,6 +109,9 @@ namespace Nivot.PowerShell
 		}
 
 		#endregion CmdletProvider Overrides
+
+        // new-psdrive
+        // remove-psdrive
 
 		#region DriveCmdletProvider Overrides
 
@@ -229,6 +234,8 @@ namespace Nivot.PowerShell
 		}
 
 		#endregion DriveCmdletProvider Overrides
+
+        // ...
 
 		#region ItemCmdletProvider Overrides
 
@@ -469,6 +476,8 @@ namespace Nivot.PowerShell
 		}
 
 		#endregion
+
+        // ...
 
 		#region NavigationCmdletProvider Overrides
 
