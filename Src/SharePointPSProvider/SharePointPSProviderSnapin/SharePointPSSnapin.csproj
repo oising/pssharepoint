@@ -49,8 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseStoreProvider\IStoreItem.cs" />
-    <Compile Include="BaseStoreProvider\IStoreObjectModel.cs" />
     <Compile Include="Commands\ExportListItemCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
     <Compile Include="Commands\NativeMethods.cs" />
@@ -60,8 +58,6 @@
     <Compile Include="LocalObjectModel\LocalSharePointObjectModel.cs" />
     <Compile Include="RemoteObjectModel\SharePointObjectProxies.cs" />
     <Compile Include="SharePointPSProvider.cs" />
-    <Compile Include="BaseStoreProvider\StoreBaseProvider.cs" />
-    <Compile Include="BaseStoreProvider\StoreItemT.cs" />
     <Compile Include="LocalObjectModel\SharePointAlerts.cs" />
     <Compile Include="SharePointPSDriveInfo.cs" />
     <Compile Include="LocalObjectModel\SharePointLists.cs" />
@@ -99,6 +95,12 @@
     <Content Include="LocalObjectModel\readme.txt" />
     <Content Include="RemoteObjectModel\readme.txt" />
     <Content Include="Scripts\readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BackingStoreProviderBase\BackingStoreProviderBase.csproj">
+      <Project>{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}</Project>
+      <Name>BackingStoreProviderBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

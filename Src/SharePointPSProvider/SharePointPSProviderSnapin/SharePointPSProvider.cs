@@ -23,7 +23,7 @@ using System.Management.Automation.Provider;
 namespace Nivot.PowerShell.SharePoint
 {
 	[CmdletProvider("SharePoint", ProviderCapabilities.ShouldProcess)]
-	public class SharePointPSProvider : StoreBaseProvider
+	public class SharePointPSProvider : StoreProviderBase
 	{
 		/// <summary>
 		/// This is our hook into all runtime checks of the SharePoint object model

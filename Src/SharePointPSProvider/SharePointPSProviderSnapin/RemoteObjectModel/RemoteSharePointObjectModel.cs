@@ -26,7 +26,7 @@ namespace Nivot.PowerShell.SharePoint
 	/// </summary>
 	internal class RemoteSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		public RemoteSharePointObjectModel(Uri remoteVirtualServer, StoreBaseProvider provider)
+		public RemoteSharePointObjectModel(Uri remoteVirtualServer, StoreProviderBase provider)
 			: base(remoteVirtualServer, provider)
 		{
 		}

@@ -34,7 +34,7 @@ namespace Nivot.PowerShell.SharePoint
 	/// </summary>
 	internal class SharePointObjectModel : IStoreObjectModel
 	{
-		private StoreBaseProvider m_provider;
+		private StoreProviderBase m_provider;
 
 		// FIXME: needs to understand provider-qualified paths
 		// e.g. 
@@ -45,7 +45,7 @@ namespace Nivot.PowerShell.SharePoint
 
 		private Uri m_virtualServer;
 
-		protected SharePointObjectModel(Uri virtualServer, StoreBaseProvider provider)
+		protected SharePointObjectModel(Uri virtualServer, StoreProviderBase provider)
 		{
 			m_virtualServer = virtualServer;
 			m_provider = provider;
@@ -57,7 +57,7 @@ namespace Nivot.PowerShell.SharePoint
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 		}
 
-		public static IStoreObjectModel GetSharePointObjectModel(Uri virtualServer, StoreBaseProvider provider)
+		public static IStoreObjectModel GetSharePointObjectModel(Uri virtualServer, StoreProviderBase provider)
 		{
 			// TODO: detect to use webservice (remote) or local and
 			//	instantiate via Activator class
@@ -120,7 +120,7 @@ namespace Nivot.PowerShell.SharePoint
 			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
-		protected StoreBaseProvider Provider
+		protected StoreProviderBase Provider
 		{
 			get { return m_provider; }
 		}
