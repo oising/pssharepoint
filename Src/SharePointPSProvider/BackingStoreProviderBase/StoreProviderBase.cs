@@ -28,7 +28,7 @@ namespace Nivot.PowerShell
 	/// <summary>
 	/// 
 	/// </summary>
-	public abstract class StoreBaseProvider : NavigationCmdletProvider,
+	public abstract class StoreProviderBase : NavigationCmdletProvider,
 		IPropertyCmdletProvider, IContentCmdletProvider, IDynamicPropertyCmdletProvider
 	{
 		public const char PathSeparator = '\\'; // DOS is dead; long live DOS.
@@ -38,7 +38,7 @@ namespace Nivot.PowerShell
 		/// </summary>
 		public abstract IStoreObjectModel StoreObjectModel { get; }
 
-		protected StoreBaseProvider()
+		protected StoreProviderBase()
 		{
 		}
 

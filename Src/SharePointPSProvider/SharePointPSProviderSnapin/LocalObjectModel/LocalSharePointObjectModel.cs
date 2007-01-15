@@ -30,7 +30,7 @@ namespace Nivot.PowerShell.SharePoint
 	{
 		private SPSite m_site;
 
-		public LocalSharePointObjectModel(Uri url, StoreBaseProvider provider)
+		public LocalSharePointObjectModel(Uri url, StoreProviderBase provider)
 			: base(url, provider)
 		{
 			m_site = new SPSite(url.ToString()); // initialize object model
