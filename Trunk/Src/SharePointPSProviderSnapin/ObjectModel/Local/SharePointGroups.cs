@@ -16,40 +16,53 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointRole : StoreItem<SPRole>
+	/// <summary>
+	/// !groups
+	/// </summary>
+	internal class SharePointGroups : StoreItem<SPGroupCollection>
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="role"></param>
-		public SharePointRole(SPRole role)
-			: base(role)
+		public SharePointGroups(SPGroupCollection groups)
+			: base(groups)
 		{
-			// add SPUser
-			RegisterAdder<SPUser>(new Action<IStoreItem>(
-			                      	delegate(IStoreItem item) { NativeObject.AddUser((SPUser) item.NativeObject); }
-			                      	));
+			// add SPGroup
+			RegisterAdder<SPGroup>(new Action<IStoreItem>(
+			                       	delegate(IStoreItem item)
+			                       		{
+			                       			SPGroup group = (SPGroup) item.NativeObject;
 
-			// remove SPUser
-			RegisterRemover<SPUser>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item) { NativeObject.RemoveUser((SPUser) item.NativeObject); }
-			                        	));
+			                       			// create identical group (clone it)
+			                       			NativeObject.Add(group.Name, group.Owner, group.Users[0], group.Description);
+			                       			foreach (SPUser user in group.Users)
+			                       			{
+			                       				// copy users from group into this one
+			                       				NativeObject[group.Name].AddUser(user);
+			                       			}
+			                       		}
+			                       	));
+
+			// remove SPGroup
+			RegisterRemover<SPGroup>(new Action<IStoreItem>(
+			                         	delegate(IStoreItem item)
+			                         		{
+			                         			SPGroup group = (SPGroup) item.NativeObject;
+			                         			// remove group
+			                         			NativeObject.Remove(group.Name);
+			                         		}
+			                         	));
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
-			// pseudo containers
-			yield return new SharePointUsers(NativeObject.Users);
-			yield return new SharePointGroups(NativeObject.Groups);
-
-			// default child item for SPRole is SPUser
-			foreach (SPUser user in NativeObject.Users)
+			// default child item for SPGroupCollection is SPGroup
+			foreach (SPGroup group in NativeObject)
 			{
-				yield return new SharePointUser(user);
+				yield return new SharePointGroup(group);
 			}
 		}
 
@@ -60,12 +73,12 @@ namespace Nivot.PowerShell.SharePoint
 
 		public override string ChildName
 		{
-			get { return NativeObject.Name; }
+			get { return "!Groups"; }
 		}
 
 		public override StoreItemFlags ItemFlags
 		{
-			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
+			get { return StoreItemFlags.TabComplete; }
 		}
 	}
 }

@@ -15,46 +15,64 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Diagnostics;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Management.Automation;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointUsers : StoreItem<SPUserCollection>
+	internal class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		public SharePointUsers(SPUserCollection users)
-			: base(users)
+		private SPSite m_site;
+
+		public LocalSharePointObjectModel(Uri url, StoreProviderBase provider)
+			: base(url, provider)
 		{
-			// TODO: add SPUser
-
-			// TODO: remove SPUser
-
-			// TODO: add SPGroup
+			m_site = new SPSite(url.ToString()); // initialize object model
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+		public override IStoreItem GetItem(string path)
 		{
-			// default child item for SPUserCollection is SPUser
-			foreach (SPUser user in NativeObject)
+			// always a minimum of '\'
+			string[] chunks = path.Split(SharePointPSProvider.PathSeparator);
+
+			// start at root SPWeb
+			IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
+			if (path == SharePointPSProvider.PathSeparator.ToString())
 			{
-				yield return new SharePointUser(user);
+				return storeItem; // at root
+			}
+
+			foreach (string chunk in chunks)
+			{
+				if (chunk == String.Empty)
+				{
+					continue; // skip first chunk
+				}
+				storeItem = storeItem[chunk]; // use indexer to find this chunk
+				if (storeItem == null)
+				{
+					return null;
+				}
+			}
+			return storeItem;
+		}
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if (m_site != null)
+			{
+				m_site.Dispose();
 			}
 		}
 
-		public override bool IsContainer
-		{
-			get { return true; }
-		}
-
-		public override string ChildName
-		{
-			get { return "!Users"; }
-		}
-
-		public override StoreItemFlags ItemFlags
-		{
-			get { return StoreItemFlags.TabComplete; }
-		}
+		#endregion
 	}
 }

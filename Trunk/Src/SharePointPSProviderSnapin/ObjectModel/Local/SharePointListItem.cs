@@ -19,41 +19,29 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointAlerts : StoreItem<SPAlertCollection>
+	internal class SharePointListItem : StoreItem<SPListItem>
 	{
-		public SharePointAlerts(SPAlertCollection alerts)
-			: base(alerts)
+		public SharePointListItem(SPListItem listItem)
+			: base(listItem)
 		{
-			// remove SPAlert
-			RegisterRemover<SPAlert>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item) { NativeObject.Delete(((SPAlert) item.NativeObject).ID); }
-			                         	));
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+		public override string ChildName
 		{
-			// default child item for SPAlertCollection is SPAlert
-			foreach (SPAlert alert in NativeObject)
-			{
-				yield return new SharePointAlert(alert);
+			get { return NativeObject.ID.ToString(); // int
 			}
 		}
 
 		public override bool IsContainer
 		{
-			get { return true; }
-		}
-
-		public override string ChildName
-		{
-			get { return "!Alerts"; }
+			get { return false; }
 		}
 
 		public override StoreItemFlags ItemFlags
 		{
-			get { return StoreItemFlags.TabComplete; }
+			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
 		}
 	}
 }

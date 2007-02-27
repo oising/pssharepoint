@@ -15,37 +15,51 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.SharePoint;
+using System.Collections.ObjectModel;
+using System.Management.Automation;
+
+using Nivot.PowerShell.SharePoint.ObjectModel;
 
 namespace Nivot.PowerShell.SharePoint
 {
 	/// <summary>
-	/// This class will never be used since the !Webs container is implicit with this provider's paths.
-	/// <remarks>This is here only for completeness' sake and to explain where !Webs really is used.</remarks>
+	/// TODO: wire up web services ;)
+	/// <remarks>Not everyone wants to install the 2.0 runtime on their sharepoint box</remarks>
 	/// </summary>
-	internal class SharePointWebs : StoreItem<SPWebCollection>
+	internal class RemoteSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		public SharePointWebs(SPWebCollection webs)
-			: base(webs)
+		public RemoteSharePointObjectModel(Uri remoteVirtualServer, StoreProviderBase provider)
+			: base(remoteVirtualServer, provider)
 		{
-			Debug.Assert(false, "SharePointWebs ???");
 		}
 
-		public override bool IsContainer
+		public override bool ItemExists(string path)
 		{
-			get { return true; }
+			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override string ChildName
+		public override IStoreItem GetItem(string path)
 		{
-			get { return "!Webs"; }
+			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override StoreItemFlags ItemFlags
+		public override Collection<IStoreItem> GetChildItems(string path)
 		{
-			get { return StoreItemFlags.None; }
+			throw new Exception("The method or operation is not implemented.");
 		}
+
+		public override bool HasChildItems(string path)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		#endregion
 	}
 }

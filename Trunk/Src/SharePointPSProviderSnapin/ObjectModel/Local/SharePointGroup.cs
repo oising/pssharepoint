@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal class SharePointGroup : StoreItem<SPGroup>
 	{

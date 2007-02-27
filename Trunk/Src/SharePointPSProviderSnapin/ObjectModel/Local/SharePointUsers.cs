@@ -19,28 +19,42 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointAlert : StoreItem<SPAlert>
+	internal class SharePointUsers : StoreItem<SPUserCollection>
 	{
-		public SharePointAlert(SPAlert alert)
-			: base(alert)
+		public SharePointUsers(SPUserCollection users)
+			: base(users)
 		{
+			// TODO: add SPUser
+
+			// TODO: remove SPUser
+
+			// TODO: add SPGroup
+		}
+
+		public override IEnumerator<IStoreItem> GetEnumerator()
+		{
+			// default child item for SPUserCollection is SPUser
+			foreach (SPUser user in NativeObject)
+			{
+				yield return new SharePointUser(user);
+			}
 		}
 
 		public override bool IsContainer
 		{
-			get { return false; }
+			get { return true; }
 		}
 
 		public override string ChildName
 		{
-			get { return NativeObject.Title; }
+			get { return "!Users"; }
 		}
 
 		public override StoreItemFlags ItemFlags
 		{
-			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
+			get { return StoreItemFlags.TabComplete; }
 		}
 	}
 }

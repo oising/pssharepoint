@@ -20,6 +20,8 @@ using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 
+using Nivot.PowerShell.SharePoint.ObjectModel;
+
 namespace Nivot.PowerShell.SharePoint
 {
 	[CmdletProvider("SharePoint", ProviderCapabilities.ShouldProcess)]

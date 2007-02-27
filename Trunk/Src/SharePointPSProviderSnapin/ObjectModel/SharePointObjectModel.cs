@@ -26,13 +26,13 @@ using System.Reflection;
 using System.Resources;
 using System.Text.RegularExpressions;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	/// <summary>
 	/// Base factory class for getting access to the SharePoint Object Model, either local or remote.
 	/// <remarks>TODO: constructor overloads for provider-qualified path, e.g. no PSDriveInfo available</remarks>
 	/// </summary>
-	internal class SharePointObjectModel : IStoreObjectModel
+	internal abstract class SharePointObjectModel : IStoreObjectModel
 	{
 		private StoreProviderBase m_provider;
 
@@ -54,7 +54,7 @@ namespace Nivot.PowerShell.SharePoint
 		static SharePointObjectModel()
 		{
 			// wire-up missing assembly handler
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			//AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 		}
 
 		public static IStoreObjectModel GetSharePointObjectModel(Uri virtualServer, StoreProviderBase provider)
@@ -76,7 +76,7 @@ namespace Nivot.PowerShell.SharePoint
 			Provider.WriteVerbose("SharePointObjectModel::HasChildItems called for path " + path);
 
 			IStoreItem item = GetItem(path);
-			Debug.Assert(item != null);
+			Debug.Assert(item != null, "item != null");
 
 			// FIXME: redundant maybe?
 			if (item.IsContainer)
@@ -92,8 +92,6 @@ namespace Nivot.PowerShell.SharePoint
 
 		public virtual bool ItemExists(string path)
 		{
-			Provider.WriteVerbose("SharePointObjectModel::ItemExists called for path " + path);
-
 			bool itemExists = (GetItem(path) != null);
 			Provider.WriteVerbose("SharePointObjectModel::ItemExists returning " + itemExists);
 
@@ -103,7 +101,7 @@ namespace Nivot.PowerShell.SharePoint
 		public virtual Collection<IStoreItem> GetChildItems(string path)
 		{
 			IStoreItem parentItem = GetItem(path);
-			Debug.Assert(parentItem != null);
+			Debug.Assert(parentItem != null, "parentItem != null");
 
 			Collection<IStoreItem> childItems = new Collection<IStoreItem>();
 
@@ -115,10 +113,7 @@ namespace Nivot.PowerShell.SharePoint
 			return childItems;
 		}
 
-		public virtual IStoreItem GetItem(string path)
-		{
-			throw new NotImplementedException("The method or operation is not implemented.");
-		}
+		public abstract IStoreItem GetItem(string path);
 
 		protected StoreProviderBase Provider
 		{
@@ -135,7 +130,7 @@ namespace Nivot.PowerShell.SharePoint
 		 * A) The referenced assembly doesn't need to be in the GAC, and can still be found immediately.
 		 * B) We can load this provider on a non-sharepoint box since it will not try to load MS.SharePoint.dll
 		 * 
-		 */
+		
 
 		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
@@ -169,6 +164,7 @@ namespace Nivot.PowerShell.SharePoint
 			}
 			return null;
 		}
+		*/
 	}
 
 	/// <summary>

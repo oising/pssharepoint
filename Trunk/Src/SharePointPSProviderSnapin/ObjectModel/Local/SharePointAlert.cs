@@ -15,64 +15,32 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Management.Automation;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
+	internal class SharePointAlert : StoreItem<SPAlert>
 	{
-		private SPSite m_site;
-
-		public LocalSharePointObjectModel(Uri url, StoreProviderBase provider)
-			: base(url, provider)
+		public SharePointAlert(SPAlert alert)
+			: base(alert)
 		{
-			m_site = new SPSite(url.ToString()); // initialize object model
 		}
 
-		public override IStoreItem GetItem(string path)
+		public override bool IsContainer
 		{
-			// always a minimum of '\'
-			string[] chunks = path.Split(SharePointPSProvider.PathSeparator);
-
-			// start at root SPWeb
-			IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
-			if (path == SharePointPSProvider.PathSeparator.ToString())
-			{
-				return storeItem; // at root
-			}
-
-			foreach (string chunk in chunks)
-			{
-				if (chunk == String.Empty)
-				{
-					continue; // skip first chunk
-				}
-				storeItem = storeItem[chunk]; // use indexer to find this chunk
-				if (storeItem == null)
-				{
-					return null;
-				}
-			}
-			return storeItem;
+			get { return false; }
 		}
 
-		#region IDisposable Members
-
-		public void Dispose()
+		public override string ChildName
 		{
-			if (m_site != null)
-			{
-				m_site.Dispose();
-			}
+			get { return NativeObject.Title; }
 		}
 
-		#endregion
+		public override StoreItemFlags ItemFlags
+		{
+			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
+		}
 	}
 }

@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Text;
 
+using Nivot.PowerShell.SharePoint.ObjectModel;
+
 //using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint
