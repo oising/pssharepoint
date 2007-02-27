@@ -16,27 +16,51 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointListItem : StoreItem<SPListItem>
+	internal class SharePointRole : StoreItem<SPRole>
 	{
-		public SharePointListItem(SPListItem listItem)
-			: base(listItem)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="role"></param>
+		public SharePointRole(SPRole role)
+			: base(role)
 		{
+			// add SPUser
+			RegisterAdder<SPUser>(new Action<IStoreItem>(
+			                      	delegate(IStoreItem item) { NativeObject.AddUser((SPUser) item.NativeObject); }
+			                      	));
+
+			// remove SPUser
+			RegisterRemover<SPUser>(new Action<IStoreItem>(
+			                        	delegate(IStoreItem item) { NativeObject.RemoveUser((SPUser) item.NativeObject); }
+			                        	));
 		}
 
-		public override string ChildName
+		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
-			get { return NativeObject.ID.ToString(); // int
+			// pseudo containers
+			yield return new SharePointUsers(NativeObject.Users);
+			yield return new SharePointGroups(NativeObject.Groups);
+
+			// default child item for SPRole is SPUser
+			foreach (SPUser user in NativeObject.Users)
+			{
+				yield return new SharePointUser(user);
 			}
 		}
 
 		public override bool IsContainer
 		{
-			get { return false; }
+			get { return true; }
+		}
+
+		public override string ChildName
+		{
+			get { return NativeObject.Name; }
 		}
 
 		public override StoreItemFlags ItemFlags

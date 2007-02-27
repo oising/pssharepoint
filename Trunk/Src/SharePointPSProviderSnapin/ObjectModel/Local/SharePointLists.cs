@@ -15,49 +15,55 @@
 #endregion
 
 using System;
-using System.Collections.ObjectModel;
-using System.Management.Automation;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	/// <summary>
-	/// TODO: wire up web services ;)
-	/// <remarks>Not everyone wants to install the 2.0 runtime on their sharepoint box</remarks>
-	/// </summary>
-	internal class RemoteSharePointObjectModel : SharePointObjectModel, IDisposable
+	internal class SharePointLists : StoreItem<SPListCollection>
 	{
-		public RemoteSharePointObjectModel(Uri remoteVirtualServer, StoreProviderBase provider)
-			: base(remoteVirtualServer, provider)
+		public SharePointLists(SPListCollection lists)
+			: base(lists)
 		{
+			RegisterRemover<SPList>(new Action<IStoreItem>(
+			                        	delegate(IStoreItem item)
+			                        		{
+			                        			SPList list = (SPList) item.NativeObject;
+			                        			NativeObject.Web.Lists.Delete(list.ID);
+			                        		}
+			                        	));
 		}
 
-		public override bool ItemExists(string path)
+		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
-			throw new Exception("The method or operation is not implemented.");
+			// default child item for SPListCollection is SPList
+			foreach (SPList list in NativeObject)
+			{
+				if (list is SPDocumentLibrary)
+				{
+					yield return new SharePointDocumentLibrary(list as SPDocumentLibrary);
+				}
+				else
+				{
+					yield return new SharePointList(list);
+				}
+			}
 		}
 
-		public override IStoreItem GetItem(string path)
+		public override bool IsContainer
 		{
-			throw new Exception("The method or operation is not implemented.");
+			get { return true; }
 		}
 
-		public override Collection<IStoreItem> GetChildItems(string path)
+		public override string ChildName
 		{
-			throw new Exception("The method or operation is not implemented.");
+			get { return "!Lists"; }
 		}
 
-		public override bool HasChildItems(string path)
+		public override StoreItemFlags ItemFlags
 		{
-			throw new Exception("The method or operation is not implemented.");
+			get { return StoreItemFlags.TabComplete; }
 		}
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		#endregion
 	}
 }

@@ -52,34 +52,41 @@
     <Compile Include="Commands\ExportListItemCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
     <Compile Include="Commands\NativeMethods.cs" />
-    <Compile Include="RemoteObjectModel\RemoteSharePointObjectModel.cs" />
-    <Compile Include="LocalObjectModel\SharePointListItem.cs" />
-    <Compile Include="LocalObjectModel\SharePointWebs.cs" />
-    <Compile Include="LocalObjectModel\LocalSharePointObjectModel.cs" />
-    <Compile Include="RemoteObjectModel\SharePointObjectProxies.cs" />
+    <Compile Include="Commands\ReadSPFileCommand.cs" />
+    <Compile Include="Commands\WriteSPFileCommand.cs" />
+    <Compile Include="ObjectModel\Local\SharePointDocumentLibrary.cs" />
+    <Compile Include="ObjectModel\Local\SharePointFile.cs" />
+    <Compile Include="ObjectModel\Local\SharePointFiles.cs" />
+    <Compile Include="ObjectModel\Local\SharePointFolder.cs" />
+    <Compile Include="ObjectModel\Local\SharePointFolders.cs" />
+    <Compile Include="ObjectModel\Remote\RemoteSharePointObjectModel.cs" />
+    <Compile Include="ObjectModel\Local\SharePointListItem.cs" />
+    <Compile Include="ObjectModel\Local\SharePointWebs.cs" />
+    <Compile Include="ObjectModel\Local\LocalSharePointObjectModel.cs" />
+    <Compile Include="ObjectModel\Remote\SharePointObjectProxies.cs" />
     <Compile Include="SharePointPSProvider.cs" />
-    <Compile Include="LocalObjectModel\SharePointAlerts.cs" />
+    <Compile Include="ObjectModel\Local\SharePointAlerts.cs" />
     <Compile Include="SharePointPSDriveInfo.cs" />
-    <Compile Include="LocalObjectModel\SharePointLists.cs" />
-    <Compile Include="LocalObjectModel\SharePointGroups.cs" />
+    <Compile Include="ObjectModel\Local\SharePointLists.cs" />
+    <Compile Include="ObjectModel\Local\SharePointGroups.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="LocalObjectModel\SharePointAlert.cs" />
-    <Compile Include="LocalObjectModel\SharePointGroup.cs" />
-    <Compile Include="LocalObjectModel\SharePointList.cs" />
+    <Compile Include="ObjectModel\Local\SharePointAlert.cs" />
+    <Compile Include="ObjectModel\Local\SharePointGroup.cs" />
+    <Compile Include="ObjectModel\Local\SharePointList.cs" />
     <Compile Include="SharePointPSSnapin.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SharePointObjectModel.cs" />
+    <Compile Include="ObjectModel\SharePointObjectModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LocalObjectModel\SharePointRole.cs" />
-    <Compile Include="LocalObjectModel\SharePointRoles.cs" />
-    <Compile Include="LocalObjectModel\SharePointUser.cs" />
-    <Compile Include="LocalObjectModel\SharePointUsers.cs" />
-    <Compile Include="LocalObjectModel\SharePointWeb.cs" />
+    <Compile Include="ObjectModel\Local\SharePointRole.cs" />
+    <Compile Include="ObjectModel\Local\SharePointRoles.cs" />
+    <Compile Include="ObjectModel\Local\SharePointUser.cs" />
+    <Compile Include="ObjectModel\Local\SharePointUsers.cs" />
+    <Compile Include="ObjectModel\Local\SharePointWeb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\SharePoint.Format.ps1xml" />
@@ -92,8 +99,8 @@
   <ItemGroup>
     <Content Include="changelog.txt" />
     <Content Include="Commands\readme.txt" />
-    <Content Include="LocalObjectModel\readme.txt" />
-    <Content Include="RemoteObjectModel\readme.txt" />
+    <Content Include="ObjectModel\Local\readme.txt" />
+    <Content Include="ObjectModel\Remote\readme.txt" />
     <Content Include="Scripts\readme.txt" />
   </ItemGroup>
   <ItemGroup>

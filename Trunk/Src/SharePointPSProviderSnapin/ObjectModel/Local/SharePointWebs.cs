@@ -16,33 +16,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointList : StoreItem<SPList>
+	/// <summary>
+	/// This class will never be used since the !Webs container is implicit with this provider's paths.
+	/// <remarks>This is here only for completeness' sake and to explain where !Webs really is used.</remarks>
+	/// </summary>
+	internal class SharePointWebs : StoreItem<SPWebCollection>
 	{
-		public SharePointList(SPList list)
-			: base(list)
+		public SharePointWebs(SPWebCollection webs)
+			: base(webs)
 		{
-			// remove SPListItem
-			RegisterRemover<SPListItem>(new Action<IStoreItem>(
-			                            	delegate(IStoreItem item)
-			                            		{
-			                            			SPListItem listItem = (SPListItem) item.NativeObject;
-			                            			NativeObject.Items.DeleteItemById(listItem.ID);
-			                            		}
-			                            	));
-		}
-
-		public override IEnumerator<IStoreItem> GetEnumerator()
-		{
-			// default child item for SPList is SPListItem
-			foreach (SPListItem listItem in NativeObject.Items)
-			{
-				yield return new SharePointListItem(listItem);
-			}
+			Debug.Assert(false, "SharePointWebs");
 		}
 
 		public override bool IsContainer
@@ -52,12 +40,12 @@ namespace Nivot.PowerShell.SharePoint
 
 		public override string ChildName
 		{
-			get { return NativeObject.Title; }
+			get { return "!Webs"; }
 		}
 
 		public override StoreItemFlags ItemFlags
 		{
-			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
+			get { return StoreItemFlags.None; }
 		}
 	}
 }

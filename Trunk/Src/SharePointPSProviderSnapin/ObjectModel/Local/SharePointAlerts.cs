@@ -16,53 +16,28 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	/// <summary>
-	/// !groups
-	/// </summary>
-	internal class SharePointGroups : StoreItem<SPGroupCollection>
+	internal class SharePointAlerts : StoreItem<SPAlertCollection>
 	{
-		public SharePointGroups(SPGroupCollection groups)
-			: base(groups)
+		public SharePointAlerts(SPAlertCollection alerts)
+			: base(alerts)
 		{
-			// add SPGroup
-			RegisterAdder<SPGroup>(new Action<IStoreItem>(
-			                       	delegate(IStoreItem item)
-			                       		{
-			                       			SPGroup group = (SPGroup) item.NativeObject;
-
-			                       			// create identical group (clone it)
-			                       			NativeObject.Add(group.Name, group.Owner, group.Users[0], group.Description);
-			                       			foreach (SPUser user in group.Users)
-			                       			{
-			                       				// copy users from group into this one
-			                       				NativeObject[group.Name].AddUser(user);
-			                       			}
-			                       		}
-			                       	));
-
-			// remove SPGroup
-			RegisterRemover<SPGroup>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item)
-			                         		{
-			                         			SPGroup group = (SPGroup) item.NativeObject;
-			                         			// remove group
-			                         			NativeObject.Remove(group.Name);
-			                         		}
+			// remove SPAlert
+			RegisterRemover<SPAlert>(new Action<IStoreItem>(
+			                         	delegate(IStoreItem item) { NativeObject.Delete(((SPAlert) item.NativeObject).ID); }
 			                         	));
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
-			// default child item for SPGroupCollection is SPGroup
-			foreach (SPGroup group in NativeObject)
+			// default child item for SPAlertCollection is SPAlert
+			foreach (SPAlert alert in NativeObject)
 			{
-				yield return new SharePointGroup(group);
+				yield return new SharePointAlert(alert);
 			}
 		}
 
@@ -73,7 +48,7 @@ namespace Nivot.PowerShell.SharePoint
 
 		public override string ChildName
 		{
-			get { return "!Groups"; }
+			get { return "!Alerts"; }
 		}
 
 		public override StoreItemFlags ItemFlags

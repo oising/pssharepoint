@@ -19,29 +19,28 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointLists : StoreItem<SPListCollection>
+	internal class SharePointUser : StoreItem<SPUser>
 	{
-		public SharePointLists(SPListCollection lists)
-			: base(lists)
+		public SharePointUser(SPUser user)
+			: base(user)
 		{
-			RegisterRemover<SPList>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item)
-			                        		{
-			                        			SPList list = (SPList) item.NativeObject;
-			                        			NativeObject.Web.Lists.Delete(list.ID);
-			                        		}
-			                        	));
+			// remove SPAlert
+			RegisterRemover<SPAlert>(new Action<IStoreItem>(
+			                         	delegate(IStoreItem item) { NativeObject.Alerts.Delete(((SPAlert) item.NativeObject).ID); }
+			                         	));
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
-			// default child item for SPListCollection is SPList
-			foreach (SPList list in NativeObject)
-			{
-				yield return new SharePointList(list);
-			}
+			// pseudo containers
+			yield return new SharePointAlerts(NativeObject.Alerts);
+			yield return new SharePointGroups(NativeObject.Groups);
+			yield return new SharePointRoles(NativeObject.Roles);
+
+			// no default child item for SPUser:
+			// e.g. get-childitems in this container will return nothing
 		}
 
 		public override bool IsContainer
@@ -51,12 +50,21 @@ namespace Nivot.PowerShell.SharePoint
 
 		public override string ChildName
 		{
-			get { return "!Lists"; }
+			get
+			{
+				string login = NativeObject.LoginName;
+				if (login.IndexOf('\\') != -1)
+				{
+					string[] loginArray = login.Split('\\');
+					return loginArray[0] + "_" + loginArray[1]; // domain_user
+				}
+				return login; // user
+			}
 		}
 
 		public override StoreItemFlags ItemFlags
 		{
-			get { return StoreItemFlags.TabComplete; }
+			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
 		}
 	}
 }

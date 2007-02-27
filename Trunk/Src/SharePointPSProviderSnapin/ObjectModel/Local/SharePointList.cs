@@ -19,28 +19,30 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.SharePoint;
 
-namespace Nivot.PowerShell.SharePoint
+namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointUser : StoreItem<SPUser>
+	internal class SharePointList : StoreItem<SPList>
 	{
-		public SharePointUser(SPUser user)
-			: base(user)
+		public SharePointList(SPList list)
+			: base(list)
 		{
-			// remove SPAlert
-			RegisterRemover<SPAlert>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item) { NativeObject.Alerts.Delete(((SPAlert) item.NativeObject).ID); }
-			                         	));
+			// remove SPListItem
+			RegisterRemover<SPListItem>(new Action<IStoreItem>(
+			                            	delegate(IStoreItem item)
+			                            		{
+			                            			SPListItem listItem = (SPListItem) item.NativeObject;
+			                            			NativeObject.Items.DeleteItemById(listItem.ID);
+			                            		}
+			                            	));
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
-			// pseudo containers
-			yield return new SharePointAlerts(NativeObject.Alerts);
-			yield return new SharePointGroups(NativeObject.Groups);
-			yield return new SharePointRoles(NativeObject.Roles);
-
-			// no default child item for SPUser:
-			// e.g. get-childitems in this container will return nothing
+			// default child item for SPList is SPListItem
+			foreach (SPListItem listItem in NativeObject.Items)
+			{
+				yield return new SharePointListItem(listItem);
+			}
 		}
 
 		public override bool IsContainer
@@ -50,16 +52,7 @@ namespace Nivot.PowerShell.SharePoint
 
 		public override string ChildName
 		{
-			get
-			{
-				string login = NativeObject.LoginName;
-				if (login.IndexOf('\\') != -1)
-				{
-					string[] loginArray = login.Split('\\');
-					return loginArray[0] + "_" + loginArray[1]; // domain_user
-				}
-				return login; // user
-			}
+			get { return NativeObject.Title; }
 		}
 
 		public override StoreItemFlags ItemFlags
