@@ -15,7 +15,8 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			foreach (SPListItem listItem in NativeObject.Items)
 			{
-				yield return new SharePointListItem(listItem);
+				// TODO: use dynamic get-item parameter to determine whether to return SPFile or SPListItem
+				yield return new SharePointFile(listItem.File);
 			}
 		}
 

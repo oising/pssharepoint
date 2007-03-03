@@ -30,8 +30,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 		public override string ChildName
 		{
-			get { return NativeObject.ID.ToString(); // int
-			}
+			get { return NativeObject.ID.ToString(); }
 		}
 
 		public override bool IsContainer
