@@ -65,6 +65,7 @@
     <Compile Include="ObjectModel\Local\SharePointWebs.cs" />
     <Compile Include="ObjectModel\Local\LocalSharePointObjectModel.cs" />
     <Compile Include="ObjectModel\Remote\SharePointObjectProxies.cs" />
+    <Compile Include="SharePointProviderInfo.cs" />
     <Compile Include="SharePointPSProvider.cs" />
     <Compile Include="ObjectModel\Local\SharePointAlerts.cs" />
     <Compile Include="SharePointPSDriveInfo.cs" />
