@@ -17,6 +17,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Management.Automation;
 
@@ -60,9 +61,9 @@ namespace Nivot.PowerShell
 			{
 				// cycle through children
 				foreach (IStoreItem storeItem in this)
-				{
+				{					
 					// FIXME: using case-insensitive comparison; this may not always be true.
-					if (String.Compare(storeItem.ChildName, childName, true) == 0)
+					if (String.Compare(storeItem.ChildName, childName, StringComparison.OrdinalIgnoreCase) == 0)
 					{
 						return storeItem;
 					}
@@ -77,12 +78,12 @@ namespace Nivot.PowerShell
 
 		protected void RegisterAdder<I>(Action<IStoreItem> addAction)
 		{
-			AddActions.Add(typeof (I), addAction);
+			AddActions.Add(typeof(I), addAction);
 		}
 
 		protected void RegisterRemover<I>(Action<IStoreItem> removeAction)
 		{
-			RemoveActions.Add(typeof (I), removeAction);
+			RemoveActions.Add(typeof(I), removeAction);
 		}
 
 		protected Action<IStoreItem> GetAddAction(IStoreItem item)

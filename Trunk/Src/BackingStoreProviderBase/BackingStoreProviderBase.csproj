@@ -7,8 +7,8 @@
     <ProjectGuid>{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BackingStoreProviderBase</RootNamespace>
-    <AssemblyName>BackingStoreProviderBase</AssemblyName>
+    <RootNamespace>Nivot.PowerShell</RootNamespace>
+    <AssemblyName>Nivot.PowerShell.BackingStoreProvider</AssemblyName>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicParameterBuilder.cs" />
     <Compile Include="IStoreItem.cs">
       <SubType>
       </SubType>
@@ -55,6 +56,8 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="StoreProviderContext.cs" />
+    <Compile Include="StoreProviderInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
