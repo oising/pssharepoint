@@ -38,10 +38,18 @@ namespace Nivot.PowerShell
 		/// </summary>
 		public abstract IStoreObjectModel StoreObjectModel { get; }
 
-		protected StoreProviderBase()
+		public StoreProviderInfo Info
 		{
+			get
+			{
+				return (StoreProviderInfo) this.ProviderInfo;
+			}
 		}
 
+		protected StoreProviderBase()
+		{			
+		}
+		
         // ...
 
 		#region CmdletProvider Overrides
@@ -73,7 +81,7 @@ namespace Nivot.PowerShell
 		protected override ProviderInfo Start(ProviderInfo providerInfo)
 		{
 			WriteVerbose("Start()");
-			return providerInfo;
+			return new StoreProviderInfo(providerInfo);
 		}
 
 		/// <summary>
@@ -246,36 +254,47 @@ namespace Nivot.PowerShell
 
 		protected override void GetItem(string path)
 		{
-			path = NormalizePath(path); // TODO: remove
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			{
+				path = NormalizePath(path); // TODO: remove
 
-			try
-			{
-				IStoreItem item = StoreObjectModel.GetItem(path);
-				Debug.Assert(item != null); // FIXME: redundant? itemexists called first?
-				WriteItemObject(item.NativeObject, path, item.IsContainer);
+				try
+				{
+					IStoreItem item = StoreObjectModel.GetItem(path);
+					Debug.Assert(item != null); // FIXME: redundant? itemexists called first?
+					WriteItemObject(item.NativeObject, path, item.IsContainer);
+				}
+				catch (Exception ex)
+				{
+					ThrowTerminatingError(
+						new ErrorRecord(ex, String.Format("GetItem('{0}')", path),
+						                ErrorCategory.NotSpecified, null));
+				}
 			}
-			catch (Exception ex)
-			{
-				ThrowTerminatingError(
-					new ErrorRecord(ex, String.Format("GetItem('{0}')", path),
-									ErrorCategory.NotSpecified, null));
-			}
+		}
+
+		protected override object GetItemDynamicParameters(string path)
+		{
+			return base.GetItemDynamicParameters(path);
 		}
 
 		protected override bool ItemExists(string path)
 		{
-			try
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
 			{
-				path = NormalizePath(path); // TODO: remove
-				return StoreObjectModel.ItemExists(path);
+				try
+				{
+					path = NormalizePath(path); // TODO: remove
+					return StoreObjectModel.ItemExists(path);
+				}
+				catch (Exception ex)
+				{
+					ThrowTerminatingError(
+						new ErrorRecord(ex, String.Format("ItemExists('{0}')", path),
+						                ErrorCategory.NotSpecified, null));
+				}
+				return false;
 			}
-			catch (Exception ex)
-			{
-				ThrowTerminatingError(
-					new ErrorRecord(ex, String.Format("ItemExists('{0}')", path),
-									ErrorCategory.NotSpecified, null));
-			}
-			return false;
 		}
 
 		#endregion
@@ -293,38 +312,41 @@ namespace Nivot.PowerShell
 
 		protected override void GetChildItems(string path, bool recurse)
 		{
-			try
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
 			{
-				path = NormalizePath(path); // TODO: remove
-				foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
+				try
 				{
-					// be nice to sigbreak
-					if (base.Stopping)
+					path = NormalizePath(path); // TODO: remove
+					foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
 					{
-						return;
-					}
-
-					// should we send this item to pipeline?
-					if ((item.ItemFlags & StoreItemFlags.PipeItem) == StoreItemFlags.PipeItem)
-					{
-						string itemPath = MakePath(path, item.ChildName);
-						WriteItemObject(item.NativeObject, itemPath, item.IsContainer);
-
-						if (recurse)
+						// be nice to sigbreak
+						if (base.Stopping)
 						{
-							if (item.IsContainer)
+							return;
+						}
+
+						// should we send this item to pipeline?
+						if ((item.ItemFlags & StoreItemFlags.PipeItem) == StoreItemFlags.PipeItem)
+						{
+							string itemPath = MakePath(path, item.ChildName);
+							WriteItemObject(item.NativeObject, itemPath, item.IsContainer);
+
+							if (recurse)
 							{
-								GetChildItems(itemPath, recurse);
+								if (item.IsContainer)
+								{
+									GetChildItems(itemPath, recurse);
+								}
 							}
 						}
 					}
 				}
-			}
-			catch (Exception ex)
-			{
-				ThrowTerminatingError(
-					new ErrorRecord(ex, String.Format("GetChildItems('{0}')", path),
-									ErrorCategory.NotSpecified, null));
+				catch (Exception ex)
+				{
+					ThrowTerminatingError(
+						new ErrorRecord(ex, String.Format("GetChildItems('{0}')", path),
+						                ErrorCategory.NotSpecified, null));
+				}
 			}
 		}
 
@@ -332,37 +354,44 @@ namespace Nivot.PowerShell
 		// FIXME: ignoring returnAllContainers
 		protected override void GetChildNames(string path, ReturnContainers returnContainers)
 		{
-			try
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
 			{
-				// enumerate children for current path
-				path = NormalizePath(path); // TODO: remove
-				foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
+				try
 				{
-					// be nice to sigbreak
-					if (base.Stopping)
+					// enumerate children for current path
+					path = NormalizePath(path); // TODO: remove
+					foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
 					{
-						return;
-					}
+						// be nice to sigbreak
+						if (base.Stopping)
+						{
+							return;
+						}
 
-					// should we tab complete this item?
-					if ((item.ItemFlags & StoreItemFlags.TabComplete) == StoreItemFlags.TabComplete)
-					{
-						WriteItemObject(item.ChildName, MakePath(path, item.ChildName), item.IsContainer);
+						// should we tab complete this item?
+						if ((item.ItemFlags & StoreItemFlags.TabComplete) == StoreItemFlags.TabComplete)
+						{
+							WriteItemObject(item.ChildName, MakePath(path, item.ChildName), item.IsContainer);
+						}
 					}
 				}
-			}
-			catch (Exception ex)
-			{
-				ThrowTerminatingError(
-					new ErrorRecord(ex, String.Format("GetChildNames('{0}')", path),
-									ErrorCategory.NotSpecified, null));
+				catch (Exception ex)
+				{
+					ThrowTerminatingError(
+						new ErrorRecord(ex, String.Format("GetChildNames('{0}')", path),
+						                ErrorCategory.NotSpecified, null));
+				}
 			}
 		}
 
 		protected override bool HasChildItems(string path)
 		{
-			path = NormalizePath(path); // TODO: remove
-			return StoreObjectModel.HasChildItems(path);
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			{
+				// FIXME: normalize path is incomplete
+				path = NormalizePath(path);
+				return StoreObjectModel.HasChildItems(path);
+			}
 		}
 
 		protected override void NewItem(string path, string type, object newItem)
@@ -376,61 +405,70 @@ namespace Nivot.PowerShell
 
 		protected override void MoveItem(string path, string destination)
 		{
-			// FIXME: need to verify copy before remove -- right now we rely on "throwterminatingerror" on copy failure
-			if (ShouldProcess(destination, "Move"))
-			{
-				CopyItem(path, destination, false);
-				RemoveItem(path, false);
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			{				
+				if (ShouldProcess(destination, "Move"))
+				{
+					CopyItem(path, destination, false);
+					if (ItemExists(destination))
+					{
+						RemoveItem(path, false);
+					}
+				}
 			}
 		}
 
 		protected override void CopyItem(string path, string copyPath, bool recurse)
 		{
-			path = NormalizePath(path); // TODO: remove
-			copyPath = NormalizePath(copyPath); // TODO: remove
-
-			IStoreItem source = StoreObjectModel.GetItem(path);
-			IStoreItem destination = StoreObjectModel.GetItem(copyPath);
-
-			// FIXME: is this redundant?
-			Debug.Assert((source != null) && (destination != null), "source and/or destination invalid!");
-
-			string sourceType = source.GetType().Name;
-			string destinationType = destination.GetType().Name;
-			WriteVerbose(String.Format("Copying from {0} to {1}", sourceType, destinationType));
-
-			// TODO: implement recursive copying
-			if (recurse)
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
 			{
-				WriteWarning("parameter -recurse is currently not implemented for copy operation.");
-			}
+				path = NormalizePath(path); // TODO: remove
+				copyPath = NormalizePath(copyPath); // TODO: remove
 
-			if (ShouldProcess(copyPath, "Copy"))
-			{
-				try
+				IStoreItem source = StoreObjectModel.GetItem(path);
+				IStoreItem destination = StoreObjectModel.GetItem(copyPath);
+
+				// FIXME: is this redundant?
+				Debug.Assert((source != null) && (destination != null), "source and/or destination invalid!");
+
+				string sourceType = source.GetType().Name;
+				string destinationType = destination.GetType().Name;
+				WriteVerbose(String.Format("Copying from {0} to {1}", sourceType, destinationType));
+
+				// TODO: implement recursive copying
+				if (recurse)
 				{
-					// try to copy
-					bool success = destination.AddItem(source);
-
-					if (!success)
-					{
-						// non-terminating error, continue with next record
-						WriteError(new ErrorRecord(new NotImplementedException(
-													String.Format("Copy operation from type {0} to type {1} is undefined.",
-																  sourceType, destinationType)), "StoreBaseProvider.CopyItem",
-												   ErrorCategory.NotImplemented, null));
-					}
-					else
-					{
-						// success
-						WriteVerbose("Copy complete.");
-					}
+					WriteWarning("parameter -recurse is currently not implemented for copy operation.");
+					return;
 				}
-				catch (ApplicationFailedException ex)
+
+				if (ShouldProcess(copyPath, "Copy"))
 				{
-					// native application failure
-					WriteVerbose("Exception: " + ex.ToString());
-					ThrowTerminatingError(new ErrorRecord(ex, "StoreError", ErrorCategory.DeviceError, null));
+					try
+					{
+						// try to copy
+						bool success = destination.AddItem(source);
+
+						if (!success)
+						{
+							// non-terminating error, continue with next record
+							WriteError(new ErrorRecord(new NotImplementedException(
+							                           	String.Format("Copy operation from type {0} to type {1} is undefined.",
+							                           	              sourceType, destinationType)), "StoreBaseProvider.CopyItem",
+							                           ErrorCategory.NotImplemented, null));
+						}
+						else
+						{
+							// success
+							WriteVerbose("Copy complete.");
+						}
+					}
+					catch (ApplicationFailedException ex)
+					{
+						// native application failure
+						WriteVerbose("Exception: " + ex.ToString());
+						ThrowTerminatingError(new ErrorRecord(ex, "StoreError", ErrorCategory.DeviceError, null));
+					}
 				}
 			}
 		}
@@ -444,33 +482,35 @@ namespace Nivot.PowerShell
 		// FIXME: recurse is ignored, not sure how it applies?
 		protected override void RemoveItem(string path, bool recurse)
 		{
-			string parentPath = GetParentPath(path, null); // FIXME: assumes PSDriveInfo != null
-
-			IStoreItem parentItem = StoreObjectModel.GetItem(NormalizePath(parentPath)); // TODO: remove
-			IStoreItem childItem = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
-			Debug.Assert((parentItem != null) && (childItem != null)); // FIXME: redundant/itemexists?
-			string parentType = parentItem.GetType().Name;
-			string childType = childItem.GetType().Name;
-
-			if (ShouldProcess(path, "Remove"))
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
 			{
-				bool success = parentItem.RemoveItem(childItem);
+				string parentPath = GetParentPath(path, null); // FIXME: assumes PSDriveInfo != null
 
-				if (!success)
-				{
-					// FIXME: should be WriteVerbose maybe?
-					WriteWarning(String.Format("Failed: {0} does not have a Remover for type {1}",
-											   parentItem.GetType(), childItem.GetType()));
+				IStoreItem parentItem = StoreObjectModel.GetItem(NormalizePath(parentPath)); // TODO: remove
+				IStoreItem childItem = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
+				Debug.Assert((parentItem != null) && (childItem != null)); // FIXME: redundant/itemexists?
+				string parentType = parentItem.GetType().Name;
+				string childType = childItem.GetType().Name;
 
-					// non-terminating error, continue with next record
-					WriteError(new ErrorRecord(new NotImplementedException(path),
-											   "StoreBaseProvider.RemoveItem", ErrorCategory.NotImplemented, null)
-						);
-				}
-				else
+				if (ShouldProcess(path, "Remove"))
 				{
-					// success
-					WriteVerbose("Remove complete.");
+					bool success = parentItem.RemoveItem(childItem);
+
+					if (!success)
+					{
+						// FIXME: should be WriteVerbose maybe?
+						WriteWarning(String.Format("Failed: {0} does not have a Remover for type {1}",
+						                           parentItem.GetType(), childItem.GetType()));
+
+						// non-terminating error, continue with next record
+						WriteError(new ErrorRecord(new NotImplementedException("Remove-Item"),
+						                           "StoreBaseProvider.RemoveItem", ErrorCategory.NotImplemented, null));
+					}
+					else
+					{
+						// success
+						WriteVerbose("Remove complete.");
+					}
 				}
 			}
 		}
@@ -483,10 +523,13 @@ namespace Nivot.PowerShell
 
 		protected override bool IsItemContainer(string path)
 		{
-			IStoreItem item = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
-			Debug.Assert(item != null); // FIXME: redundant?
+			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			{
+				IStoreItem item = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
+				Debug.Assert(item != null); // FIXME: redundant?
 
-			return item.IsContainer;
+				return item.IsContainer;
+			}
 		}
 
 		#endregion
