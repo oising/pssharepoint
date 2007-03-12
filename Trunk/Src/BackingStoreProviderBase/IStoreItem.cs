@@ -41,6 +41,11 @@ namespace Nivot.PowerShell
 		bool RemoveItem(IStoreItem item);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		void InvokeItem();
+
+		/// <summary>
 		/// The underlying native backing-store object
 		/// </summary>
 		object NativeObject { get; }
@@ -67,5 +72,7 @@ namespace Nivot.PowerShell
 		/// Flags for how the provider should treat this item, e.g. tab-complete only, don't tab-complete, pipe only etc.
 		/// </summary>
 		StoreItemFlags ItemFlags { get; }
+		
+		
 	}
 }

@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
@@ -24,8 +25,8 @@ using Nivot.PowerShell.SharePoint.ObjectModel;
 
 namespace Nivot.PowerShell.SharePoint
 {
-	[CmdletProvider("SharePoint", ProviderCapabilities.ShouldProcess)]
-	public class SharePointPSProvider : StoreProviderBase
+	[CmdletProvider("SharePoint", ProviderCapabilities.ShouldProcess | ProviderCapabilities.Credentials)]
+	public class SharePointProvider : StoreProviderBase
 	{
 		/// <summary>
 		/// This is our hook into all runtime checks of the SharePoint object model
@@ -34,27 +35,18 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			get
 			{
-				Uri url = null;
-				try
+				SharePointObjectModel objectModel = null;
+				
+				if (this.PSDriveInfo != null)
 				{
-					if (this.PSDriveInfo != null)
-					{
-						url = new Uri(this.PSDriveInfo.Root);
-					}
-					else
-					{
-						//  "\\server\path\path\item";
+					objectModel = ((SharePointDriveInfo)this.PSDriveInfo).ObjectModel;
+				}
+				else
+				{
+					ThrowTerminatingError(SharePointErrorRecord.NotImplementedError("Must use drive-qualifed paths."));
+				}
 
-						// TODO: extract root and deal with non drv-qualified path...
-						throw new NotSupportedException("Path must be drive-qualified!");
-					}
-				}
-				catch (UriFormatException ex)
-				{
-					WriteError(new ErrorRecord(ex, "Invalid Path", ErrorCategory.InvalidArgument, null));
-					return null;
-				}
-				return SharePointObjectModel.GetSharePointObjectModel(url, this);
+				return objectModel;
 			}
 		}
 
@@ -62,43 +54,61 @@ namespace Nivot.PowerShell.SharePoint
 
 		protected override PSDriveInfo NewDrive(PSDriveInfo drive)
 		{
-			// null check?
-			if (drive == null)
+			using (EnterContext())
 			{
-				ArgumentNullException argEx = new ArgumentNullException("drive");
-				WriteError(new ErrorRecord(argEx, "NullDrive",
-				                           ErrorCategory.InvalidArgument, null));
+				if (drive is SharePointDriveInfo)
+				{
+					// whaa, where, how???
+					return drive;
+				}
 
-				return null;
+				string root = drive.Root;
+
+				if (String.IsNullOrEmpty(root))
+				{
+					WriteError(SharePointErrorRecord.ArgumentNullOrEmpty("Root"));
+					return null;
+				}
+
+				if (!Uri.IsWellFormedUriString(root, UriKind.Absolute))
+				{
+					WriteError(
+						SharePointErrorRecord.InvalidOperationError(
+							"RootNotWellFormedUri", "Site collection Root is not a well formed Uri."));
+					return null;
+				}
+
+				SharePointDriveInfo driveInfo = null;
+
+				try
+				{
+					Uri siteCollectionUrl = new Uri(root);
+					driveInfo =
+						new SharePointDriveInfo(drive.Name, ProviderInfo, siteCollectionUrl, "SharePoint Drive", Credential,
+						                        ParamRemoteIsSet);
+
+					WriteVerbose("PSDriveInfo.Root = " + driveInfo.Root);
+				} catch (Exception ex)
+				{
+					Trace.WriteLine(ex, "NewDrive");
+
+					string message = String.Format("Unable to open site collection at {0} : {1}.", root, ex.Message);
+					WriteError(new ErrorRecord(new ArgumentException(
+					                           	message, ex), "NewDrive", ErrorCategory.OpenError, null));
+
+					return null;
+				}
+
+				return driveInfo;
 			}
+		}
 
-			// empty root?
-			if (String.IsNullOrEmpty(drive.Root))
-			{
-				ArgumentException argEx = new ArgumentException("drive.Root");
-				WriteError(new ErrorRecord(argEx, "NoRoot",
-				                           ErrorCategory.InvalidArgument, drive));
+		protected override object NewDriveDynamicParameters()
+		{
+			DynamicParameterBuilder parameters = new DynamicParameterBuilder();
+			parameters.AddSwitchParam("Remote");
 
-				return null;
-			}
-
-			SharePointPSDriveInfo spDriveInfo = null;
-
-			try
-			{
-				spDriveInfo = new SharePointPSDriveInfo(drive);
-			}
-			catch (Exception ex)
-			{
-				WriteError(new ErrorRecord(
-				           	new ArgumentException("Unable to open site!", ex), "NewDrive", ErrorCategory.OpenError, null));
-
-				return null;
-			}
-
-			WriteVerbose("PSDriveInfo.Root = " + spDriveInfo.Root);
-
-			return spDriveInfo;
+			return parameters.GetDictionary();
 		}
 
 		protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
@@ -121,5 +131,10 @@ namespace Nivot.PowerShell.SharePoint
 		}
 
 		#endregion
+
+		private bool ParamRemoteIsSet 
+		{
+			get { return DynamicParameters["Remote"].IsSet; }
+		}
 	}
 }

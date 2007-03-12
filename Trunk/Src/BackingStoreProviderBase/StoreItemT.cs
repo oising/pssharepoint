@@ -17,8 +17,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Management.Automation;
 
 namespace Nivot.PowerShell
@@ -27,7 +25,8 @@ namespace Nivot.PowerShell
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class StoreItem<T> : IStoreItem, IDisposable where T : class
+	public abstract class StoreItem<T> : IStoreItem, IStoreItemDynamicProperties,
+		IDisposable where T : class
 	{
 		private T m_storeObject;
 		private bool m_isDisposed = false;
@@ -61,7 +60,7 @@ namespace Nivot.PowerShell
 			{
 				// cycle through children
 				foreach (IStoreItem storeItem in this)
-				{					
+				{
 					// FIXME: using case-insensitive comparison; this may not always be true.
 					if (String.Compare(storeItem.ChildName, childName, StringComparison.OrdinalIgnoreCase) == 0)
 					{
@@ -156,6 +155,11 @@ namespace Nivot.PowerShell
 			return false;
 		}
 
+		public virtual void InvokeItem()
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 		object IStoreItem.NativeObject
 		{
 			get { return m_storeObject; }
@@ -166,6 +170,55 @@ namespace Nivot.PowerShell
 		public abstract bool IsContainer { get; }
 
 		public abstract StoreItemFlags ItemFlags { get; }
+
+		#endregion
+
+		#region IStoreItemDynamicProperties Members
+
+		public virtual RuntimeDefinedParameterDictionary GetItemDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary SetItemDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary GetChildItemsDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary GetChildNamesDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary ClearItemDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary NewItemDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary MoveItemDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary CopyItemDynamicProperties
+		{
+			get { return null; }
+		}
+
+		public virtual RuntimeDefinedParameterDictionary InvokeItemDynamicProperties
+		{
+			get { return null; }
+		}
 
 		#endregion
 
@@ -182,7 +235,7 @@ namespace Nivot.PowerShell
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ((IEnumerable<IStoreItem>) this).GetEnumerator();
+			return ((IEnumerable<IStoreItem>)this).GetEnumerator();
 		}
 
 		#endregion
@@ -200,7 +253,7 @@ namespace Nivot.PowerShell
 					// been disposed through finalization
 					if (NativeObject is IDisposable)
 					{
-						((IDisposable) NativeObject).Dispose();
+						((IDisposable)NativeObject).Dispose();
 					}
 				}
 				m_isDisposed = true;
@@ -221,7 +274,7 @@ namespace Nivot.PowerShell
 		}
 	}
 
-	[Flags()]
+	[Flags]
 	public enum StoreItemFlags
 	{
 		None = 0,

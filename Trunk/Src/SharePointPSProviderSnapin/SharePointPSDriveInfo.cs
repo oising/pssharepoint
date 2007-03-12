@@ -26,26 +26,53 @@ using Nivot.PowerShell.SharePoint.ObjectModel;
 namespace Nivot.PowerShell.SharePoint
 {
 	// FIXME: this class is currently redundant
-	public class SharePointPSDriveInfo : PSDriveInfo, IDisposable
+	public class SharePointDriveInfo : PSDriveInfo, IDisposable
 	{
 		private SharePointObjectModel m_sharePointObjectModel = null;
-
+		private string m_virtualServer;
+		private bool m_isRemote = true;
+		
 		protected bool IsDisposed = false;
 
-		public SharePointPSDriveInfo(PSDriveInfo PSDriveInfo)
-			: base(PSDriveInfo)
+		internal SharePointDriveInfo(string name, ProviderInfo provider, Uri siteCollectionUrl, string description, PSCredential credential, bool remote)
+			: base(name, provider, siteCollectionUrl.ToString(), description, credential)
 		{
-			// intialize to root, e.g. DRIVENAME:\
-
-			// get a reference to sharepoint object model
-			//m_sharePointObjectModel = SharePointObjectModel.GetSharePointObjectModel(new Uri(this.Root));
+			m_sharePointObjectModel = SharePointObjectModel.GetSharePointObjectModel(siteCollectionUrl, remote);
+			m_isRemote = remote;
+			m_virtualServer = siteCollectionUrl.Host;
 		}
 
-		//public IStoreObjectModel ObjectModel {
-		//    get {
-		//        return m_sharePointObjectModel;
-		//    }
-		//}
+		internal SharePointObjectModel ObjectModel
+		{
+			get
+			{
+				return m_sharePointObjectModel;
+			}
+		}
+
+		public string VirtualServer
+		{
+			get
+			{
+				return m_virtualServer;
+			}
+		}
+
+		public Version SharePointVersion
+		{
+			get
+			{
+				return m_sharePointObjectModel.SharePointVersion;
+			}
+		}
+
+		public bool IsRemote
+		{
+			get
+			{
+				return m_isRemote;
+			}
+		}
 
 		#region IDisposable Members
 
@@ -72,7 +99,7 @@ namespace Nivot.PowerShell.SharePoint
 			GC.SuppressFinalize(this);
 		}
 
-		~SharePointPSDriveInfo()
+		~SharePointDriveInfo()
 		{
 			Dispose(false);
 		}

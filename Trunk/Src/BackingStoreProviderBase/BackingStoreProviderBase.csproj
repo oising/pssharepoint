@@ -46,6 +46,7 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="IStoreItemDynamicProperties.cs" />
     <Compile Include="IStoreObjectModel.cs">
       <SubType>
       </SubType>

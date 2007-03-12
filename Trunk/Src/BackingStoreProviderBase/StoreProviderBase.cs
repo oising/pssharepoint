@@ -15,9 +15,11 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Text;
@@ -25,31 +27,47 @@ using System.Text.RegularExpressions;
 
 namespace Nivot.PowerShell
 {
+
 	/// <summary>
 	/// 
 	/// </summary>
 	public abstract class StoreProviderBase : NavigationCmdletProvider,
 		IPropertyCmdletProvider, IContentCmdletProvider, IDynamicPropertyCmdletProvider
 	{
-		public const char PathSeparator = '\\'; // DOS is dead; long live DOS.
+		public new StoreProviderInfo ProviderInfo
+		{
+			get
+			{				
+				return (StoreProviderInfo) base.ProviderInfo;
+			}
+		}
+
+		protected new RuntimeDefinedParameterDictionary DynamicParameters
+		{
+		    get
+		    {
+				return base.DynamicParameters as RuntimeDefinedParameterDictionary;
+		    }
+		}
+
+		//protected new TDriveInfo PSDriveInfo
+		//{
+		//    get
+		//    {
+		//        return (TDriveInfo)base.PSDriveInfo;
+		//    }
+		//}
 
 		/// <summary>
 		/// Provides a handle to the runtime object model of the backing store
 		/// </summary>
 		public abstract IStoreObjectModel StoreObjectModel { get; }
 
-		public StoreProviderInfo Info
+		protected StoreProviderContext<StoreProviderBase>.Cookie EnterContext()
 		{
-			get
-			{
-				return (StoreProviderInfo) this.ProviderInfo;
-			}
+			return StoreProviderContext<StoreProviderBase>.Enter(this);
 		}
 
-		protected StoreProviderBase()
-		{			
-		}
-		
         // ...
 
 		#region CmdletProvider Overrides
@@ -254,7 +272,7 @@ namespace Nivot.PowerShell
 
 		protected override void GetItem(string path)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				path = NormalizePath(path); // TODO: remove
 
@@ -280,7 +298,7 @@ namespace Nivot.PowerShell
 
 		protected override bool ItemExists(string path)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				try
 				{
@@ -312,7 +330,7 @@ namespace Nivot.PowerShell
 
 		protected override void GetChildItems(string path, bool recurse)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				try
 				{
@@ -354,7 +372,7 @@ namespace Nivot.PowerShell
 		// FIXME: ignoring returnAllContainers
 		protected override void GetChildNames(string path, ReturnContainers returnContainers)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				try
 				{
@@ -386,7 +404,7 @@ namespace Nivot.PowerShell
 
 		protected override bool HasChildItems(string path)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				// FIXME: normalize path is incomplete
 				path = NormalizePath(path);
@@ -405,7 +423,7 @@ namespace Nivot.PowerShell
 
 		protected override void MoveItem(string path, string destination)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{				
 				if (ShouldProcess(destination, "Move"))
 				{
@@ -420,7 +438,7 @@ namespace Nivot.PowerShell
 
 		protected override void CopyItem(string path, string copyPath, bool recurse)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				path = NormalizePath(path); // TODO: remove
 				copyPath = NormalizePath(copyPath); // TODO: remove
@@ -482,7 +500,7 @@ namespace Nivot.PowerShell
 		// FIXME: recurse is ignored, not sure how it applies?
 		protected override void RemoveItem(string path, bool recurse)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				string parentPath = GetParentPath(path, null); // FIXME: assumes PSDriveInfo != null
 
@@ -523,7 +541,7 @@ namespace Nivot.PowerShell
 
 		protected override bool IsItemContainer(string path)
 		{
-			using (StoreProviderContext<StoreProviderBase>.Enter(this))
+			using (EnterContext())
 			{
 				IStoreItem item = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
 				Debug.Assert(item != null); // FIXME: redundant?
@@ -1517,7 +1535,7 @@ namespace Nivot.PowerShell
 			// ensure drive is rooted
 			if (path == String.Empty)
 			{
-				path = PathSeparator.ToString();
+				path = ProviderInfo.PathSeparator.ToString();
 			}
 
 			WriteVerbose("Normalized to " + path);
