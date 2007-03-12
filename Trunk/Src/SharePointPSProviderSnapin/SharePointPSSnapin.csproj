@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\ExportListItemCommand.cs" />
+    <Compile Include="Commands\GetSPVirtualServerCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
     <Compile Include="Commands\NativeMethods.cs" />
     <Compile Include="Commands\ReadSPFileCommand.cs" />
@@ -65,6 +66,9 @@
     <Compile Include="ObjectModel\Local\SharePointWebs.cs" />
     <Compile Include="ObjectModel\Local\LocalSharePointObjectModel.cs" />
     <Compile Include="ObjectModel\Remote\SharePointObjectProxies.cs" />
+    <Compile Include="ObjectModel\SharePointConnectionInfo.cs" />
+    <Compile Include="ObjectModel\SharePointUtils.cs" />
+    <Compile Include="SharePointErrorRecord.cs" />
     <Compile Include="SharePointProviderInfo.cs" />
     <Compile Include="SharePointPSProvider.cs" />
     <Compile Include="ObjectModel\Local\SharePointAlerts.cs" />

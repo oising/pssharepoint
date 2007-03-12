@@ -28,22 +28,52 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		private SPSite m_site;
+		private SPSite m_site;		
 
-		public LocalSharePointObjectModel(Uri url, StoreProviderBase provider)
-			: base(url, provider)
+		internal LocalSharePointObjectModel(Uri siteCollectionUrl)
+		{			
+			m_site = new SPSite(siteCollectionUrl.ToString());
+			
+			// attempt to open root web
+			// (will trigger error if url is not valid sharepoint instance)
+			using (SPWeb rootWeb = m_site.OpenWeb())
+			{
+				Provider.WriteVerbose("RootWeb: " + rootWeb);
+			}
+		}
+
+		internal LocalSharePointObjectModel(SPSite site)
 		{
-			m_site = new SPSite(url.ToString()); // initialize object model
+			m_site = site;
+		}
+
+		internal SPSite SiteCollection
+		{
+			get
+			{
+				return m_site;
+			}
+		}
+
+		internal override Version SharePointVersion
+		{
+			get
+			{
+				return SharePointUtils.GetSharePointVersion();
+			}
 		}
 
 		public override IStoreItem GetItem(string path)
 		{
+			char separator = Provider.ProviderInfo.PathSeparator;
+
 			// always a minimum of '\'
-			string[] chunks = path.Split(SharePointPSProvider.PathSeparator);
+			string[] chunks = path.Split(separator);
 
 			// start at root SPWeb
 			IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
-			if (path == SharePointPSProvider.PathSeparator.ToString())
+
+			if (path == separator.ToString())
 			{
 				return storeItem; // at root
 			}
@@ -52,9 +82,13 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			{
 				if (chunk == String.Empty)
 				{
-					continue; // skip first chunk
+					// skip first chunk
+					continue;
 				}
-				storeItem = storeItem[chunk]; // use indexer to find this chunk
+
+				// use indexer to find this chunk
+				storeItem = storeItem[chunk];
+				
 				if (storeItem == null)
 				{
 					return null;

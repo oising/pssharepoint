@@ -28,9 +28,14 @@ namespace Nivot.PowerShell.SharePoint
 	/// </summary>
 	internal class RemoteSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		public RemoteSharePointObjectModel(Uri remoteVirtualServer, StoreProviderBase provider)
-			: base(remoteVirtualServer, provider)
+		internal RemoteSharePointObjectModel(Uri siteCollectionUrl)
 		{
+			Provider.ThrowTerminatingError(SharePointErrorRecord.NotImplementedError("Remote instance not supported yet."));
+		}
+
+		internal override Version SharePointVersion
+		{
+			get { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override bool ItemExists(string path)
@@ -56,8 +61,7 @@ namespace Nivot.PowerShell.SharePoint
 		#region IDisposable Members
 
 		public void Dispose()
-		{
-			throw new Exception("The method or operation is not implemented.");
+		{			
 		}
 
 		#endregion

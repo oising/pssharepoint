@@ -1,0 +1,43 @@
+		/*
+		 * NOTE: This is not used yet!
+		 * The idea will is to embed the LocalSharePointObjectModel Assembly as a resource
+		 * which allows us to defer loading until needed. This serves two purposes:
+		 *
+		 * A) The referenced assembly doesn't need to be in the GAC, and can still be found immediately.
+		 * B) We can load this provider on a non-sharepoint box since it will not try to load MS.SharePoint.dll
+		 * 
+		
+
+		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			string[] resources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+
+			foreach (string resource in resources)
+			{
+				string baseName = resource.Substring(0, resource.LastIndexOf('.'));
+				ResourceManager resourceManager = new ResourceManager(baseName, Assembly.GetExecutingAssembly());
+				ResourceSet resourceSet = resourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
+				IDictionaryEnumerator enumerator = resourceSet.GetEnumerator();
+
+				while (enumerator.MoveNext())
+				{
+					object obj = enumerator.Value;
+					if (obj is byte[])
+					{
+						try
+						{
+							Assembly assembly = Assembly.Load((byte[]) obj);
+							if (args.Name == assembly.GetName().FullName)
+							{
+								return assembly;
+							}
+						}
+						catch
+						{
+						}
+					}
+				}
+			}
+			return null;
+		}
+		*/

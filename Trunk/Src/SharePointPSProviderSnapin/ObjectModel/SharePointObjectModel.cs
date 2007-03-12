@@ -30,38 +30,47 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	/// <summary>
 	/// Base factory class for getting access to the SharePoint Object Model, either local or remote.
-	/// <remarks>TODO: constructor overloads for provider-qualified path, e.g. no PSDriveInfo available</remarks>
 	/// </summary>
 	internal abstract class SharePointObjectModel : IStoreObjectModel
 	{
-		private StoreProviderBase m_provider;
-
 		// FIXME: needs to understand provider-qualified paths
 		// e.g. 
 		//   sharepoint::\\server\site\web (virtual server qualified, search local [then remote])
 		//   sharepoint::[\]site\web (default server, local)
-		private static Regex s_pathRegex =
-			new Regex(@"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?", RegexOptions.IgnoreCase);
-
-		private Uri m_virtualServer;
-
-		protected SharePointObjectModel(Uri virtualServer, StoreProviderBase provider)
-		{
-			m_virtualServer = virtualServer;
-			m_provider = provider;
-		}
+		private static Regex s_pathRegex;
 
 		static SharePointObjectModel()
 		{
-			// wire-up missing assembly handler
-			//AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			RegexOptions options = (RegexOptions.IgnoreCase | RegexOptions.Compiled);			
+			s_pathRegex = new Regex(@"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?", options);
 		}
 
-		public static IStoreObjectModel GetSharePointObjectModel(Uri virtualServer, StoreProviderBase provider)
+		protected static SharePointProvider Provider
 		{
-			// TODO: detect to use webservice (remote) or local and
-			//	instantiate via Activator class
-			return new LocalSharePointObjectModel(virtualServer, provider);
+			get
+			{
+				return StoreProviderContext<StoreProviderBase>.Current as SharePointProvider;
+			}
+		}
+
+		internal static SharePointObjectModel GetSharePointObjectModel(Uri siteCollectionUrl, bool remote)
+		{
+			SharePointObjectModel objectModel;
+			
+			if (remote)
+			{
+				objectModel = new RemoteSharePointObjectModel(siteCollectionUrl);
+			}
+			else
+			{
+				objectModel = new LocalSharePointObjectModel(siteCollectionUrl);
+			}
+			return objectModel;
+		}
+
+		internal abstract Version SharePointVersion
+		{
+			get;
 		}
 
 		#region IStoreObjectModel Members
@@ -115,79 +124,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 		public abstract IStoreItem GetItem(string path);
 
-		protected StoreProviderBase Provider
-		{
-			get { return m_provider; }
-		}
-
 		#endregion
-
-		/*
-		 * NOTE: This is not used yet!
-		 * The idea will is to embed the LocalSharePointObjectModel Assembly as a resource
-		 * which allows us to defer loading until needed. This serves two purposes:
-		 *
-		 * A) The referenced assembly doesn't need to be in the GAC, and can still be found immediately.
-		 * B) We can load this provider on a non-sharepoint box since it will not try to load MS.SharePoint.dll
-		 * 
-		
-
-		private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-		{
-			string[] resources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-
-			foreach (string resource in resources)
-			{
-				string baseName = resource.Substring(0, resource.LastIndexOf('.'));
-				ResourceManager resourceManager = new ResourceManager(baseName, Assembly.GetExecutingAssembly());
-				ResourceSet resourceSet = resourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
-				IDictionaryEnumerator enumerator = resourceSet.GetEnumerator();
-
-				while (enumerator.MoveNext())
-				{
-					object obj = enumerator.Value;
-					if (obj is byte[])
-					{
-						try
-						{
-							Assembly assembly = Assembly.Load((byte[]) obj);
-							if (args.Name == assembly.GetName().FullName)
-							{
-								return assembly;
-							}
-						}
-						catch
-						{
-						}
-					}
-				}
-			}
-			return null;
-		}
-		*/
-	}
-
-	/// <summary>
-	/// Not used... just an idea floating around...
-	/// </summary>
-	[Flags()]
-	public enum SPItemType
-	{
-		Unknown = 0, // default until path is parsed
-		Alert = 1,
-		Group = 2,
-		List = 4,
-		Role = 8,
-		User = 16,
-		Web = 32,
-
-		Alerts = Alert | Container,
-		Groups = Group | Container,
-		Lists = List | Container,
-		Roles = Role | Container,
-		Users = User | Container,
-		Webs = Web | Container,
-
-		Container = 32768
 	}
 }

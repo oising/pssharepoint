@@ -1,8 +1,8 @@
+// original author: Jachym Kouba
+// (a colleague from the PowerShellCX project)
 
 using System;
 using System.Management.Automation.Provider;
-
-// original author: Jachym Kouba (pscx project)
 
 namespace Nivot.PowerShell
 {
