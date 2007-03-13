@@ -70,9 +70,9 @@
     <Compile Include="ObjectModel\SharePointUtils.cs" />
     <Compile Include="SharePointErrorRecord.cs" />
     <Compile Include="SharePointProviderInfo.cs" />
-    <Compile Include="SharePointPSProvider.cs" />
+    <Compile Include="SharePointProvider.cs" />
     <Compile Include="ObjectModel\Local\SharePointAlerts.cs" />
-    <Compile Include="SharePointPSDriveInfo.cs" />
+    <Compile Include="SharePointDriveInfo.cs" />
     <Compile Include="ObjectModel\Local\SharePointLists.cs" />
     <Compile Include="ObjectModel\Local\SharePointGroups.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
