@@ -50,19 +50,15 @@ namespace Nivot.PowerShell
 		    }
 		}
 
-		//protected new TDriveInfo PSDriveInfo
-		//{
-		//    get
-		//    {
-		//        return (TDriveInfo)base.PSDriveInfo;
-		//    }
-		//}
-
 		/// <summary>
 		/// Provides a handle to the runtime object model of the backing store
 		/// </summary>
 		public abstract IStoreObjectModel StoreObjectModel { get; }
 
+        /// <summary>
+        /// Sets the <see cref="ThreadStaticAttribute"/> decorated static member StoreProviderContext&lt;TProvider&gt;.Current to this instance for use as a temporary reference for other classes to acccess this provider's instance methods. 
+        /// </summary>
+        /// <returns>Returns an <see cref="IDisposable"/> "Cookie" that when disposed, frees the static GCRoot holding this provider instance.</returns>
 		protected StoreProviderContext<StoreProviderBase>.Cookie EnterContext()
 		{
 			return StoreProviderContext<StoreProviderBase>.Enter(this);
@@ -274,12 +270,16 @@ namespace Nivot.PowerShell
 		{
 			using (EnterContext())
 			{
-				path = NormalizePath(path); // TODO: remove
+				// FIXME: need better path normalization
+				path = NormalizePath(path);
 
 				try
 				{
 					IStoreItem item = StoreObjectModel.GetItem(path);
-					Debug.Assert(item != null); // FIXME: redundant? itemexists called first?
+
+					// FIXME: redundant? itemexists called first?
+					Debug.Assert(item != null);
+					
 					WriteItemObject(item.NativeObject, path, item.IsContainer);
 				}
 				catch (Exception ex)
@@ -293,7 +293,15 @@ namespace Nivot.PowerShell
 
 		protected override object GetItemDynamicParameters(string path)
 		{
-			return base.GetItemDynamicParameters(path);
+            using (EnterContext())
+            {
+                IStoreItemDynamicProperties item = StoreObjectModel.GetItem(path) as IStoreItemDynamicProperties;
+                if (item != null)
+                {
+                    return item.GetItemDynamicProperties;
+                }
+                return null;
+            }
 		}
 
 		protected override bool ItemExists(string path)
@@ -302,7 +310,9 @@ namespace Nivot.PowerShell
 			{
 				try
 				{
-					path = NormalizePath(path); // TODO: remove
+					// FIXME: need better path normalization
+					path = NormalizePath(path);
+
 					return StoreObjectModel.ItemExists(path);
 				}
 				catch (Exception ex)
@@ -313,6 +323,19 @@ namespace Nivot.PowerShell
 				}
 				return false;
 			}
+		}
+
+		protected override object ItemExistsDynamicParameters(string path)
+		{
+            using (EnterContext())
+            {
+                IStoreItemDynamicProperties item = StoreObjectModel.GetItem(path) as IStoreItemDynamicProperties;
+                if (item != null)
+                {
+                    return item.ItemExistsDynamicProperties;
+                }
+                return null;
+            }
 		}
 
 		#endregion
@@ -344,7 +367,7 @@ namespace Nivot.PowerShell
 						}
 
 						// should we send this item to pipeline?
-						if ((item.ItemFlags & StoreItemFlags.PipeItem) == StoreItemFlags.PipeItem)
+						if ((item.ItemOptions & StoreItemOptions.ShouldPipeItem) == StoreItemOptions.ShouldPipeItem)
 						{
 							string itemPath = MakePath(path, item.ChildName);
 							WriteItemObject(item.NativeObject, itemPath, item.IsContainer);
@@ -368,6 +391,19 @@ namespace Nivot.PowerShell
 			}
 		}
 
+        protected override object GetChildItemsDynamicParameters(string path, bool recurse)
+        {
+            using (EnterContext())
+            {
+                // read dynamic property information from the context object
+                IStoreItemDynamicProperties item = StoreObjectModel.GetItem(path) as IStoreItemDynamicProperties;
+                if (item != null)
+                {
+                    return item.GetChildItemsDynamicProperties;
+                }
+                return null;                
+            }
+        }
 
 		// FIXME: ignoring returnAllContainers
 		protected override void GetChildNames(string path, ReturnContainers returnContainers)
@@ -387,7 +423,7 @@ namespace Nivot.PowerShell
 						}
 
 						// should we tab complete this item?
-						if ((item.ItemFlags & StoreItemFlags.TabComplete) == StoreItemFlags.TabComplete)
+						if ((item.ItemOptions & StoreItemOptions.ShouldTabComplete) == StoreItemOptions.ShouldTabComplete)
 						{
 							WriteItemObject(item.ChildName, MakePath(path, item.ChildName), item.IsContainer);
 						}
@@ -432,6 +468,10 @@ namespace Nivot.PowerShell
 					{
 						RemoveItem(path, false);
 					}
+                    else
+					{
+					    WriteWarning("Unable to verify item was created at " + destination);
+					}
 				}
 			}
 		}
@@ -440,7 +480,13 @@ namespace Nivot.PowerShell
 		{
 			using (EnterContext())
 			{
-				path = NormalizePath(path); // TODO: remove
+                if (recurse)
+                {
+                    WriteWarning("parameter -recurse is not implemented for copy operation.");
+                    return;
+                }
+
+                path = NormalizePath(path); // TODO: remove
 				copyPath = NormalizePath(copyPath); // TODO: remove
 
 				IStoreItem source = StoreObjectModel.GetItem(path);
@@ -449,16 +495,9 @@ namespace Nivot.PowerShell
 				// FIXME: is this redundant?
 				Debug.Assert((source != null) && (destination != null), "source and/or destination invalid!");
 
-				string sourceType = source.GetType().Name;
-				string destinationType = destination.GetType().Name;
-				WriteVerbose(String.Format("Copying from {0} to {1}", sourceType, destinationType));
-
-				// TODO: implement recursive copying
-				if (recurse)
-				{
-					WriteWarning("parameter -recurse is currently not implemented for copy operation.");
-					return;
-				}
+				string sourceTypeName = source.GetType().Name;
+				string destinationTypeName = destination.GetType().Name;
+				WriteVerbose(String.Format("Copying from {0} to {1}", sourceTypeName, destinationTypeName));
 
 				if (ShouldProcess(copyPath, "Copy"))
 				{
@@ -472,7 +511,7 @@ namespace Nivot.PowerShell
 							// non-terminating error, continue with next record
 							WriteError(new ErrorRecord(new NotImplementedException(
 							                           	String.Format("Copy operation from type {0} to type {1} is undefined.",
-							                           	              sourceType, destinationType)), "StoreBaseProvider.CopyItem",
+							                           	              sourceTypeName, destinationTypeName)), "StoreBaseProvider.CopyItem",
 							                           ErrorCategory.NotImplemented, null));
 						}
 						else
@@ -491,24 +530,25 @@ namespace Nivot.PowerShell
 			}
 		}
 
-		// FIXME: base implementation only handles drive-qualified path it appears
-		protected override string GetParentPath(string path, string root)
-		{
-			return base.GetParentPath(path, root);
-		}
-
-		// FIXME: recurse is ignored, not sure how it applies?
+		// FIXME: recurse is not handled, not sure how it should work?
 		protected override void RemoveItem(string path, bool recurse)
 		{
 			using (EnterContext())
 			{
+                if (recurse)
+                {
+                    WriteWarning("parameter -recurse is not implemented for remove operation.");
+                    return;
+                }
+
 				string parentPath = GetParentPath(path, null); // FIXME: assumes PSDriveInfo != null
 
 				IStoreItem parentItem = StoreObjectModel.GetItem(NormalizePath(parentPath)); // TODO: remove
 				IStoreItem childItem = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
 				Debug.Assert((parentItem != null) && (childItem != null)); // FIXME: redundant/itemexists?
-				string parentType = parentItem.GetType().Name;
-				string childType = childItem.GetType().Name;
+				
+                string parentTypeName = parentItem.GetType().Name;
+				string childTypeName = childItem.GetType().Name;
 
 				if (ShouldProcess(path, "Remove"))
 				{
@@ -518,7 +558,7 @@ namespace Nivot.PowerShell
 					{
 						// FIXME: should be WriteVerbose maybe?
 						WriteWarning(String.Format("Failed: {0} does not have a Remover for type {1}",
-						                           parentItem.GetType(), childItem.GetType()));
+						                           parentTypeName, childTypeName));
 
 						// non-terminating error, continue with next record
 						WriteError(new ErrorRecord(new NotImplementedException("Remove-Item"),
@@ -1522,14 +1562,15 @@ namespace Nivot.PowerShell
 
 			if (!String.IsNullOrEmpty(path))
 			{
-				// flip slashes; remove a trailing slash, if any.
-				string driveRoot = this.PSDriveInfo.Root.Replace('/', '\\').TrimEnd('\\');
-
-				// is drive qualified?
-				if (path.StartsWith(driveRoot))
-				{
-					path = path.Replace(driveRoot, ""); // strip it
-				}
+                // are we working via a drive?
+                if (this.PSDriveInfo != null)
+                {
+                    path = NormalizePathOnDrive(path);
+                }
+                else
+                {
+                    path = NormalizeDrivelessPath(path);
+                }
 			}
 
 			// ensure drive is rooted
@@ -1543,7 +1584,29 @@ namespace Nivot.PowerShell
 			return path;
 		}
 
-		/*
+        protected virtual string NormalizePathOnDrive(string path)
+        {
+            // flip slashes; remove a trailing slash, if any.
+            string driveRoot = this.PSDriveInfo.Root.Replace('/', '\\').TrimEnd('\\');
+
+            // is drive qualified?
+            if (path.StartsWith(driveRoot))
+            {
+                path = path.Replace(driveRoot, String.Empty); // strip it
+            }
+
+            return path;
+        }
+
+        protected virtual string NormalizeDrivelessPath(string path)
+        {
+            ThrowTerminatingError(
+                new ErrorRecord(new NotImplementedException("Driveless path support not implemented."), "DriveLessPath",
+                                ErrorCategory.NotImplemented, path));
+            return null;
+        }
+
+	    /*
 				private bool IsDrive(string path) {
 					bool isDrive = (path == String.Format(this.PSDriveInfo.Root + ":" + PathSeparator));
 					Dump("IsDrive {0} : {1}", path, isDrive);

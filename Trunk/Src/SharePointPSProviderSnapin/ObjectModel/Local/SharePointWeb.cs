@@ -96,6 +96,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
 			// pseudo containers first
+            yield return new SharePointSite(NativeObject.Site);
 			yield return new SharePointAlerts(NativeObject.Alerts);
 			yield return new SharePointGroups(NativeObject.Groups);
 			yield return new SharePointLists(NativeObject.Lists);
@@ -123,9 +124,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			}
 		}
 
-		public override StoreItemFlags ItemFlags
+		public override StoreItemOptions ItemOptions
 		{
-			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
+			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
 		}
 	}
 }

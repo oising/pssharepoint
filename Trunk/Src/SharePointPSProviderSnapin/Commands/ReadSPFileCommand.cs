@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Management.Automation;
 using System.Text;
 
 namespace Nivot.PowerShell.SharePoint.Commands
 {
-	class ReadSPFileCommand
+	[Cmdlet(VerbsCommunications.Read, "SPFile")]
+	public class ReadSPFileCommand : Cmdlet
 	{
+
 	}
 }

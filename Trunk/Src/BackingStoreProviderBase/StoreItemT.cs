@@ -17,6 +17,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Web.Caching;
+
 using System.Management.Automation;
 
 namespace Nivot.PowerShell
@@ -25,13 +28,14 @@ namespace Nivot.PowerShell
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class StoreItem<T> : IStoreItem, IStoreItemDynamicProperties,
-		IDisposable where T : class
+	public abstract class StoreItem<T> : IStoreItem, IStoreItemDynamicProperties, ICacheable, IDisposable
+        where T : class
 	{
 		private T m_storeObject;
-		private bool m_isDisposed = false;
+		protected bool IsDisposed = false;
 
-		// lookup tables (via type) for delegates that can add or remove items to/from this type
+		// lookup tables (via type) for delegates that
+		// can add or remove items to/from this type
 		protected Dictionary<Type, Action<IStoreItem>> AddActions;
 		protected Dictionary<Type, Action<IStoreItem>> RemoveActions;
 
@@ -42,9 +46,21 @@ namespace Nivot.PowerShell
 			RemoveActions = new Dictionary<Type, Action<IStoreItem>>();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public virtual T NativeObject
 		{
-			get { return m_storeObject; }
+			get
+			{
+				EnsureNotDisposed();
+				return m_storeObject;
+			}
+
+            private set
+            {
+                m_storeObject = value;
+            }
 		}
 
 		#region Indexer (ChildName)
@@ -58,6 +74,8 @@ namespace Nivot.PowerShell
 		{
 			get
 			{
+				EnsureNotDisposed();
+
 				// cycle through children
 				foreach (IStoreItem storeItem in this)
 				{
@@ -77,16 +95,19 @@ namespace Nivot.PowerShell
 
 		protected void RegisterAdder<I>(Action<IStoreItem> addAction)
 		{
+			EnsureNotDisposed();
 			AddActions.Add(typeof(I), addAction);
 		}
 
 		protected void RegisterRemover<I>(Action<IStoreItem> removeAction)
 		{
+			EnsureNotDisposed();
 			RemoveActions.Add(typeof(I), removeAction);
 		}
 
 		protected Action<IStoreItem> GetAddAction(IStoreItem item)
 		{
+			EnsureNotDisposed();
 			Action<IStoreItem> addAction;
 
 			if (AddActions.TryGetValue(item.NativeObject.GetType(), out addAction))
@@ -99,6 +120,7 @@ namespace Nivot.PowerShell
 
 		protected Action<IStoreItem> GetRemoveAction(IStoreItem item)
 		{
+			EnsureNotDisposed();
 			Action<IStoreItem> removeAction;
 
 			if (RemoveActions.TryGetValue(item.NativeObject.GetType(), out removeAction))
@@ -115,6 +137,7 @@ namespace Nivot.PowerShell
 
 		public virtual bool AddItem(IStoreItem item)
 		{
+			EnsureNotDisposed();
 			Action<IStoreItem> addAction = GetAddAction(item);
 
 			if (addAction != null)
@@ -136,6 +159,7 @@ namespace Nivot.PowerShell
 
 		public virtual bool RemoveItem(IStoreItem item)
 		{
+			EnsureNotDisposed();
 			Action<IStoreItem> removeAction = GetRemoveAction(item);
 
 			if (removeAction != null)
@@ -156,20 +180,24 @@ namespace Nivot.PowerShell
 		}
 
 		public virtual void InvokeItem()
-		{
+		{			
 			throw new Exception("The method or operation is not implemented.");
 		}
 
 		object IStoreItem.NativeObject
 		{
-			get { return m_storeObject; }
+			get
+			{
+				EnsureNotDisposed();
+				return m_storeObject;
+			}
 		}
 
 		public abstract string ChildName { get; }
 
 		public abstract bool IsContainer { get; }
 
-		public abstract StoreItemFlags ItemFlags { get; }
+		public abstract StoreItemOptions ItemOptions { get; }
 
 		#endregion
 
@@ -220,6 +248,11 @@ namespace Nivot.PowerShell
 			get { return null; }
 		}
 
+		public virtual RuntimeDefinedParameterDictionary ItemExistsDynamicProperties
+		{
+			get { return null; }
+		}
+
 		#endregion
 
 		#region IEnumerable<IStoreItem> Members
@@ -235,28 +268,52 @@ namespace Nivot.PowerShell
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
+			EnsureNotDisposed();
 			return ((IEnumerable<IStoreItem>)this).GetEnumerator();
 		}
 
 		#endregion
 
+        #region ICacheable Members
+
+        public virtual bool ShouldCache
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public virtual CacheItemPriority Priority
+        {
+            get
+            {
+                return CacheItemPriority.Default;
+            }
+        }
+
+        #endregion
+
 		#region IDisposable Members
 
 		public virtual void Dispose(bool disposing)
 		{
-			if (!m_isDisposed)
+            Debug.WriteLine(String.Format("Dispose({0})", disposing), GetType().Name);
+
+			if (!IsDisposed)
 			{
 				// not already called?
 				if (disposing)
 				{
-					// explicit dispose called: safe to assume NativeObject has not
+                    // explicit dispose called: safe to assume NativeObject has not
 					// been disposed through finalization
 					if (NativeObject is IDisposable)
 					{
-						((IDisposable)NativeObject).Dispose();
+						((IDisposable)NativeObject).Dispose();                        
+                        NativeObject = null; // hence T : class restraint
 					}
 				}
-				m_isDisposed = true;
+				IsDisposed = true;
 			}
 		}
 
@@ -268,23 +325,20 @@ namespace Nivot.PowerShell
 
 		#endregion
 
-		~StoreItem()
+		/// <summary>
+		/// 
+		/// </summary>
+		protected void EnsureNotDisposed()
 		{
+			if (IsDisposed)
+			{
+				throw new ObjectDisposedException(GetType().Name, "Object has been already disposed!");
+			}
+		}
+
+		~StoreItem()
+		{            
 			Dispose(false);
 		}
-	}
-
-	[Flags]
-	public enum StoreItemFlags
-	{
-		None = 0,
-		/// <summary>
-		/// Should appear in Tab Completion list
-		/// </summary>
-		TabComplete = 1,
-		/// <summary>
-		/// Should be sent to object pipeline
-		/// </summary>
-		PipeItem = 2
 	}
 }

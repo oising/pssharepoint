@@ -1,15 +1,18 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+
 using Microsoft.SharePoint;
+using System.Management.Automation.Provider;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	class SharePointFile : StoreItem<SPFile>
+	class SharePointFile : StoreItem<SPFile>, IContentReader
 	{
 		public SharePointFile(SPFile file) : base(file)
-		{
-			
+		{			
 		}
 
 		public override string ChildName
@@ -22,9 +25,28 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			get { return false; }
 		}
 
-		public override StoreItemFlags ItemFlags
+		public override StoreItemOptions ItemOptions
 		{
-			get { return StoreItemFlags.TabComplete | StoreItemFlags.PipeItem; }
+			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
 		}
-	}
+
+        #region IContentReader Members
+
+        public void Close()
+        {
+            throw new Exception("The method or operation is not implemented. TEST.");
+        }
+
+        public IList Read(long readCount)
+        {
+            throw new Exception("The method or operation is not implemented. TEST.");
+        }
+
+        public void Seek(long offset, System.IO.SeekOrigin origin)
+        {
+            throw new Exception("The method or operation is not implemented. TEST.");
+        }
+
+        #endregion
+    }
 }

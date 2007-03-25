@@ -70,14 +70,15 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			// always a minimum of '\'
 			string[] chunks = path.Split(separator);
 
-			// start at root SPWeb
-			IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
+			// start at SPSite
+			IStoreItem storeItem = new SharePointSite(m_site);
 
 			if (path == separator.ToString())
-			{
+			{			    
 				return storeItem; // at root
 			}
 
+            // index into webs
 			foreach (string chunk in chunks)
 			{
 				if (chunk == String.Empty)

@@ -12,12 +12,13 @@ namespace Nivot.PowerShell
 	{
 		RuntimeDefinedParameterDictionary GetItemDynamicProperties { get; }
 		RuntimeDefinedParameterDictionary SetItemDynamicProperties { get; }
-		RuntimeDefinedParameterDictionary GetChildItemsDynamicProperties { get; }
-		RuntimeDefinedParameterDictionary GetChildNamesDynamicProperties { get; }
 		RuntimeDefinedParameterDictionary ClearItemDynamicProperties { get; }
+		RuntimeDefinedParameterDictionary ItemExistsDynamicProperties { get; }
+		RuntimeDefinedParameterDictionary InvokeItemDynamicProperties { get; }
+		RuntimeDefinedParameterDictionary GetChildItemsDynamicProperties { get; }
+		RuntimeDefinedParameterDictionary GetChildNamesDynamicProperties { get; }	
 		RuntimeDefinedParameterDictionary NewItemDynamicProperties { get; }
 		RuntimeDefinedParameterDictionary MoveItemDynamicProperties { get; }
-		RuntimeDefinedParameterDictionary CopyItemDynamicProperties { get; }
-		RuntimeDefinedParameterDictionary InvokeItemDynamicProperties { get; }
+		RuntimeDefinedParameterDictionary CopyItemDynamicProperties { get; }		
 	}
 }

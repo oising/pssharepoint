@@ -43,9 +43,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			get { return "!Webs"; }
 		}
 
-		public override StoreItemFlags ItemFlags
+		public override StoreItemOptions ItemOptions
 		{
-			get { return StoreItemFlags.None; }
+			get { return StoreItemOptions.None; }
 		}
 	}
 }

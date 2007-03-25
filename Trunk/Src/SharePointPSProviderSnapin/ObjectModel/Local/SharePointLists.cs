@@ -61,9 +61,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			get { return "!Lists"; }
 		}
 
-		public override StoreItemFlags ItemFlags
+		public override StoreItemOptions ItemOptions
 		{
-			get { return StoreItemFlags.TabComplete; }
+			get { return StoreItemOptions.ShouldTabComplete; }
 		}
 	}
 }

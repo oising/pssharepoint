@@ -43,10 +43,12 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management.Automation, Version=1.0.9567.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\RC1\System.Management.Automation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -56,18 +58,22 @@
     <Compile Include="Commands\NativeMethods.cs" />
     <Compile Include="Commands\ReadSPFileCommand.cs" />
     <Compile Include="Commands\WriteSPFileCommand.cs" />
+    <Compile Include="ObjectModel\ISharePointObject.cs" />
+    <Compile Include="ObjectModel\Helper\ListUtils.cs" />
     <Compile Include="ObjectModel\Local\SharePointDocumentLibrary.cs" />
     <Compile Include="ObjectModel\Local\SharePointFile.cs" />
     <Compile Include="ObjectModel\Local\SharePointFiles.cs" />
     <Compile Include="ObjectModel\Local\SharePointFolder.cs" />
     <Compile Include="ObjectModel\Local\SharePointFolders.cs" />
+    <Compile Include="ObjectModel\Local\SharePointSite.cs" />
+    <Compile Include="ObjectModel\Remote\RemoteSharePointObject.cs" />
     <Compile Include="ObjectModel\Remote\RemoteSharePointObjectModel.cs" />
     <Compile Include="ObjectModel\Local\SharePointListItem.cs" />
     <Compile Include="ObjectModel\Local\SharePointWebs.cs" />
     <Compile Include="ObjectModel\Local\LocalSharePointObjectModel.cs" />
     <Compile Include="ObjectModel\Remote\SharePointObjectProxies.cs" />
     <Compile Include="ObjectModel\SharePointConnectionInfo.cs" />
-    <Compile Include="ObjectModel\SharePointUtils.cs" />
+    <Compile Include="ObjectModel\Helper\SharePointUtils.cs" />
     <Compile Include="SharePointErrorRecord.cs" />
     <Compile Include="SharePointProviderInfo.cs" />
     <Compile Include="SharePointProvider.cs" />
@@ -93,8 +99,10 @@
     <Compile Include="ObjectModel\Local\SharePointUser.cs" />
     <Compile Include="ObjectModel\Local\SharePointUsers.cs" />
     <Compile Include="ObjectModel\Local\SharePointWeb.cs" />
+    <Compile Include="ObjectModel\Helper\WebUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\install.ps1" />
     <None Include="Scripts\SharePoint.Format.ps1xml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

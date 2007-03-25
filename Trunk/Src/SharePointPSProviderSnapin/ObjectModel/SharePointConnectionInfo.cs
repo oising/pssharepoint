@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
+	// NOT USED
 	internal class SharePointConnectionInfo
 	{
 		private Uri m_siteCollectionUrl;
