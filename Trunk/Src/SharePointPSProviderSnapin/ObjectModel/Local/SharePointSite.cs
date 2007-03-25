@@ -21,50 +21,31 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointUser : StoreItem<SPUser>
-	{
-		public SharePointUser(SPUser user)
-			: base(user)
-		{
-			// remove SPAlert
-			RegisterRemover<SPAlert>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item) { NativeObject.Alerts.Delete(((SPAlert) item.NativeObject).ID); }
-			                         	));
-		}
+    public class SharePointSite : StoreItem<SPSite>
+    {
+        public SharePointSite(SPSite site)
+            : base(site)
+        {
+        }
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
-		{
-			// pseudo containers
-			yield return new SharePointAlerts(NativeObject.Alerts);
-			yield return new SharePointGroups(NativeObject.Groups);
-			yield return new SharePointRoles(NativeObject.Roles);
+        public override string ChildName
+        {
+            get { return "/"; } // root
+        }
 
-			// no default child item for SPUser:
-			// e.g. get-childitems in this container will return nothing
-		}
+        public override bool IsContainer
+        {
+            get { return true; }
+        }
 
-		public override bool IsContainer
-		{
-			get { return true; }
-		}
+        public override IEnumerator<IStoreItem> GetEnumerator()
+        {
+            yield return new SharePointWeb(NativeObject.RootWeb);
+        }
 
-		public override string ChildName
-		{
-			get
-			{
-				string login = NativeObject.LoginName;
-				if (login.IndexOf('\\') != -1)
-				{
-					string[] loginArray = login.Split('\\');
-					return loginArray[0] + "_" + loginArray[1]; // domain_user
-				}
-				return login; // user
-			}
-		}
-
-		public override StoreItemOptions ItemOptions
-		{
-			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
-		}
-	}
+        public override StoreItemOptions ItemOptions
+        {
+            get { return StoreItemOptions.ShouldTabComplete; }
+        }
+    }
 }

@@ -42,7 +42,7 @@ namespace Nivot.PowerShell.SharePoint
 					objectModel = ((SharePointDriveInfo)this.PSDriveInfo).ObjectModel;
 				}
 				else
-				{
+				{                    
 					ThrowTerminatingError(SharePointErrorRecord.NotImplementedError("Must use drive-qualifed paths."));
 				}
 
@@ -88,7 +88,8 @@ namespace Nivot.PowerShell.SharePoint
 						                        ParamRemoteIsSet);
 
 					WriteVerbose("PSDriveInfo.Root = " + driveInfo.Root);
-				} catch (Exception ex)
+				}
+				catch (Exception ex)
 				{
 					Trace.WriteLine(ex, "NewDrive");
 

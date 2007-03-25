@@ -24,8 +24,7 @@ using Nivot.PowerShell.SharePoint.ObjectModel;
 //using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint
-{
-	// FIXME: this class is currently redundant
+{	
 	public class SharePointDriveInfo : PSDriveInfo, IDisposable
 	{
 		private SharePointObjectModel m_sharePointObjectModel = null;
@@ -50,6 +49,9 @@ namespace Nivot.PowerShell.SharePoint
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public string VirtualServer
 		{
 			get
@@ -58,6 +60,9 @@ namespace Nivot.PowerShell.SharePoint
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public Version SharePointVersion
 		{
 			get
@@ -66,6 +71,9 @@ namespace Nivot.PowerShell.SharePoint
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public bool IsRemote
 		{
 			get

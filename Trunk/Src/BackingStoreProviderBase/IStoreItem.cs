@@ -71,8 +71,6 @@ namespace Nivot.PowerShell
 		/// <summary>
 		/// Flags for how the provider should treat this item, e.g. tab-complete only, don't tab-complete, pipe only etc.
 		/// </summary>
-		StoreItemFlags ItemFlags { get; }
-		
-		
+		StoreItemOptions ItemOptions { get; }		
 	}
 }

@@ -90,10 +90,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			// FIXME: redundant maybe?
 			if (item.IsContainer)
 			{
-				// FIXME: I don't like the look of this, but nor do I like the alternatives
+				// FIXME: this is a bit hackish
 				foreach (IStoreItem childItem in item)
 				{
-					return true; // HACK: if we get here, we've got child items
+					return true;
 				}
 			}
 			return false;
@@ -120,6 +120,12 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			}
 
 			return childItems;
+		}		
+
+		public virtual void InvokeItem(string path)
+		{
+			IStoreItem item = GetItem(path);
+			item.InvokeItem();
 		}
 
 		public abstract IStoreItem GetItem(string path);
