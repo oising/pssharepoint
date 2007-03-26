@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -73,6 +74,22 @@ namespace Nivot.PowerShell
             if (value is IDisposable)
             {
                 ((IDisposable) value).Dispose();
+            }
+        }
+
+        internal void Clear()
+        {
+            lock (m_syncRoot)
+            {
+                List<string> keys = new List<string>();
+                foreach (DictionaryEntry entry in m_cache)
+                {
+                    keys.Add((string) entry.Key);
+                }                
+                foreach (string key in keys)
+                {
+                    m_cache.Remove(key);
+                }
             }
         }
     }

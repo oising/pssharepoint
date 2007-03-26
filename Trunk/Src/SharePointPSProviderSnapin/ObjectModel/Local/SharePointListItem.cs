@@ -17,6 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Management.Automation;
+
 using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
@@ -37,6 +39,19 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return false; }
 		}
+
+        public override PSObject GetPSObject()
+        {
+            PSObject output = new PSObject(NativeObject);
+ 
+            foreach (SPField field in NativeObject.Fields)
+            {                
+                PSNoteProperty property = new PSNoteProperty("@" + field.Title, NativeObject[field.Title]);
+                output.Properties.Add(property);
+            }
+
+            return output;
+        }
 
 		public override StoreItemOptions ItemOptions
 		{

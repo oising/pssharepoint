@@ -6,11 +6,14 @@ using System.IO;
 
 using Microsoft.SharePoint;
 using System.Management.Automation.Provider;
+using Nivot.PowerShell.SharePoint.ObjectModel.Helper;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	class SharePointFile : StoreItem<SPFile>, IContentReader
 	{
+	    private IContentReader m_reader = null;
+
 		public SharePointFile(SPFile file) : base(file)
 		{			
 		}
@@ -34,19 +37,41 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
         public void Close()
         {
-            throw new Exception("The method or operation is not implemented. TEST.");
+            if (m_reader != null)
+            {
+                m_reader.Close();
+            }
         }
 
         public IList Read(long readCount)
         {
-            throw new Exception("The method or operation is not implemented. TEST.");
+            EnsureReader();
+            return m_reader.Read(readCount);
         }
 
         public void Seek(long offset, System.IO.SeekOrigin origin)
         {
-            throw new Exception("The method or operation is not implemented. TEST.");
+            EnsureReader();
+            m_reader.Seek(offset, origin);
         }
 
         #endregion
+
+        private void EnsureReader()
+        {
+            if (m_reader == null)
+            {
+                m_reader = new SPFileReader(this.NativeObject);
+            }
+        }
+
+        public override void Dispose(bool disposing)
+        {
+            if (m_reader != null)
+            {
+                m_reader.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

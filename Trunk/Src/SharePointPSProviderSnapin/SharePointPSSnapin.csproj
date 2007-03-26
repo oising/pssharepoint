@@ -58,6 +58,7 @@
     <Compile Include="Commands\NativeMethods.cs" />
     <Compile Include="Commands\ReadSPFileCommand.cs" />
     <Compile Include="Commands\WriteSPFileCommand.cs" />
+    <Compile Include="ObjectModel\Helper\SPFileReader.cs" />
     <Compile Include="ObjectModel\ISharePointObject.cs" />
     <Compile Include="ObjectModel\Helper\ListUtils.cs" />
     <Compile Include="ObjectModel\Local\SharePointDocumentLibrary.cs" />

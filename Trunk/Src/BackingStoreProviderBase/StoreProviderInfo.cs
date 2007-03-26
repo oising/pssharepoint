@@ -22,6 +22,14 @@ namespace Nivot.PowerShell
 			}
 		}
 
+	    public virtual bool EnableItemCaching
+	    {
+	        get
+	        {
+                return true;
+	        }
+	    }
+
 		public virtual char PathSeparator
 		{
 			get

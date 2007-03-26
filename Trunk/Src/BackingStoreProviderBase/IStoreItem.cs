@@ -50,6 +50,12 @@ namespace Nivot.PowerShell
 		/// </summary>
 		object NativeObject { get; }
 
+        /// <summary>
+        /// Get the PSObject for output after applying a decorator, if needed.
+        /// </summary>
+        /// <returns>The PSObject destined for pipeline output.</returns>
+	    PSObject GetPSObject();
+
 		/// <summary>
 		/// Indexer to find a child by name
 		/// </summary>

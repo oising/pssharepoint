@@ -42,13 +42,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ClearStoreItemCacheCommand.cs" />
+    <Compile Include="StoreProviderBase.IDynamicPropertyCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.IPropertyCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.IContentCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.NavigationCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.ContainerCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.ItemCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.DriveCmdletProvider.cs" />
+    <Compile Include="StoreProviderBase.CmdletProvider.cs" />
     <Compile Include="DynamicParameterBuilder.cs" />
     <Compile Include="ICacheable.cs" />
     <Compile Include="IStoreItem.cs">
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="IStoreItemDynamicProperties.cs" />
+    <Compile Include="IDynamicParametersProvider.cs" />
     <Compile Include="IStoreObjectModel.cs">
       <SubType>
       </SubType>
@@ -56,6 +65,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoreItemCache.cs" />
     <Compile Include="StoreItemOptions.cs" />
+    <Compile Include="StoreItemT.DynamicParametersProvider.cs" />
     <Compile Include="StoreProviderBase.cs" />
     <Compile Include="StoreItemT.cs">
       <SubType>
