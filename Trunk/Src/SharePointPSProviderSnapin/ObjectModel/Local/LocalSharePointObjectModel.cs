@@ -28,17 +28,25 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		private SPSite m_site;		
+		private SPSite m_site;	// FIXME: gcroot!
 
 		internal LocalSharePointObjectModel(Uri siteCollectionUrl)
 		{			
 			m_site = new SPSite(siteCollectionUrl.ToString());
-			
-			// attempt to open root web
-			// (will trigger error if url is not valid sharepoint instance)
-			using (SPWeb rootWeb = m_site.OpenWeb())
+
+			try
 			{
-				Provider.WriteVerbose("RootWeb: " + rootWeb);
+				// Attempt to open root web: this will trigger an
+				// error if the url is not a valid sharepoint site.
+				using (SPWeb rootWeb = m_site.OpenWeb("/"))
+				{
+					Provider.WriteVerbose("Root Web Opened: " + rootWeb.Name);
+				}
+			}
+			catch
+			{
+				Provider.ThrowTerminatingError(
+					SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid Site: Cannot open Root Web."));
 			}
 		}
 
@@ -78,7 +86,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 				return storeItem; // at root
 			}
 
-            // index into webs
+            // index into object hierarchy
 			foreach (string chunk in chunks)
 			{
 				if (chunk == String.Empty)
@@ -105,6 +113,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			if (m_site != null)
 			{
 				m_site.Dispose();
+				m_site = null;
 			}
 		}
 
