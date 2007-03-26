@@ -49,7 +49,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get
 			{
-				return StoreProviderContext<StoreProviderBase>.Current as SharePointProvider;
+				return StoreProviderContext.Current as SharePointProvider;
 			}
 		}
 

@@ -14,50 +14,38 @@
 
 #endregion
 
-// original author: Jachym Kouba (powershellcx project)
-// changes: removed generic provider type parameter (redundant here)
-
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Management.Automation;
 using System.Management.Automation.Provider;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Nivot.PowerShell
 {
-    public static class StoreProviderContext
-    {
-        [ThreadStatic]
-        private static StoreProviderBase _current;
 
-        public static StoreProviderBase Current
-        {
-            get { return _current; }
-        }
+	/// <summary>
+	/// 
+	/// </summary>
+	public abstract partial class StoreProviderBase
+	{        
+		#region NavigationCmdletProvider Overrides
 
-        public static Cookie Enter(StoreProviderBase provider)
-        {
-            if (provider == null)
-            {
-            	throw new ArgumentNullException("provider");
-            }
+		protected override bool IsItemContainer(string path)
+		{
+			using (EnterContext())
+			{
+				IStoreItem item = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
+				Debug.Assert(item != null); // FIXME: redundant?
 
-            Cookie cookie = new Cookie(_current);
-            _current = provider;
+				return item.IsContainer;
+			}
+		}
 
-            return cookie;
-        }
-
-        public struct Cookie : IDisposable
-        {
-            internal readonly StoreProviderBase _previous;
-
-            internal Cookie(StoreProviderBase previous)
-	        {
-                _previous = previous;
-	        }
-
-            public void Dispose()
-            {
-                _current = _previous;
-            }
-        }
-    }
+		#endregion
+	}
 }

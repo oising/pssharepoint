@@ -36,17 +36,17 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 			try
 			{
-				// Attempt to open root web: this will trigger an
+				// Attempt to open spweb: this will trigger an
 				// error if the url is not a valid sharepoint site.
-				using (SPWeb rootWeb = m_site.OpenWeb("/"))
+				using (SPWeb rootWeb = m_site.OpenWeb())
 				{
-					Provider.WriteVerbose("Root Web Opened: " + rootWeb.Name);
+					Provider.WriteVerbose("OpenWeb() succeeded: got " + rootWeb.Name);
 				}
 			}
 			catch
 			{
 				Provider.ThrowTerminatingError(
-					SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid Site: Cannot open Root Web."));
+					SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid SiteCollection: Cannot open SPWeb."));
 			}
 		}
 

@@ -28,28 +28,29 @@ namespace Nivot.PowerShell
 	/// 
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class StoreItem<T> : IStoreItem, IStoreItemDynamicProperties, ICacheable, IDisposable
-        where T : class
+	public abstract partial class StoreItem<T> : IStoreItem, ICacheable, IDisposable where T : class
 	{
 		private T m_storeObject;
-		protected bool IsDisposed = false;
 
-		// lookup tables (via type) for delegates that
-		// can add or remove items to/from this type
+        protected bool IsDisposed = false;
+
 		protected Dictionary<Type, Action<IStoreItem>> AddActions;
 		protected Dictionary<Type, Action<IStoreItem>> RemoveActions;
 
 		protected StoreItem(T storeObject)
 		{
 			m_storeObject = storeObject;
+
 			AddActions = new Dictionary<Type, Action<IStoreItem>>();
 			RemoveActions = new Dictionary<Type, Action<IStoreItem>>();
+
+		    Provider.WriteDebug("Constructing " + GetType().Name);
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public virtual T NativeObject
+		protected virtual T NativeObject
 		{
 			get
 			{
@@ -62,6 +63,29 @@ namespace Nivot.PowerShell
                 m_storeObject = value;
             }
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual PSObject GetPSObject()
+        {
+            return new PSObject(NativeObject);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected static StoreProviderBase Provider
+        {
+            get
+            {
+                StoreProviderBase provider = StoreProviderContext.Current;
+                Debug.Assert(provider != null, "StoreProviderContext.Current != null");
+                
+                return provider;
+            }
+        }
 
 		#region Indexer (ChildName)
 
@@ -198,60 +222,6 @@ namespace Nivot.PowerShell
 		public abstract bool IsContainer { get; }
 
 		public abstract StoreItemOptions ItemOptions { get; }
-
-		#endregion
-
-		#region IStoreItemDynamicProperties Members
-
-		public virtual RuntimeDefinedParameterDictionary GetItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary SetItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary GetChildItemsDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary GetChildNamesDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary ClearItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary NewItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary MoveItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary CopyItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary InvokeItemDynamicProperties
-		{
-			get { return null; }
-		}
-
-		public virtual RuntimeDefinedParameterDictionary ItemExistsDynamicProperties
-		{
-			get { return null; }
-		}
 
 		#endregion
 

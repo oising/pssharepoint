@@ -49,7 +49,7 @@ namespace Nivot.PowerShell.SharePoint
 				return objectModel;
 			}
 		}
-
+        
 		#region Drive methods
 
 		protected override PSDriveInfo NewDrive(PSDriveInfo drive)
@@ -92,6 +92,8 @@ namespace Nivot.PowerShell.SharePoint
 				catch (Exception ex)
 				{
 					Trace.WriteLine(ex, "NewDrive");
+				    
+                    WriteVerbose(ex.ToString());
 
 					string message = String.Format("Unable to open site collection at {0} : {1}.", root, ex.Message);
 					WriteError(new ErrorRecord(new ArgumentException(
@@ -135,7 +137,7 @@ namespace Nivot.PowerShell.SharePoint
 
 		private bool ParamRemoteIsSet 
 		{
-			get { return DynamicParameters["Remote"].IsSet; }
+			get { return RuntimeDynamicParameters["Remote"].IsSet; }
 		}
 	}
 }
