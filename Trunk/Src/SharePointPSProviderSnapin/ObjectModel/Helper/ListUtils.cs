@@ -5,7 +5,7 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-    class ListUtils
+    static class ListUtils
     {
         static bool Copy(SPList source, SPList destination)
         {

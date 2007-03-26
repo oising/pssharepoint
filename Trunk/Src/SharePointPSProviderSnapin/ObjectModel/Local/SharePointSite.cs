@@ -21,7 +21,7 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-    public class SharePointSite : StoreItem<SPSite>
+    internal class SharePointSite : StoreItem<SPSite>
     {
         public SharePointSite(SPSite site)
             : base(site)
