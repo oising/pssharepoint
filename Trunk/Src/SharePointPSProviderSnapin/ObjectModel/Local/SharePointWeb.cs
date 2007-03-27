@@ -14,119 +14,115 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Web.Caching;
+
 using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	internal class SharePointWeb : StoreItem<SPWeb>
-	{
-		public SharePointWeb(SPWeb web)
-			: base(web)
-		{
-			// add SPUser
-			RegisterAdder<SPUser>(new Action<IStoreItem>(
-			                      	delegate(IStoreItem item)
-			                      		{
-			                      			SPUser user = (SPUser) item.NativeObject;
-			                      			NativeObject.Roles["Reader"].AddUser(user);
-			                      		}
-			                      	));
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class SharePointWeb : StoreItem<SPWeb>
+    {
+        internal const string DefaultRole = "Reader";
 
-			// add SPGroup
-			RegisterAdder<SPGroup>(new Action<IStoreItem>(
-			                       	delegate(IStoreItem item)
-			                       		{
-			                       			SPGroup group = (SPGroup) item.NativeObject;
-			                       			NativeObject.Groups.Add(group.Name, group.Owner, group.Users[0], group.Description);
-			                       		}
-			                       	));
+        public SharePointWeb(SPWeb web)
+            : base(web)
+        {
+            RegisterAdder<SPUser>(AddUser);
+            RegisterRemover<SPUser>(RemoveUser);
+            RegisterAdder<SPGroup>(AddGroup);
+            RegisterRemover<SPGroup>(RemoveGroup);
+            RegisterAdder<SPRole>(AddRole);
+            RegisterRemover<SPRole>(RemoveRole);
+            RegisterRemover<SPWeb>(RemoveWeb);
+        }
 
-			// add SPRole
-			RegisterAdder<SPRole>(new Action<IStoreItem>(
-			                      	delegate(IStoreItem item)
-			                      		{
-			                      			SPRole role = (SPRole) item.NativeObject;
-			                      			NativeObject.Roles.Add(role.Name, role.Description, role.PermissionMask);
-			                      		}
-			                      	));
+        public override IEnumerator<IStoreItem> GetEnumerator()
+        {
+            // pseudo containers first
+            yield return new SharePointAlerts(NativeObject.Alerts);
+            yield return new SharePointGroups(NativeObject.Groups);
+            yield return new SharePointLists(NativeObject.Lists);
+            yield return new SharePointRoles(NativeObject.Roles);
+            yield return new SharePointUsers(NativeObject.Users);
 
-			// remove SPUser
-			RegisterRemover<SPUser>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item)
-			                        		{
-			                        			SPUser user = (SPUser) item.NativeObject;
-			                        			NativeObject.Users.Remove(user.LoginName);
-			                        		}
-			                        	));
+            // default child item for SPWebCollection is SPWeb
+            foreach (SPWeb web in NativeObject.Webs)
+            {
+                yield return new SharePointWeb(web);
+            }
+        }
 
-			// remove SPGroup
-			RegisterRemover<SPGroup>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item)
-			                         		{
-			                         			SPGroup group = (SPGroup) item.NativeObject;
-			                         			NativeObject.Groups.RemoveByID(group.ID);
-			                         		}
-			                         	));
+        public override bool IsContainer
+        {
+            get { return true; }
+        }
 
-			// remove SPRole
-			RegisterRemover<SPRole>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item)
-			                        		{
-			                        			SPRole role = (SPRole) item.NativeObject;
-			                        			NativeObject.Roles.RemoveByID(role.ID);
-			                        		}
-			                        	));
+        public override string ChildName
+        {
+            get
+            {
+                string url = NativeObject.ServerRelativeUrl;
+                return url.Substring(url.LastIndexOf('/') + 1); // e.g. subsite in /site/subsite
+            }
+        }
 
-			// remove SPWeb
-			RegisterRemover<SPWeb>(new Action<IStoreItem>(
-			                       	delegate(IStoreItem item)
-			                       		{
-			                       			SPWeb childWeb = (SPWeb) item.NativeObject;
-			                       			childWeb.Delete();
-			                       		}
-			                       	));
-		}
+        public override StoreItemOptions ItemOptions
+        {
+            get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem | StoreItemOptions.ShouldCache; }
+        }
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
-		{
-			// pseudo containers first
-            yield return new SharePointSite(NativeObject.Site);
-			yield return new SharePointAlerts(NativeObject.Alerts);
-			yield return new SharePointGroups(NativeObject.Groups);
-			yield return new SharePointLists(NativeObject.Lists);
-			yield return new SharePointRoles(NativeObject.Roles);
-			yield return new SharePointUsers(NativeObject.Users);
+        public override CacheItemPriority CachePriority
+        {
+            get
+            {
+                return CacheItemPriority.High;
+            }
+        }
 
-			// default child item for SPWebCollection is SPWeb
-			foreach (SPWeb web in NativeObject.Webs)
-			{
-				yield return new SharePointWeb(web);
-			}
-		}
+        #region Adder/Remover Members
 
-		public override bool IsContainer
-		{
-			get { return true; }
-		}
+        private void AddUser(SPUser user)
+        {
+            NativeObject.Roles[DefaultRole].AddUser(user);
+            NativeObject.Update();
+        }
 
-		public override string ChildName
-		{
-			get
-			{
-				string url = NativeObject.ServerRelativeUrl;
-				return url.Substring(url.LastIndexOf('/') + 1); // e.g. subsite in /site/subsite
-			}
-		}
+        private void RemoveUser(SPUser user)
+        {
+            NativeObject.Users.Remove(user.LoginName);
+        }
 
-		public override StoreItemOptions ItemOptions
-		{
-			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
-		}
-	}
+        private void AddRole(SPRole role)
+        {
+            NativeObject.Roles.Add(role.Name, role.Description, role.PermissionMask);
+            NativeObject.Update();
+        }
+
+        private void RemoveRole(SPRole role)
+        {
+            NativeObject.Roles.RemoveByID(role.ID);
+        }
+
+        private void AddGroup(SPGroup group)
+        {
+            NativeObject.Groups.Add(group.Name, group.Owner, group.Users[0], group.Description);
+            NativeObject.Update();
+        }
+
+        private void RemoveGroup(SPGroup group)
+        {
+            NativeObject.Groups.RemoveByID(group.ID);
+        }
+
+        private void RemoveWeb(SPWeb childWeb)
+        {
+            NativeObject.Webs[childWeb.ID].Delete();
+        }
+
+        #endregion
+    }
 }

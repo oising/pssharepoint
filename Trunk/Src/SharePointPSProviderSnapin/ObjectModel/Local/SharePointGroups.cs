@@ -29,32 +29,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	{
 		public SharePointGroups(SPGroupCollection groups)
 			: base(groups)
-		{
-			// add SPGroup
-			RegisterAdder<SPGroup>(new Action<IStoreItem>(
-			                       	delegate(IStoreItem item)
-			                       		{
-			                       			SPGroup group = (SPGroup) item.NativeObject;
-
-			                       			// create identical group (clone it)
-			                       			NativeObject.Add(group.Name, group.Owner, group.Users[0], group.Description);
-			                       			foreach (SPUser user in group.Users)
-			                       			{
-			                       				// copy users from group into this one
-			                       				NativeObject[group.Name].AddUser(user);
-			                       			}
-			                       		}
-			                       	));
-
-			// remove SPGroup
-			RegisterRemover<SPGroup>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item)
-			                         		{
-			                         			SPGroup group = (SPGroup) item.NativeObject;
-			                         			// remove group
-			                         			NativeObject.Remove(group.Name);
-			                         		}
-			                         	));
+		{			
+		    RegisterAdder<SPGroup>(AddGroup);
+			RegisterRemover<SPGroup>(RemoveGroup);
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
@@ -80,5 +57,21 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete; }
 		}
+
+        private void AddGroup(SPGroup group)
+        {
+            // create identical group (clone it)
+            NativeObject.Add(group.Name, group.Owner, group.Users[0], group.Description);
+            foreach (SPUser user in group.Users)
+            {
+                // copy users from group into this one
+                NativeObject[group.Name].AddUser(user);
+            }
+        }
+        
+        private void RemoveGroup(SPGroup group)
+        {
+            NativeObject.Remove(group.Name);
+        }
 	}
 }

@@ -26,13 +26,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public SharePointAlerts(SPAlertCollection alerts)
 			: base(alerts)
 		{
-			// remove SPAlert
-			RegisterRemover<SPAlert>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item) { NativeObject.Delete(((SPAlert) item.NativeObject).ID); }
-			                         	));
+		    RegisterRemover<SPAlert>(RemoveAlert);
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+	    public override IEnumerator<IStoreItem> GetEnumerator()
 		{
 			// default child item for SPAlertCollection is SPAlert
 			foreach (SPAlert alert in NativeObject)
@@ -55,5 +52,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete; }
 		}
+
+        private void RemoveAlert(SPAlert alert)
+        {
+            NativeObject.Delete(alert.ID);
+        }
 	}
 }

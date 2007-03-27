@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Nivot.PowerShell
 {
-    public partial class StoreItem<T> : IDynamicParametersProvider
+    public partial class StoreItem<TNative> : IDynamicParametersProvider
     {
         #region IDynamicParametersProvider Members
 

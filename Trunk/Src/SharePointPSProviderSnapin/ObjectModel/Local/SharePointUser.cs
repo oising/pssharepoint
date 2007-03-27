@@ -26,10 +26,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public SharePointUser(SPUser user)
 			: base(user)
 		{
-			// remove SPAlert
-			RegisterRemover<SPAlert>(new Action<IStoreItem>(
-			                         	delegate(IStoreItem item) { NativeObject.Alerts.Delete(((SPAlert) item.NativeObject).ID); }
-			                         	));
+			RegisterRemover<SPAlert>(RemoveAlert);
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
@@ -66,5 +63,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
 		}
+
+        private void RemoveAlert(SPAlert alert)
+        {
+            NativeObject.Alerts.Delete(alert.ID);
+        }
 	}
 }

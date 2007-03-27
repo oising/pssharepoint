@@ -192,7 +192,7 @@ namespace Nivot.PowerShell
 			{
                 if (recurse)
                 {
-                    WriteWarning("parameter -recurse is not implemented for copy operation.");
+                    WriteWarning("parameter -recurse is not implemented for copy operations.");
                     return;
                 }
 
@@ -214,7 +214,7 @@ namespace Nivot.PowerShell
 					try
 					{
 						// try to copy
-						bool success = destination.AddItem(source);
+						bool success = destination.AddChildItem(source);
 
 						if (!success)
 						{
@@ -230,7 +230,7 @@ namespace Nivot.PowerShell
 							WriteVerbose("Copy successful.");
 						}
 					}
-					catch (ApplicationFailedException ex)
+					catch (BackingStoreException ex)
 					{
 						// native application failure
 						WriteVerbose("Exception: " + ex.ToString());
@@ -247,7 +247,7 @@ namespace Nivot.PowerShell
 			{
                 if (recurse)
                 {
-                    WriteWarning("parameter -recurse is not implemented for remove operation.");
+                    WriteWarning("parameter -recurse is not implemented for remove operations.");
                     return;
                 }
 
@@ -262,7 +262,7 @@ namespace Nivot.PowerShell
 
 				if (ShouldProcess(path, "Remove"))
 				{
-					bool success = parentItem.RemoveItem(childItem);
+					bool success = parentItem.RemoveChildItem(childItem);
 
 					if (!success)
 					{

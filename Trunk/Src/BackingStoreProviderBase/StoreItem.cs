@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Web.Caching;
 
 using System.Management.Automation;
@@ -25,32 +26,46 @@ using System.Management.Automation;
 namespace Nivot.PowerShell
 {
 	/// <summary>
-	/// 
+	/// A wrapper class for facilitating manipulation and enumeration of a native backing-store object and its children.
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public abstract partial class StoreItem<T> : IStoreItem, ICacheable, IDisposable where T : class
+    /// <typeparam name="TNative">The type of the backing-store object this wrapper exposes.</typeparam>
+    public abstract partial class StoreItem<TNative> : IStoreItem, IDisposable where TNative : class
 	{
-		private T m_storeObject;
+        private TNative m_storeObject;
 
+        /// <summary>
+        /// Has this wrapper (and the underlying backing-store object) been disposed?
+        /// </summary>
         protected bool IsDisposed = false;
 
-		protected Dictionary<Type, Action<IStoreItem>> AddActions;
-		protected Dictionary<Type, Action<IStoreItem>> RemoveActions;
+        /// <summary>
+        /// 
+        /// </summary>
+		protected Dictionary<Type, Delegate> AddActions;
 
-		protected StoreItem(T storeObject)
-		{
-			m_storeObject = storeObject;
+        /// <summary>
+        /// 
+        /// </summary>
+		protected Dictionary<Type, Delegate> RemoveActions;
 
-			AddActions = new Dictionary<Type, Action<IStoreItem>>();
-			RemoveActions = new Dictionary<Type, Action<IStoreItem>>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="storeObject"></param>
+        protected StoreItem(TNative storeObject)
+        {
+            m_storeObject = storeObject;
 
-		    Provider.WriteDebug("Constructing " + GetType().Name);
-		}
+            AddActions = new Dictionary<Type, Delegate>();
+            RemoveActions = new Dictionary<Type, Delegate>();
+
+            Provider.WriteDebug("Constructing " + GetType().Name);            
+        }
 
 		/// <summary>
-		/// 
+		/// Gets the native backing-store object this wrapper exposes.
 		/// </summary>
-		protected virtual T NativeObject
+        protected virtual TNative NativeObject
 		{
 			get
 			{
@@ -65,16 +80,18 @@ namespace Nivot.PowerShell
 		}
 
         /// <summary>
-        /// 
+        /// Gets the PSObject wrapped native backing-store object this wrapper exposes. This method is called to obtain the object to write to the pipeline.
+        /// <remarks>This method should be overridden in derived classes to facilitate decoration of the output object. </remarks>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A PSObject wrapping the native backing-store object.</returns>
         public virtual PSObject GetPSObject()
         {
             return new PSObject(NativeObject);
         }
 
         /// <summary>
-        /// 
+        /// Gets the current StoreProviderBase derived provider that is utilising this object.
+        /// <remarks>Use this member to invoke WriteVerbose, WriteDebug and other instance methods on the active provider instance in a thread-safe manner.</remarks>
         /// </summary>
         protected static StoreProviderBase Provider
         {
@@ -117,22 +134,22 @@ namespace Nivot.PowerShell
 
 		#region Protected Members
 
-		protected void RegisterAdder<I>(Action<IStoreItem> addAction)
+        protected void RegisterAdder<TSubject>(Action<TSubject> action) where TSubject : class
 		{
 			EnsureNotDisposed();
-			AddActions.Add(typeof(I), addAction);
+            AddActions.Add(typeof(TSubject), action);
 		}
 
-		protected void RegisterRemover<I>(Action<IStoreItem> removeAction)
+        protected void RegisterRemover<TSubject>(Action<TSubject> action) where TSubject : class
 		{
 			EnsureNotDisposed();
-			RemoveActions.Add(typeof(I), removeAction);
+            RemoveActions.Add(typeof(TSubject), action);
 		}
 
-		protected Action<IStoreItem> GetAddAction(IStoreItem item)
+		protected Delegate GetAddAction(IStoreItem item)
 		{
 			EnsureNotDisposed();
-			Action<IStoreItem> addAction;
+			Delegate addAction;
 
 			if (AddActions.TryGetValue(item.NativeObject.GetType(), out addAction))
 			{
@@ -142,10 +159,10 @@ namespace Nivot.PowerShell
 			return null;
 		}
 
-		protected Action<IStoreItem> GetRemoveAction(IStoreItem item)
+		protected Delegate GetRemoveAction(IStoreItem item)
 		{
 			EnsureNotDisposed();
-			Action<IStoreItem> removeAction;
+			Delegate removeAction;
 
 			if (RemoveActions.TryGetValue(item.NativeObject.GetType(), out removeAction))
 			{
@@ -159,44 +176,54 @@ namespace Nivot.PowerShell
 
 		#region IStoreItem Members
 
-		public virtual bool AddItem(IStoreItem item)
+        /// <summary>
+        /// Try to add a store item to this item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+		public virtual bool AddChildItem(IStoreItem item)
 		{
 			EnsureNotDisposed();
-			Action<IStoreItem> addAction = GetAddAction(item);
+			Delegate addAction = GetAddAction(item);
 
 			if (addAction != null)
 			{
 				try
 				{
 					// try to add item
-					addAction(item);
+					addAction.DynamicInvoke(item);
 					return true;
 				}
-				catch (Exception exception)
+				catch (TargetInvocationException ex)
 				{
-					throw new ApplicationFailedException("Native Store Error", exception);
+				    throw new BackingStoreException("AddChildItem Failed!", ex.InnerException);
 				}
 			}
 			// no adder found
 			return false;
 		}
 
-		public virtual bool RemoveItem(IStoreItem item)
+        /// <summary>
+        /// Try to remove a store item from this item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+		public virtual bool RemoveChildItem(IStoreItem item)
 		{
 			EnsureNotDisposed();
-			Action<IStoreItem> removeAction = GetRemoveAction(item);
+			Delegate removeAction = GetRemoveAction(item);
 
 			if (removeAction != null)
 			{
 				try
 				{
 					// try to remove item
-					removeAction(item);
+					removeAction.DynamicInvoke(item);
 					return true;
 				}
-				catch (Exception exception)
+				catch (TargetInvocationException ex)
 				{
-					throw new ApplicationFailedException("Native Store Error", exception);
+                    throw new BackingStoreException("RemoveChildItem Failed!", ex.InnerException);
 				}
 			}
 			// no remover found
@@ -205,7 +232,7 @@ namespace Nivot.PowerShell
 
 		public virtual void InvokeItem()
 		{			
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
 		object IStoreItem.NativeObject
@@ -223,11 +250,19 @@ namespace Nivot.PowerShell
 
 		public abstract StoreItemOptions ItemOptions { get; }
 
-		#endregion
+	    public virtual CacheItemPriority CachePriority
+	    {
+	        get
+	        {
+	            return CacheItemPriority.Default;
+	        }
+	    }
 
-		#region IEnumerable<IStoreItem> Members
+        #endregion
 
-		public virtual IEnumerator<IStoreItem> GetEnumerator()
+        #region IEnumerable<IStoreItem> Members
+
+        public virtual IEnumerator<IStoreItem> GetEnumerator()
 		{
 			yield break;
 		}
@@ -244,26 +279,6 @@ namespace Nivot.PowerShell
 
 		#endregion
 
-        #region ICacheable Members
-
-        public virtual bool ShouldCache
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public virtual CacheItemPriority Priority
-        {
-            get
-            {
-                return CacheItemPriority.Default;
-            }
-        }
-
-        #endregion
-
 		#region IDisposable Members
 
 		public virtual void Dispose(bool disposing)
@@ -279,8 +294,8 @@ namespace Nivot.PowerShell
 					// been disposed through finalization
 					if (NativeObject is IDisposable)
 					{
-						((IDisposable)NativeObject).Dispose();                        
-                        NativeObject = null; // hence T : class restraint
+						((IDisposable)NativeObject).Dispose();
+                        NativeObject = null; // hence reference-type restraint
 					}
 				}
 				IsDisposed = true;
@@ -310,5 +325,13 @@ namespace Nivot.PowerShell
 		{            
 			Dispose(false);
 		}
+
+        /// <summary>
+        /// TODO: allow user-defined external scriptblock actions ;-) 
+        /// </summary>
+        /// <typeparam name="TSubject"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="subject"></param>
+        public delegate void StoreItemAction<TSubject>(TNative target, TSubject subject) where TSubject : class;
 	}
 }

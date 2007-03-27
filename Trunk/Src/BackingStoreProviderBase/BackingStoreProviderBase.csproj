@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackingStoreException.cs" />
     <Compile Include="Commands\ClearStoreItemCacheCommand.cs" />
     <Compile Include="StoreProviderBase.IDynamicPropertyCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.IPropertyCmdletProvider.cs" />
@@ -52,7 +53,6 @@
     <Compile Include="StoreProviderBase.DriveCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.CmdletProvider.cs" />
     <Compile Include="DynamicParameterBuilder.cs" />
-    <Compile Include="ICacheable.cs" />
     <Compile Include="IStoreItem.cs">
       <SubType>
       </SubType>
@@ -65,13 +65,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoreItemCache.cs" />
     <Compile Include="StoreItemOptions.cs" />
-    <Compile Include="StoreItemT.DynamicParametersProvider.cs" />
+    <Compile Include="StoreItem.DynamicParametersProvider.cs" />
     <Compile Include="StoreProviderBase.cs" />
-    <Compile Include="StoreItemT.cs">
+    <Compile Include="StoreItem.cs">
       <SubType>
       </SubType>
     </Compile>
     <Compile Include="StoreProviderContext.cs" />
+    <Compile Include="StoreProviderErrorRecord.cs" />
     <Compile Include="StoreProviderInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

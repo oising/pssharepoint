@@ -14,14 +14,13 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 		public SharePointDocumentLibrary(SPDocumentLibrary docLib) : base(docLib)
 		{
-            // allow override of default return object from SPFile to SPListItem
-            DynamicParameterBuilder builder = new DynamicParameterBuilder();
-            builder.AddSwitchParam("ListItem");
+		    CreateDynamicParameters();
 
-            m_params = builder.GetDictionary();
+		    RegisterRemover<SPFile>(RemoveFile);
+		    RegisterRemover<SPListItem>(RemoveListItem);
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+	    public override IEnumerator<IStoreItem> GetEnumerator()
 		{
 		    bool returnListItems = ParamListItemIsSet;
 			
@@ -83,5 +82,24 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	            return Provider.RuntimeDynamicParameters["ListItem"].IsSet;
 	        }
 	    }
+
+        private void CreateDynamicParameters()
+        {
+            // allow override of default return object from SPFile to SPListItem
+            DynamicParameterBuilder builder = new DynamicParameterBuilder();
+            builder.AddSwitchParam("ListItem");
+            m_params = builder.GetDictionary();
+        }
+
+        private void RemoveFile(SPFile file)
+        {
+            SPListItem listItem = file.Item;
+            RemoveListItem(listItem);
+        }
+
+        private void RemoveListItem(SPListItem listItem)
+        {
+            NativeObject.Items.DeleteItemById(listItem.ID);
+        }
 	}
 }

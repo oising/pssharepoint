@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Text;
+using System.Web.Caching;
 
 namespace Nivot.PowerShell
 {
@@ -31,17 +32,17 @@ namespace Nivot.PowerShell
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		bool AddItem(IStoreItem item);
+		bool AddChildItem(IStoreItem item);
 
 		/// <summary>
 		/// Try to remove a store item from this item
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		bool RemoveItem(IStoreItem item);
+		bool RemoveChildItem(IStoreItem item);
 
 		/// <summary>
-		/// 
+		/// Try to invoke this item
 		/// </summary>
 		void InvokeItem();
 
@@ -77,6 +78,11 @@ namespace Nivot.PowerShell
 		/// <summary>
 		/// Flags for how the provider should treat this item, e.g. tab-complete only, don't tab-complete, pipe only etc.
 		/// </summary>
-		StoreItemOptions ItemOptions { get; }		
+		StoreItemOptions ItemOptions { get; }
+
+        /// <summary>
+        /// If this item is cacheable, this denotes its cache priority.
+        /// </summary>
+        CacheItemPriority CachePriority { get; }
 	}
 }

@@ -9,7 +9,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	{
 		public SharePointFolder(SPFolder folder) : base(folder)
 		{
-			
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()

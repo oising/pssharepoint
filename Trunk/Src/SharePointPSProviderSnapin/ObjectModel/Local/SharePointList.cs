@@ -26,14 +26,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public SharePointList(SPList list)
 			: base(list)
 		{
-			// remove SPListItem
-			RegisterRemover<SPListItem>(new Action<IStoreItem>(
-			                            	delegate(IStoreItem item)
-			                            		{
-			                            			SPListItem listItem = (SPListItem) item.NativeObject;
-			                            			NativeObject.Items.DeleteItemById(listItem.ID);
-			                            		}
-			                            	));
+			RegisterRemover<SPListItem>(RemoveListItem);
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
@@ -59,5 +52,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
 		}
+
+        private void RemoveListItem(SPListItem listItem)
+        {
+            NativeObject.Items.DeleteItemById(listItem.ID);
+        }
 	}
 }
