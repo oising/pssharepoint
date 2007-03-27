@@ -129,6 +129,33 @@ namespace Nivot.PowerShell
             }
         }
 
+        protected override void InvokeDefaultAction(string path)
+        {
+            WriteDebug("InvokeDefaultAction: " + path);
+
+            using (EnterContext())
+            {
+                IStoreItem item = StoreObjectModel.GetItem(path);
+                item.InvokeItem();
+            }
+        }
+
+        protected override object InvokeDefaultActionDynamicParameters(string path)
+        {
+            WriteDebug("InvokeItemDynamicParameters: " + path);
+
+            using (EnterContext())
+            {
+                IDynamicParametersProvider item = StoreObjectModel.GetItem(path) as IDynamicParametersProvider;
+                if (item != null)
+                {
+                    WriteDebug("InvokeDefaultAction assigned dynamic parameters.");
+                    return item.InvokeItemDynamicParameters;
+                }
+                return null;
+            }
+        }
+
         #endregion
 	}
 }

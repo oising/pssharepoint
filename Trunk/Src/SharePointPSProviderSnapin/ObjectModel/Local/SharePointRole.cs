@@ -29,18 +29,13 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public SharePointRole(SPRole role)
 			: base(role)
 		{
-			// add SPUser
-			RegisterAdder<SPUser>(new Action<IStoreItem>(
-			                      	delegate(IStoreItem item) { NativeObject.AddUser((SPUser) item.NativeObject); }
-			                      	));
-
-			// remove SPUser
-			RegisterRemover<SPUser>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item) { NativeObject.RemoveUser((SPUser) item.NativeObject); }
-			                        	));
+			RegisterAdder<SPUser>(AddUser);
+			RegisterRemover<SPUser>(RemoveUser);
+		    RegisterAdder<SPGroup>(AddGroup);
+            RegisterRemover<SPGroup>(RemoveGroup);
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+	    public override IEnumerator<IStoreItem> GetEnumerator()
 		{
 			// pseudo containers
 			yield return new SharePointUsers(NativeObject.Users);
@@ -67,5 +62,25 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
 		}
+
+        private void RemoveGroup(SPGroup group)
+        {
+            NativeObject.RemoveGroup(group);
+        }
+
+        private void AddGroup(SPGroup group)
+        {
+            NativeObject.AddGroup(group);
+        }
+
+        private void RemoveUser(SPUser user)
+        {
+            NativeObject.RemoveUser(user);
+        }
+
+        private void AddUser(SPUser user)
+        {
+            NativeObject.AddUser(user);
+        }
 	}
 }

@@ -30,26 +30,11 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public SharePointRoles(SPRoleCollection roles)
 			: base(roles)
 		{
-			// add SPRole
-			RegisterAdder<SPRole>(new Action<IStoreItem>(
-			                      	delegate(IStoreItem item)
-			                      		{
-			                      			SPRole role = (SPRole) item.NativeObject;
-			                      			NativeObject.Add(role.Name, role.Description, role.PermissionMask);
-			                      		}
-			                      	));
-
-			// remove SPRole
-			RegisterRemover<SPRole>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item)
-			                        		{
-			                        			SPRole role = (SPRole) item.NativeObject;
-			                        			NativeObject.Remove(role.ID); // or role.Name
-			                        		}
-			                        	));
+            RegisterAdder<SPRole>(AddRole);
+            RegisterRemover<SPRole>(RemoveRole);
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+	    public override IEnumerator<IStoreItem> GetEnumerator()
 		{
 			// default child item for SPRoleCollection is SPRole
 			foreach (SPRole role in NativeObject)
@@ -72,5 +57,15 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete; }
 		}
+
+        private void AddRole(SPRole role)
+        {
+            NativeObject.Add(role.Name, role.Description, role.PermissionMask);
+        }
+
+        private void RemoveRole(SPRole role)
+        {
+            NativeObject.Remove(role.ID); // or role.Name
+        }
 	}
 }

@@ -9,10 +9,11 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	{
 		public SharePointFiles(SPFileCollection files) : base(files)
 		{
-			
+		    //RegisterAdder<SPFile>(AddFile);
+            //RegisterRemover<SPFile>(RemoveFile);
 		}
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
+	    public override IEnumerator<IStoreItem> GetEnumerator()
 		{			
 			foreach (SPFile file in NativeObject)
 			{

@@ -18,6 +18,10 @@ namespace Nivot.PowerShell
 		/// <summary>
 		/// Should be sent to object pipeline
 		/// </summary>
-		ShouldPipeItem = 2
+		ShouldPipeItem = 2,
+        /// <summary>
+        /// Should be cached
+        /// </summary>
+        ShouldCache = 4
 	}
 }

@@ -26,27 +26,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public SharePointGroup(SPGroup group)
 			: base(group)
 		{
-			// add SPUser
-			RegisterAdder<SPUser>(new Action<IStoreItem>(
-			                      	delegate(IStoreItem item) { NativeObject.AddUser((SPUser) item.NativeObject); }
-			                      	));
-
-			// remove SPUser
-			RegisterRemover<SPUser>(new Action<IStoreItem>(
-			                        	delegate(IStoreItem item) { NativeObject.RemoveUser((SPUser) item.NativeObject); }
-			                        	));
-
-			// add (merge) SPGroup
-			RegisterAdder<SPGroup>(new Action<IStoreItem>(
-			                       	delegate(IStoreItem item)
-			                       		{
-			                       			SPGroup sourceGroup = (SPGroup) item.NativeObject;
-			                       			foreach (SPUser user in sourceGroup.Users)
-			                       			{
-			                       				AddItem(new SharePointUser(user));
-			                       			}
-			                       		}
-			                       	));
+		    RegisterAdder<SPUser>(AddUser);
+		    RegisterRemover<SPUser>(RemoveUser);
+			RegisterAdder<SPGroup>(AddGroup);
 		}
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
@@ -76,5 +58,23 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
 		}
+
+        private void AddUser(SPUser user)
+        {
+            NativeObject.AddUser(user);
+        }
+
+        private void RemoveUser(SPUser user)
+        {
+            NativeObject.RemoveUser(user);
+        }
+
+        private void AddGroup(SPGroup sourceGroup)
+        {
+            foreach (SPUser user in sourceGroup.Users)
+            {
+                AddUser(user);
+            }
+        }
 	}
 }
