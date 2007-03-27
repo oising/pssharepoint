@@ -191,7 +191,7 @@ namespace Nivot.PowerShell
 				try
 				{
 					// try to add item
-					addAction.DynamicInvoke(item);
+					addAction.DynamicInvoke(item.NativeObject);
 					return true;
 				}
 				catch (TargetInvocationException ex)
@@ -218,7 +218,7 @@ namespace Nivot.PowerShell
 				try
 				{
 					// try to remove item
-					removeAction.DynamicInvoke(item);
+					removeAction.DynamicInvoke(item.NativeObject);
 					return true;
 				}
 				catch (TargetInvocationException ex)
@@ -333,5 +333,15 @@ namespace Nivot.PowerShell
         /// <param name="target"></param>
         /// <param name="subject"></param>
         public delegate void StoreItemAction<TSubject>(TNative target, TSubject subject) where TSubject : class;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="storeItem"></param>
+        /// <returns></returns>
+        public static implicit operator TNative(StoreItem<TNative> storeItem)
+        {
+            return storeItem.NativeObject;
+        }
 	}
 }
