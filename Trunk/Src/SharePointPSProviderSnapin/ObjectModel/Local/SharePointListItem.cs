@@ -42,12 +42,20 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
         public override PSObject GetPSObject()
         {
-            PSObject output = new PSObject(NativeObject);
+            PSObject output = new PSObject(NativeObject);            
  
             foreach (SPField field in NativeObject.Fields)
-            {                
-                PSNoteProperty property = new PSNoteProperty("@" + field.Title, NativeObject[field.Title]);
-                output.Properties.Add(property);
+            {
+                string name = "@" + field.Title;
+                if (output.Properties.Match(name) == null)
+                {
+                    PSNoteProperty property = new PSNoteProperty(name, NativeObject[field.Title]);
+                    output.Properties.Add(property);
+                }
+                else
+                {
+                    Provider.WriteDebug("property " + name + " already exists.");
+                }
             }
 
             return output;
