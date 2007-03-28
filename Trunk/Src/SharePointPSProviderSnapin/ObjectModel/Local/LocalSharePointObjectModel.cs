@@ -73,7 +73,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 		public override IStoreItem GetItem(string path)
 		{
-			char separator = Provider.ProviderInfo.PathSeparator;
+		    Debug.Assert((path.IndexOf("http:") == -1),
+		                 String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
+
+            char separator = Provider.ProviderInfo.PathSeparator;
 
 			// always a minimum of '\'
 			string[] chunks = path.Split(separator);

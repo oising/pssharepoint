@@ -47,13 +47,12 @@ namespace Nivot.PowerShell
 		protected override void GetChildItems(string path, bool recurse)
 		{
 		    WriteDebug("GetChildItems: " + path);
+            path = NormalizePath(path); 
 
 			using (EnterContext())
 			{
 				try
 				{
-					path = NormalizePath(path); // FIXME: normalize path is flakey
-
 					foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
 					{
 						// be nice to sigbreak
@@ -92,6 +91,7 @@ namespace Nivot.PowerShell
         protected override object GetChildItemsDynamicParameters(string path, bool recurse)
         {
             WriteDebug("GetChildItemsDynamicParameters: " + path);
+            path = NormalizePath(path);
 
             using (EnterContext())
             {
@@ -110,13 +110,12 @@ namespace Nivot.PowerShell
 		protected override void GetChildNames(string path, ReturnContainers returnContainers)
 		{
 		    WriteDebug("GetChildNames: " + path);
+            path = NormalizePath(path); 
 
 			using (EnterContext())
 			{
 				try
-				{					
-					path = NormalizePath(path); // FIXME: normalize path is flakey
-
+				{
                     // enumerate children for current path
 					foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
 					{
@@ -145,11 +144,10 @@ namespace Nivot.PowerShell
 		protected override bool HasChildItems(string path)
 		{
 		    WriteDebug("HasChildItems: " + path);
+            path = NormalizePath(path);
 
 			using (EnterContext())
 			{
-                path = NormalizePath(path); // FIXME: normalize path is flakey
-
 				return StoreObjectModel.HasChildItems(path);
 			}
 		}
@@ -171,6 +169,8 @@ namespace Nivot.PowerShell
 			{				
 				if (ShouldProcess(destination, "Move"))
 				{
+                    // TODO: implement FastMove overrides
+
 					CopyItem(path, destination, false);
 					if (ItemExists(destination))
 					{
@@ -196,8 +196,8 @@ namespace Nivot.PowerShell
                     return;
                 }
 
-                path = NormalizePath(path); // TODO: remove
-				copyPath = NormalizePath(copyPath); // TODO: remove
+                path = NormalizePath(path);
+				copyPath = NormalizePath(copyPath);
 
 				IStoreItem source = StoreObjectModel.GetItem(path);
 				IStoreItem destination = StoreObjectModel.GetItem(copyPath);
@@ -211,6 +211,8 @@ namespace Nivot.PowerShell
 
 				if (ShouldProcess(copyPath, "Copy"))
 				{
+                    // TODO: implement FastCopy override
+
 					try
 					{
 						// try to copy
@@ -243,6 +245,8 @@ namespace Nivot.PowerShell
 		// FIXME: recurse is not handled, not sure how it should work?
 		protected override void RemoveItem(string path, bool recurse)
 		{
+		    WriteDebug(String.Format("Remove: {0} ; Recurse: {1}", path, recurse));
+
 			using (EnterContext())
 			{
                 if (recurse)

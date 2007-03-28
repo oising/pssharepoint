@@ -33,13 +33,13 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			CreateDynamicParameters();
 		}
 
-        //public override RuntimeDefinedParameterDictionary GetItemDynamicParameters
-        //{
-        //    get
-        //    {
-        //        return m_params;
-        //    }
-        //}
+        public override RuntimeDefinedParameterDictionary GetItemDynamicParameters
+        {
+            get
+            {
+                return m_params;
+            }
+        }
 
 		public override string ChildName
 		{
@@ -67,12 +67,23 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 				foreach (SPField field in NativeObject.Fields)
 				{
-					string name = field.Title;
-					PSNoteProperty property = new PSNoteProperty(name, NativeObject[name]);
-					output.Properties.Add(property);
+                    if (field.Hidden == false)
+                    {
+                        string name = field.Title;
+
+                        if (output.Properties.Match(name).Count != 0)
+                        {
+                            // already added (e.g. Title is used a few times)
+                            name = field.InternalName;
+                        }
+
+                        PSNoteProperty property = new PSNoteProperty(name, NativeObject[field.InternalName]);
+                        output.Properties.Add(property);
+                    }
 				}
 
-			    PSNoteProperty nativeItem = new PSNoteProperty("_ListItem", NativeObject);
+			    //PSNoteProperty nativeItem = new PSNoteProperty("_ListItem", NativeObject);
+			    //output.Properties.Add(nativeItem);
 			}
 
         	return output;
