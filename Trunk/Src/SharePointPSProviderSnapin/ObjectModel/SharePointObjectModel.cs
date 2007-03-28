@@ -116,6 +116,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 			foreach (IStoreItem childItem in parentItem)
 			{
+                if (Provider.Stopping)
+                {
+                    break;
+                }
 				childItems.Add(childItem);
 			}
 

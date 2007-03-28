@@ -37,9 +37,12 @@ namespace Nivot.PowerShell
 
 		protected override bool IsItemContainer(string path)
 		{
+            WriteDebug("IsItemContainer: " + path);
+		    path = NormalizePath(path);
+
 			using (EnterContext())
 			{
-				IStoreItem item = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
+				IStoreItem item = StoreObjectModel.GetItem(path); // TODO: remove
 				Debug.Assert(item != null); // FIXME: redundant?
 
 				return item.IsContainer;

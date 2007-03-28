@@ -41,19 +41,18 @@ namespace Nivot.PowerShell
         protected override bool IsValidPath(string path)
         {
             WriteDebug("IsValidPath: " + path);
+            path = NormalizePath(path);
 
-            return StoreObjectModel.IsValidPath(NormalizePath(path));
+            return StoreObjectModel.IsValidPath(path);
         }
 
         protected override void GetItem(string path)
         {
             WriteDebug("GetItem: " + path);
+            path = NormalizePath(path);
 
             using (EnterContext())
             {
-                // FIXME: need better path normalization
-                path = NormalizePath(path);
-
                 try
                 {
                     IStoreItem item = StoreObjectModel.GetItem(path);
@@ -77,7 +76,8 @@ namespace Nivot.PowerShell
         protected override object GetItemDynamicParameters(string path)
         {
             WriteDebug("GetItemDynamicParameters: " + path);
-
+            path = NormalizePath(path);
+            
             using (EnterContext())
             {
                 IDynamicParametersProvider item = StoreObjectModel.GetItem(path) as IDynamicParametersProvider;
@@ -94,14 +94,12 @@ namespace Nivot.PowerShell
         protected override bool ItemExists(string path)
         {
             WriteDebug("ItemExists: " + path);
+            path = NormalizePath(path);
 
             using (EnterContext())
             {
                 try
                 {
-                    // FIXME: need better path normalization
-                    path = NormalizePath(path);
-
                     return StoreObjectModel.ItemExists(path);
                 }
                 catch (Exception ex)
@@ -117,6 +115,7 @@ namespace Nivot.PowerShell
         protected override object ItemExistsDynamicParameters(string path)
         {
             WriteDebug("ItemExistsDynamicParameters: " + path);
+            path = NormalizePath(path);
 
             using (EnterContext())
             {
@@ -133,6 +132,7 @@ namespace Nivot.PowerShell
         protected override void InvokeDefaultAction(string path)
         {
             WriteDebug("InvokeDefaultAction: " + path);
+            path = NormalizePath(path);
 
             using (EnterContext())
             {
@@ -144,6 +144,7 @@ namespace Nivot.PowerShell
         protected override object InvokeDefaultActionDynamicParameters(string path)
         {
             WriteDebug("InvokeItemDynamicParameters: " + path);
+            path = NormalizePath(path);
 
             using (EnterContext())
             {

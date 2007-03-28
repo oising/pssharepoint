@@ -74,7 +74,7 @@ namespace Nivot.PowerShell
         /// and fields decorated with parsing attributes similar to a cmdlet 
         /// class or a 
         /// <see cref="System.Management.Automation"/>.
-        /// The default implemenation returns null.
+        /// The default implementation returns null.
         /// </returns>
         protected override object StartDynamicParameters()
         {

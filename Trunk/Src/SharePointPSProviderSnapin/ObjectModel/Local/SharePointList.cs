@@ -35,7 +35,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
         private void CreateDynamicParameters()
         {
-            // allow override of default return object from PSCustomObject to SPListItem
             DynamicParameterBuilder builder = new DynamicParameterBuilder();
             builder.AddSwitchParam("ListItem");
             m_params = builder.GetDictionary();
@@ -45,19 +44,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get
 			{
-			    Provider.WriteVerbose(GetType().Name + ":GetChildItemsDynamicParameters");
+			    Provider.WriteVerbose(GetType().Name + ".GetChildItemsDynamicParameters");
 				return m_params;
 			}
 		}
-
-        public override RuntimeDefinedParameterDictionary GetItemDynamicParameters
-        {
-            get
-            {
-                Provider.WriteVerbose(GetType().Name + ":GetItemDynamicParameters");
-                return m_params;
-            }
-        }
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
