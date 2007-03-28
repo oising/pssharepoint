@@ -86,6 +86,7 @@ namespace Nivot.PowerShell
                     WriteDebug("GetItem assigned dynamic parameters.");
                     return item.GetItemDynamicParameters;
                 }
+
                 return null;
             }
         }

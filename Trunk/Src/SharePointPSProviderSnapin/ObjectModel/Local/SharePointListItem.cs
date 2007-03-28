@@ -25,10 +25,21 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal class SharePointListItem : StoreItem<SPListItem>
 	{
+		private RuntimeDefinedParameterDictionary m_params;
+
 		public SharePointListItem(SPListItem listItem)
 			: base(listItem)
 		{
+			CreateDynamicParameters();
 		}
+
+        //public override RuntimeDefinedParameterDictionary GetItemDynamicParameters
+        //{
+        //    get
+        //    {
+        //        return m_params;
+        //    }
+        //}
 
 		public override string ChildName
 		{
@@ -42,28 +53,42 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
         public override PSObject GetPSObject()
         {
-            PSObject output = new PSObject(NativeObject);            
- 
-            foreach (SPField field in NativeObject.Fields)
-            {
-                string name = "@" + field.Title;
-                if (output.Properties.Match(name) == null)
-                {
-                    PSNoteProperty property = new PSNoteProperty(name, NativeObject[field.Title]);
-                    output.Properties.Add(property);
-                }
-                else
-                {
-                    Provider.WriteDebug("property " + name + " already exists.");
-                }
-            }
+            PSObject output;
 
-            return output;
+			if (Provider.RuntimeDynamicParameters["ListItem"].IsSet)
+			{
+				// Native SPListItem
+				output = new PSObject(NativeObject);
+			}
+			else
+			{
+				// PSCustomObject
+				output = new PSObject();
+
+				foreach (SPField field in NativeObject.Fields)
+				{
+					string name = field.Title;
+					PSNoteProperty property = new PSNoteProperty(name, NativeObject[name]);
+					output.Properties.Add(property);
+				}
+
+			    PSNoteProperty nativeItem = new PSNoteProperty("_ListItem", NativeObject);
+			}
+
+        	return output;
         }
 
 		public override StoreItemOptions ItemOptions
 		{
 			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
+		}
+
+		private void CreateDynamicParameters()
+		{
+			// allow override of default return object from PSCustomObject to SPListItem
+			DynamicParameterBuilder builder = new DynamicParameterBuilder();
+			builder.AddSwitchParam("ListItem");
+			m_params = builder.GetDictionary();
 		}
 	}
 }

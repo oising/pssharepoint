@@ -25,11 +25,6 @@ namespace Nivot.PowerShell.SharePoint
 	[RunInstaller(true)]
 	public class SharePointPSSnapIn : PSSnapIn
 	{
-		public SharePointPSSnapIn()
-			: base()
-		{
-		}
-
 		public override string Name
 		{
 			get { return "Nivot.PowerShell.SharePoint"; }
@@ -44,5 +39,21 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			get { return "Exposes a Windows SharePoint Services SiteCollection to Windows PowerShell 1.0"; }
 		}
+
+        public override string[] Formats
+        {
+            get
+            {
+                return base.Formats;
+            }
+        }
+
+        public override string[] Types
+        {
+            get
+            {
+                return base.Types;
+            }
+        }
 	}
 }
