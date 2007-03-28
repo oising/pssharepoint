@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Management.Automation;
 using System.Text;
 using Microsoft.SharePoint;
 
@@ -23,11 +24,40 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal class SharePointList : StoreItem<SPList>
 	{
+        private RuntimeDefinedParameterDictionary m_params;
+
 		public SharePointList(SPList list)
 			: base(list)
 		{
 			RegisterRemover<SPListItem>(RemoveListItem);
+            CreateDynamicParameters();
 		}
+
+        private void CreateDynamicParameters()
+        {
+            // allow override of default return object from PSCustomObject to SPListItem
+            DynamicParameterBuilder builder = new DynamicParameterBuilder();
+            builder.AddSwitchParam("ListItem");
+            m_params = builder.GetDictionary();
+        }
+
+		public override RuntimeDefinedParameterDictionary GetChildItemsDynamicParameters
+		{
+			get
+			{
+			    Provider.WriteVerbose(GetType().Name + ":GetChildItemsDynamicParameters");
+				return m_params;
+			}
+		}
+
+        public override RuntimeDefinedParameterDictionary GetItemDynamicParameters
+        {
+            get
+            {
+                Provider.WriteVerbose(GetType().Name + ":GetItemDynamicParameters");
+                return m_params;
+            }
+        }
 
 		public override IEnumerator<IStoreItem> GetEnumerator()
 		{
