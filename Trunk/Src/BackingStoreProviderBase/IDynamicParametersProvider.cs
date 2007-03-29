@@ -8,19 +8,10 @@ namespace Nivot.PowerShell
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IDynamicParametersProvider
+	internal interface IDynamicParametersProvider
 	{
-		RuntimeDefinedParameterDictionary GetItemDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary SetItemDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary ClearItemDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary ItemExistsDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary InvokeItemDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary GetChildItemsDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary GetChildNamesDynamicParameters { get; }	
-		RuntimeDefinedParameterDictionary NewItemDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary MoveItemDynamicParameters { get; }
-		RuntimeDefinedParameterDictionary CopyItemDynamicParameters { get; }
-        RuntimeDefinedParameterDictionary GetContentReaderDynamicParameters { get; }
-        RuntimeDefinedParameterDictionary GetContentWriterDynamicParameters { get; }
+		RuntimeDefinedParameterDictionary GetDynamicParameters(StoreProviderMethods method);
+		void SetDynamicParameters(StoreProviderMethods method, RuntimeDefinedParameterDictionary parameters);
+		void ClearDynamicParameters(StoreProviderMethods method);
 	}
 }

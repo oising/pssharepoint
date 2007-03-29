@@ -15,5 +15,13 @@ namespace Nivot.PowerShell
             
             return record;
         }
+
+		internal static ErrorRecord NotImplemented(string message)
+		{
+			NotImplementedException exception = new NotImplementedException(message);			
+			ErrorRecord record = new ErrorRecord(exception, "NotImplemented", ErrorCategory.NotImplemented, null);
+
+			return record;
+		}
     }
 }

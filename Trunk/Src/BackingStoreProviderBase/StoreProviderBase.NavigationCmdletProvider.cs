@@ -49,6 +49,29 @@ namespace Nivot.PowerShell
 			}
 		}
 
+		protected override void MoveItem(string path, string destination)
+		{
+			WriteDebug(String.Format("MoveItem: {0} -> {1}", path, destination));
+
+			using (EnterContext())
+			{
+				if (ShouldProcess(destination, "Move"))
+				{
+					// TODO: implement FastMove overrides
+
+					CopyItem(path, destination, false);
+					if (ItemExists(destination))
+					{
+						RemoveItem(path, false);
+					}
+					else
+					{
+						WriteWarning("Aborting removal of source item: unable to verify item was copied to " + destination);
+					}
+				}
+			}
+		}
+
 		#endregion
 	}
 }

@@ -25,7 +25,7 @@ namespace Nivot.PowerShell
 	/// <summary>
 	/// Interface for backing-store items; IEnumerable for child items
 	/// </summary>
-	public interface IStoreItem : IEnumerable<IStoreItem>
+	public interface IStoreItem : IEnumerable<IStoreItem>, IDisposable
 	{
 		/// <summary>
 		/// Try to add a store item to this item

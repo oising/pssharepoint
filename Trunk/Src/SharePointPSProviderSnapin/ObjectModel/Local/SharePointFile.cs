@@ -11,11 +11,13 @@ using Nivot.PowerShell.SharePoint.ObjectModel.Helper;
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	class SharePointFile : StoreItem<SPFile>, IContentReader
-	{
+	{       
 	    private IContentReader m_reader = null;
 
 		public SharePointFile(SPFile file) : base(file)
-		{			
+		{
+            StoreProviderMethods methods = StoreProviderMethods.GetItem | StoreProviderMethods.GetChildItems;
+            RegisterSwitchParameter(methods, SharePointParams.ListItem);
 		}
 
 		public override string ChildName
@@ -70,6 +72,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             if (m_reader != null)
             {
                 m_reader.Dispose();
+                m_reader = null;
             }
             base.Dispose(disposing);
         }
