@@ -74,7 +74,21 @@ namespace Nivot.PowerShell
 		/// </remarks>
 		public IContentReader GetContentReader(string path)
 		{
-			return null;
+		    WriteDebug("GetContentReader: " + path);
+		    path = NormalizePath(path);
+
+            using (EnterContext())
+            {
+                IStoreItem item = StoreObjectModel.GetItem(path);              
+                
+                IContentReader reader = item as IContentReader;
+                if (reader == null)
+                {
+                    WriteWarning("Cannot Get-Content againsts items of type " + item.GetType().Name);
+                }
+
+                return reader;                
+            }
 		} // GetContentReader
 
 		/// <summary>

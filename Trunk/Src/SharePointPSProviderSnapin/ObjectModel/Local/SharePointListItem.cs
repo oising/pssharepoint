@@ -24,22 +24,13 @@ using Microsoft.SharePoint;
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal class SharePointListItem : StoreItem<SPListItem>
-	{
-		private RuntimeDefinedParameterDictionary m_params;
-
+	{        
 		public SharePointListItem(SPListItem listItem)
 			: base(listItem)
 		{
-			CreateDynamicParameters();
+		    StoreProviderMethods methods = StoreProviderMethods.GetItem | StoreProviderMethods.GetChildItems;
+            RegisterSwitchParameter(methods, SharePointParams.ListItem);
 		}
-
-        public override RuntimeDefinedParameterDictionary GetItemDynamicParameters
-        {
-            get
-            {
-                return m_params;
-            }
-        }
 
 		public override string ChildName
 		{
@@ -55,7 +46,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
         {
             PSObject output;
 
-			if (Provider.RuntimeDynamicParameters["ListItem"].IsSet)
+            bool? returnListItems = IsSwitchParameterSet(SharePointParams.ListItem);
+
+            if (returnListItems == true)
 			{
 				// Native SPListItem
 				output = new PSObject(NativeObject);
@@ -84,6 +77,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 			    //PSNoteProperty nativeItem = new PSNoteProperty("_ListItem", NativeObject);
 			    //output.Properties.Add(nativeItem);
+
+                // no longer need native object
+                Dispose(true);
 			}
 
         	return output;
@@ -92,14 +88,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public override StoreItemOptions ItemOptions
 		{
 			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
-		}
-
-		private void CreateDynamicParameters()
-		{
-			// allow override of default return object from PSCustomObject to SPListItem
-			DynamicParameterBuilder builder = new DynamicParameterBuilder();
-			builder.AddSwitchParam("ListItem");
-			m_params = builder.GetDictionary();
 		}
 	}
 }

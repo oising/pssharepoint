@@ -31,8 +31,7 @@ namespace Nivot.PowerShell
 	/// <summary>
 	/// 
 	/// </summary>
-	public abstract partial class StoreProviderBase : NavigationCmdletProvider
-		/* IPropertyCmdletProvider, IContentCmdletProvider, IDynamicPropertyCmdletProvider */
+	public abstract partial class StoreProviderBase : NavigationCmdletProvider		
 	{
         /// <summary>
         /// 
@@ -53,7 +52,7 @@ namespace Nivot.PowerShell
 	        get
 	        {
 	            object parameters = this.DynamicParameters;
-	            Debug.Assert(parameters != null, "DynamicParameters != null");
+	            WriteDebug("DynamicParameters is null? " + (parameters == null));
 
                 return parameters as RuntimeDefinedParameterDictionary;
 	        }
@@ -71,6 +70,49 @@ namespace Nivot.PowerShell
 		protected StoreProviderContext.Cookie EnterContext()
 		{
 			return StoreProviderContext.Enter(this);
+		}
+
+		private RuntimeDefinedParameterDictionary GetDynamicParametersForMethod(StoreProviderMethods method, string path, params object[] context)
+		{
+			WriteDebug(String.Format("GetDynamicParametersForMethod {0} for path {1}", method, path));
+
+            RuntimeDefinedParameterDictionary parameters = null;
+
+            using (EnterContext())
+            {
+                // new-item is special-cased
+				if (method == StoreProviderMethods.NewItem)
+				{                    
+					// dynamic properties are defined on the parent of the new item
+					// since properties are normally provided by the context object
+					// of the target path (which doesn't exist yet).
+					path = GetParentPath(path, null);
+				}
+
+				// read dynamic property information from the context object
+                using (IStoreItem item = StoreObjectModel.GetItem(path))
+                {
+                    IDynamicParametersProvider parameterProvider = item as IDynamicParametersProvider;
+                    if (parameterProvider != null)
+                    {
+                        int count = 0;
+
+                        parameters = parameterProvider.GetDynamicParameters(method);
+                        if (parameters != null)
+                        {
+                            count = parameters.Count;
+                        }
+
+                        WriteDebug(String.Format("{0} assigned {1} dynamic parameter(s).", method, count));
+                    } else
+                    {
+                        WriteDebug(
+                            String.Format("{0} does not implement IDynamicParametersProvider.", item.GetType().Name));
+                    }
+                }
+            }
+
+            return parameters;
 		}
 
 		#region Helper Methods

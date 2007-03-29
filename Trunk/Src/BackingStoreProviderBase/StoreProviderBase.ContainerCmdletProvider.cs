@@ -92,18 +92,8 @@ namespace Nivot.PowerShell
         {
             WriteDebug("GetChildItemsDynamicParameters: " + path);
             path = NormalizePath(path);
-
-            using (EnterContext())
-            {
-                // read dynamic property information from the context object
-                IDynamicParametersProvider item = StoreObjectModel.GetItem(path) as IDynamicParametersProvider;
-                if (item != null)
-                {
-                    WriteDebug("GetChildItems assigned dynamic parameters.");
-                    return item.GetChildItemsDynamicParameters;
-                }
-                return null;                
-            }
+			
+			return GetDynamicParametersForMethod(StoreProviderMethods.GetChildItems, path, recurse);
         }
 
 		// FIXME: ignoring returnAllContainers
@@ -141,6 +131,14 @@ namespace Nivot.PowerShell
 			}
 		}
 
+		protected override object GetChildNamesDynamicParameters(string path)
+		{
+			WriteDebug("GetChildNamesDynamicParameters: " + path);
+			path = NormalizePath(path);
+
+			return GetDynamicParametersForMethod(StoreProviderMethods.GetChildNames, path);
+		}
+
 		protected override bool HasChildItems(string path)
 		{
 		    WriteDebug("HasChildItems: " + path);
@@ -155,48 +153,30 @@ namespace Nivot.PowerShell
 		protected override void NewItem(string path, string type, object newItem)
 		{
 			ThrowTerminatingError(
-				new ErrorRecord(
-					new NotImplementedException(path),
-					"StoreBaseProvider.NewItem", ErrorCategory.NotImplemented, null)
-				);
+				StoreProviderErrorRecord.NotImplemented("New-Item"));			
 		}
 
-		protected override void MoveItem(string path, string destination)
+		protected override object NewItemDynamicParameters(string path, string itemTypeName, object newItemValue)
 		{
-		    WriteDebug(String.Format("MoveItem: {0} -> {1}", path, destination));
+			WriteDebug(String.Format("NewItemDynamicParameters: new {0} in {1} ; value ({2})", path, itemTypeName, newItemValue));
+			path = NormalizePath(path);
 
-			using (EnterContext())
-			{				
-				if (ShouldProcess(destination, "Move"))
-				{
-                    // TODO: implement FastMove overrides
-
-					CopyItem(path, destination, false);
-					if (ItemExists(destination))
-					{
-						RemoveItem(path, false);
-					}
-                    else
-					{
-					    WriteWarning("Aborting removal of source item: unable to verify item was copied to " + destination);
-					}
-				}
-			}
+			return GetDynamicParametersForMethod(StoreProviderMethods.NewItem, path, itemTypeName, newItemValue);
 		}
 
 		protected override void CopyItem(string path, string copyPath, bool recurse)
 		{
-            WriteDebug(String.Format("CopyItem: {0} -> {1} (recurse: {2})", path, copyPath, recurse));
+			WriteDebug(String.Format("CopyItem: {0} -> {1} (recurse: {2})", path, copyPath, recurse));
 
 			using (EnterContext())
 			{
-                if (recurse)
-                {
-                    WriteWarning("parameter -recurse is not implemented for copy operations.");
-                    return;
-                }
+				if (recurse)
+				{
+					WriteWarning("parameter -recurse is not implemented for copy operations.");
+					return;
+				}
 
-                path = NormalizePath(path);
+				path = NormalizePath(path);
 				copyPath = NormalizePath(copyPath);
 
 				IStoreItem source = StoreObjectModel.GetItem(path);
@@ -211,7 +191,7 @@ namespace Nivot.PowerShell
 
 				if (ShouldProcess(copyPath, "Copy"))
 				{
-                    // TODO: implement FastCopy override
+					// TODO: implement FastCopy override
 
 					try
 					{
@@ -221,10 +201,10 @@ namespace Nivot.PowerShell
 						if (!success)
 						{
 							// non-terminating error, continue with next record
-							WriteError(new ErrorRecord(new NotImplementedException(
-							                           	String.Format("Copy operation from type {0} to type {1} is undefined.",
-							                           	              sourceTypeName, destinationTypeName)), "StoreBaseProvider.CopyItem",
-							                           ErrorCategory.NotImplemented, null));
+							WriteError(
+								StoreProviderErrorRecord.NotImplemented(
+									String.Format("Copy operation from type {0} to type {1} is undefined.",
+										sourceTypeName, destinationTypeName)));
 						}
 						else
 						{
@@ -275,8 +255,7 @@ namespace Nivot.PowerShell
 						                           parentTypeName, childTypeName));
 
 						// non-terminating error, continue with next record
-						WriteError(new ErrorRecord(new NotImplementedException("Remove-Item"),
-						                           "StoreBaseProvider.RemoveItem", ErrorCategory.NotImplemented, null));
+						WriteError(StoreProviderErrorRecord.NotImplemented("Remove-Item"));
 					}
 					else
 					{
@@ -284,7 +263,7 @@ namespace Nivot.PowerShell
 						WriteVerbose("Remove complete.");
 					}
 				}
-			}
+			}			
 		}
 
 		#endregion

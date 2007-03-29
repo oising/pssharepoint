@@ -8,11 +8,11 @@ namespace Nivot.PowerShell
 {
     public class DynamicParameterBuilder
     {
-        private readonly RuntimeDefinedParameterDictionary _dict;
+        private readonly RuntimeDefinedParameterDictionary m_dictionary;
 
         public DynamicParameterBuilder()
         {
-            _dict = new RuntimeDefinedParameterDictionary();
+            m_dictionary = new RuntimeDefinedParameterDictionary();
         }
 
         public void AddSwitchParam(string name)
@@ -51,12 +51,12 @@ namespace Nivot.PowerShell
             rdp.ParameterType = typeof(T);
             rdp.Attributes.Add(pa);
 
-            _dict.Add(name, rdp);
+            m_dictionary.Add(name, rdp);
         }
 
         public RuntimeDefinedParameterDictionary GetDictionary()
         {
-            return _dict;
+            return m_dictionary;
         }
     }
 }

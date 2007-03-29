@@ -29,11 +29,12 @@ namespace Nivot.PowerShell
 	/// A wrapper class for facilitating manipulation and enumeration of a native backing-store object and its children.
 	/// </summary>
     /// <typeparam name="TNative">The type of the backing-store object this wrapper exposes.</typeparam>
-    public abstract partial class StoreItem<TNative> : IStoreItem, IDisposable where TNative : class
+    public abstract class StoreItem<TNative> : IStoreItem, IDynamicParametersProvider
 	{
         private TNative m_storeObject;
-
-        /// <summary>
+		private DynamicParameterDictionary m_parameterDictionary;
+        
+		/// <summary>
         /// Has this wrapper (and the underlying backing-store object) been disposed?
         /// </summary>
         protected bool IsDisposed = false;
@@ -55,6 +56,7 @@ namespace Nivot.PowerShell
         protected StoreItem(TNative storeObject)
         {
             m_storeObject = storeObject;
+			m_parameterDictionary = new DynamicParameterDictionary();
 
             AddActions = new Dictionary<Type, Delegate>();
             RemoveActions = new Dictionary<Type, Delegate>();
@@ -63,20 +65,83 @@ namespace Nivot.PowerShell
         }
 
 		/// <summary>
-		/// Gets the native backing-store object this wrapper exposes.
+		/// 
 		/// </summary>
-        protected virtual TNative NativeObject
+		/// <param name="methods"></param>
+		/// <param name="name"></param>
+		protected void RegisterSwitchParameter(StoreProviderMethods methods, string name)
 		{
-			get
-			{
-				EnsureNotDisposed();
-				return m_storeObject;
-			}
+            m_parameterDictionary.AddSwitchParam(methods, name);
+		}
 
-            private set
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		protected bool? IsSwitchParameterSet(string name)
+		{
+            bool? result = null;
+
+            if (Provider.RuntimeDynamicParameters != null)
             {
-                m_storeObject = value;
+                RuntimeDefinedParameter parameter = Provider.RuntimeDynamicParameters[name];                
+                result = parameter.IsSet;
             }
+            else
+            {
+                Provider.WriteDebug(String.Format("The SwitchParameter {0} on {1} has not been defined!", name, GetType().Name));
+            }
+
+		    return result;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TParam"></typeparam>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		protected TParam GetParameterValue<TParam>(string name)
+		{
+		    TParam value = default(TParam);
+
+            if (Provider.RuntimeDynamicParameters != null)
+            {
+                RuntimeDefinedParameter parameter = Provider.RuntimeDynamicParameters[name];                                
+                value = (TParam) parameter.Value;
+            }
+            else
+            {
+                Provider.WriteDebug(String.Format("The Parameter {0} on {1} has not been defined!", name, GetType().Name));
+            }
+
+		    return value;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TParam"></typeparam>
+		/// <param name="methods"></param>
+		/// <param name="name"></param>
+		/// <param name="mandatory"></param>
+		protected void RegisterParameter<TParam>(StoreProviderMethods methods, string name, bool mandatory)
+		{
+			m_parameterDictionary.AddParam<TParam>(methods, name, mandatory, null);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TParam"></typeparam>
+		/// <param name="methods"></param>
+		/// <param name="name"></param>
+		/// <param name="mandatory"></param>
+		/// <param name="parameterSet"></param>
+		protected void RegisterParameter<TParam>(StoreProviderMethods methods, string name, bool mandatory, string parameterSet)
+		{
+			m_parameterDictionary.AddParam<TParam>(methods, name, mandatory, parameterSet);
 		}
 
         /// <summary>
@@ -89,6 +154,23 @@ namespace Nivot.PowerShell
             return new PSObject(NativeObject);
         }
 
+		/// <summary>
+		/// Gets the native backing-store object this wrapper exposes.
+		/// </summary>
+		protected virtual TNative NativeObject
+		{
+			get
+			{
+				EnsureNotDisposed();
+				return m_storeObject;
+			}
+
+			private set
+			{
+				m_storeObject = value;
+			}
+		}
+
         /// <summary>
         /// Gets the current StoreProviderBase derived provider that is utilising this object.
         /// <remarks>Use this member to invoke WriteVerbose, WriteDebug and other instance methods on the active provider instance in a thread-safe manner.</remarks>
@@ -96,13 +178,29 @@ namespace Nivot.PowerShell
         protected static StoreProviderBase Provider
         {
             get
-            {
-                StoreProviderBase provider = StoreProviderContext.Current;
-                Debug.Assert(provider != null, "StoreProviderContext.Current != null");
-                
-                return provider;
+            {                
+                return StoreProviderContext.Current;
             }
         }
+
+        #region IDynamicParametersProvider Members
+
+        RuntimeDefinedParameterDictionary IDynamicParametersProvider.GetDynamicParameters(StoreProviderMethods method)
+        {
+            return m_parameterDictionary.GetDictionary(method);
+        }
+
+        void IDynamicParametersProvider.SetDynamicParameters(StoreProviderMethods method, RuntimeDefinedParameterDictionary parameters)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        void IDynamicParametersProvider.ClearDynamicParameters(StoreProviderMethods method)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion
 
 		#region Indexer (ChildName)
 
@@ -125,6 +223,7 @@ namespace Nivot.PowerShell
 					{
 						return storeItem;
 					}
+                    storeItem.Dispose();
 				}
 				return null;
 			}
@@ -134,13 +233,13 @@ namespace Nivot.PowerShell
 
 		#region Protected Members
 
-        protected void RegisterAdder<TSubject>(Action<TSubject> action) where TSubject : class
+        protected void RegisterAdder<TSubject>(Action<TSubject> action)
 		{
 			EnsureNotDisposed();
             AddActions.Add(typeof(TSubject), action);
 		}
 
-        protected void RegisterRemover<TSubject>(Action<TSubject> action) where TSubject : class
+        protected void RegisterRemover<TSubject>(Action<TSubject> action)
 		{
 			EnsureNotDisposed();
             RemoveActions.Add(typeof(TSubject), action);
@@ -285,17 +384,22 @@ namespace Nivot.PowerShell
 		{
             Debug.WriteLine(String.Format("Dispose({0})", disposing), GetType().Name);
 
+            // not already called?
 			if (!IsDisposed)
 			{
-				// not already called?
+				// explicit call?
 				if (disposing)
 				{
+				    Provider.WriteDebug(GetType().Name + ".Dispose(true)");
+
                     // explicit dispose called: safe to assume NativeObject has not
 					// been disposed through finalization
 					if (NativeObject is IDisposable)
 					{
 						((IDisposable)NativeObject).Dispose();
-                        NativeObject = null; // hence reference-type restraint
+					    
+                        // free the native object (null for ref types, default value for structs)
+                        NativeObject = default(TNative);
 					}
 				}
 				IsDisposed = true;
@@ -326,13 +430,13 @@ namespace Nivot.PowerShell
 			Dispose(false);
 		}
 
-        /// <summary>
-        /// TODO: allow user-defined external scriptblock actions ;-) 
-        /// </summary>
-        /// <typeparam name="TSubject"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="subject"></param>
-        public delegate void StoreItemAction<TSubject>(TNative target, TSubject subject) where TSubject : class;
+	    /// <summary>
+	    /// TODO: allow user-defined external scriptblock actions ;-) 
+	    /// </summary>
+	    /// <typeparam name="TSubject"></typeparam>
+	    /// <param name="target"></param>
+	    /// <param name="subject"></param>
+	    public delegate void StoreItemAction<TSubject>(TNative target, TSubject subject);
 
         /// <summary>
         /// 
@@ -343,5 +447,5 @@ namespace Nivot.PowerShell
         {
             return storeItem.NativeObject;
         }
-	}
+    }
 }

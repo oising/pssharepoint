@@ -77,18 +77,8 @@ namespace Nivot.PowerShell
         {
             WriteDebug("GetItemDynamicParameters: " + path);
             path = NormalizePath(path);
-            
-            using (EnterContext())
-            {
-                IDynamicParametersProvider item = StoreObjectModel.GetItem(path) as IDynamicParametersProvider;
-                if (item != null)
-                {
-                    WriteDebug("GetItem assigned dynamic parameters.");
-                    return item.GetItemDynamicParameters;
-                }
 
-                return null;
-            }
+			return GetDynamicParametersForMethod(StoreProviderMethods.GetItem, path);
         }
 
         protected override bool ItemExists(string path)
@@ -117,16 +107,7 @@ namespace Nivot.PowerShell
             WriteDebug("ItemExistsDynamicParameters: " + path);
             path = NormalizePath(path);
 
-            using (EnterContext())
-            {
-                IDynamicParametersProvider item = StoreObjectModel.GetItem(path) as IDynamicParametersProvider;
-                if (item != null)
-                {
-                    WriteDebug("ItemExists assigned dynamic parameters.");
-                    return item.ItemExistsDynamicParameters;
-                }
-                return null;
-            }
+			return GetDynamicParametersForMethod(StoreProviderMethods.ItemExists, path);
         }
 
         protected override void InvokeDefaultAction(string path)
@@ -146,16 +127,7 @@ namespace Nivot.PowerShell
             WriteDebug("InvokeItemDynamicParameters: " + path);
             path = NormalizePath(path);
 
-            using (EnterContext())
-            {
-                IDynamicParametersProvider item = StoreObjectModel.GetItem(path) as IDynamicParametersProvider;
-                if (item != null)
-                {
-                    WriteDebug("InvokeDefaultAction assigned dynamic parameters.");
-                    return item.InvokeItemDynamicParameters;
-                }
-                return null;
-            }
+			return GetDynamicParametersForMethod(StoreProviderMethods.InvokeDefaultAction, path);
         }
 
         #endregion

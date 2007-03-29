@@ -18,6 +18,7 @@
 // changes: removed generic provider type parameter (redundant here)
 
 using System;
+using System.Diagnostics;
 using System.Management.Automation.Provider;
 
 namespace Nivot.PowerShell
@@ -29,7 +30,12 @@ namespace Nivot.PowerShell
 
         public static StoreProviderBase Current
         {
-            get { return _current; }
+            get {
+                Debug.Assert(_current != null,
+                             "Current provider context is null! did you forget to call EnterContext() in the calling method?");
+
+                return _current;
+            }
         }
 
         public static Cookie Enter(StoreProviderBase provider)

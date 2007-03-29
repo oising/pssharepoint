@@ -61,6 +61,7 @@
     <Compile Include="Commands\WriteSPFileCommand.cs" />
     <Compile Include="ObjectModel\Helper\SPFileReader.cs" />
     <Compile Include="ObjectModel\ISharePointObject.cs" />
+    <Compile Include="ObjectModel\Local\SharePointPictureLibrary.cs" />
     <Compile Include="ObjectModel\Local\SharePointDocumentLibrary.cs" />
     <Compile Include="ObjectModel\Local\SharePointFile.cs" />
     <Compile Include="ObjectModel\Local\SharePointFiles.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="ObjectModel\Remote\SharePointObjectProxies.cs" />
     <Compile Include="ObjectModel\SharePointConnectionInfo.cs" />
     <Compile Include="ObjectModel\Helper\SharePointUtils.cs" />
+    <Compile Include="ObjectModel\SharePointDynamicParameters.cs" />
     <Compile Include="SharePointErrorRecord.cs" />
     <Compile Include="SharePointProviderInfo.cs" />
     <Compile Include="SharePointProvider.cs" />

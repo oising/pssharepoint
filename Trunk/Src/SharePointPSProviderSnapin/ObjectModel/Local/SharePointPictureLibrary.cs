@@ -8,9 +8,10 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointDocumentLibrary : StoreItem<SPDocumentLibrary>
+	internal class SharePointPictureLibrary : StoreItem<SPPictureLibrary>
 	{
-		public SharePointDocumentLibrary(SPDocumentLibrary docLib) : base(docLib)
+        public SharePointPictureLibrary(SPPictureLibrary picLib)
+            : base(picLib)
 		{
 		    RegisterRemover<SPFile>(RemoveFile);
 		    RegisterRemover<SPListItem>(RemoveListItem);
