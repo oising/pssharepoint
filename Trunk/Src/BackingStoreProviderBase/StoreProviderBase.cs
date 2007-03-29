@@ -52,7 +52,7 @@ namespace Nivot.PowerShell
 	        get
 	        {
 	            object parameters = this.DynamicParameters;
-	            WriteDebug("DynamicParameters is null? " + (parameters == null));
+	            WriteDebug("DynamicParameters null: " + (parameters == null));
 
                 return parameters as RuntimeDefinedParameterDictionary;
 	        }
@@ -102,9 +102,9 @@ namespace Nivot.PowerShell
                         {
                             count = parameters.Count;
                         }
-
                         WriteDebug(String.Format("{0} assigned {1} dynamic parameter(s).", method, count));
-                    } else
+                    }
+					else
                     {
                         WriteDebug(
                             String.Format("{0} does not implement IDynamicParametersProvider.", item.GetType().Name));

@@ -56,6 +56,7 @@
     <Compile Include="Commands\ExportListItemCommand.cs" />
     <Compile Include="Commands\GetSPVirtualServerCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
+    <Compile Include="Commands\MountSPSiteCommand.cs" />
     <Compile Include="Commands\NativeMethods.cs" />
     <Compile Include="Commands\ReadSPFileCommand.cs" />
     <Compile Include="Commands\WriteSPFileCommand.cs" />

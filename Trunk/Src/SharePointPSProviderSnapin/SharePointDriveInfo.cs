@@ -45,6 +45,7 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			get
 			{
+				EnsureNotDisposed();
 				return m_sharePointObjectModel;
 			}
 		}
@@ -56,6 +57,7 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			get
 			{
+				EnsureNotDisposed();
 				return m_virtualServer;
 			}
 		}
@@ -67,6 +69,7 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			get
 			{
+				EnsureNotDisposed();
 				return m_sharePointObjectModel.SharePointVersion;
 			}
 		}
@@ -78,11 +81,20 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			get
 			{
+				EnsureNotDisposed();
 				return m_isRemote;
 			}
 		}
 
 		#region IDisposable Members
+
+		private void EnsureNotDisposed()
+		{
+			if (IsDisposed)
+			{
+				throw new ObjectDisposedException("PSDriveInfo " + this.Name);
+			}
+		}
 
 		protected virtual void Dispose(bool disposing)
 		{
@@ -93,6 +105,7 @@ namespace Nivot.PowerShell.SharePoint
 					if (m_sharePointObjectModel is IDisposable)
 					{
 						((IDisposable) m_sharePointObjectModel).Dispose();
+						m_sharePointObjectModel = null;
 					}
 					IsDisposed = true;
 				}
