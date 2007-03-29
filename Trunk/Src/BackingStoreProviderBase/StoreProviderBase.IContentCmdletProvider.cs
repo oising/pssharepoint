@@ -79,8 +79,9 @@ namespace Nivot.PowerShell
 
             using (EnterContext())
             {
-                IStoreItem item = StoreObjectModel.GetItem(path);              
-                
+				// note: reader will dispose item
+                IStoreItem item = StoreObjectModel.GetItem(path); 
+               
                 IContentReader reader = item as IContentReader;
                 if (reader == null)
                 {

@@ -26,21 +26,22 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
+	internal sealed class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
 	{
-		private SPSite m_site;	// FIXME: gcroot!
-
+		private bool m_isDisposed = false;
+		private SPSite m_site;	// FIXME: gcroot?
+		
 		internal LocalSharePointObjectModel(Uri siteCollectionUrl)
 		{			
 			m_site = new SPSite(siteCollectionUrl.ToString());
 
 			try
 			{
-				// Attempt to open spweb: this will trigger an
+				// Attempt to open a web: this will trigger an
 				// error if the url is not a valid sharepoint site.
-				using (SPWeb rootWeb = m_site.OpenWeb())
+				using (SPWeb web = m_site.OpenWeb())
 				{
-					Provider.WriteVerbose("OpenWeb() succeeded: got " + rootWeb.Name);
+					Provider.WriteVerbose("OpenWeb() succeeded: got " + web.Name);
 				}
 			}
 			catch
@@ -59,6 +60,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get
 			{
+				EnsureNotDisposed();
 				return m_site;
 			}
 		}
@@ -73,6 +75,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 		public override IStoreItem GetItem(string path)
 		{
+			EnsureNotDisposed();
 		    Debug.Assert((path.IndexOf("http:") == -1),
 		                 String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
 
@@ -111,12 +114,21 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
 		#region IDisposable Members
 
+		private void EnsureNotDisposed()
+		{
+			if (m_isDisposed)
+			{
+				throw new ObjectDisposedException("LocalSharePointObjectModel");
+			}
+		}
+
 		public void Dispose()
 		{
 			if (m_site != null)
 			{
 				m_site.Dispose();
 				m_site = null;
+				m_isDisposed = true;
 			}
 		}
 

@@ -42,10 +42,10 @@ namespace Nivot.PowerShell
 
 			using (EnterContext())
 			{
-				IStoreItem item = StoreObjectModel.GetItem(path); // TODO: remove
-				Debug.Assert(item != null); // FIXME: redundant?
-
-				return item.IsContainer;
+				using (IStoreItem item = StoreObjectModel.GetItem(path))
+				{
+					return item.IsContainer;
+				}
 			}
 		}
 

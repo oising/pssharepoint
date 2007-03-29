@@ -84,52 +84,51 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			Provider.WriteVerbose("SharePointObjectModel::HasChildItems called for path " + path);
 
-			IStoreItem item = GetItem(path);
-			Debug.Assert(item != null, "item != null");
-
-			// FIXME: redundant maybe?
-			if (item.IsContainer)
+			using (IStoreItem item = GetItem(path))
 			{
-				// FIXME: this is a bit hackish
-				foreach (IStoreItem childItem in item)
+				// slight optimization
+				if (item.IsContainer)
 				{
-					return true;
+					foreach (IStoreItem childItem in item)
+					{
+						using (childItem)
+						{
+							return true;
+						}
+					}
 				}
+				return false;
 			}
-			return false;
 		}
 
 		public virtual bool ItemExists(string path)
 		{
-			bool itemExists = (GetItem(path) != null);
-			Provider.WriteVerbose("SharePointObjectModel::ItemExists returning " + itemExists);
+			bool itemExists;
+
+			using (IStoreItem item = GetItem(path))
+			{
+				itemExists = (item != null);				
+			}
 
 			return itemExists;
 		}
 
 		public virtual Collection<IStoreItem> GetChildItems(string path)
 		{
-			IStoreItem parentItem = GetItem(path);
-			Debug.Assert(parentItem != null, "parentItem != null");
+			using (IStoreItem parentItem = GetItem(path))
+			{				
+				Collection<IStoreItem> childItems = new Collection<IStoreItem>();
 
-			Collection<IStoreItem> childItems = new Collection<IStoreItem>();
-
-			foreach (IStoreItem childItem in parentItem)
-			{
-                if (Provider.Stopping)
-                {
-                    break;
-                }
-				childItems.Add(childItem);
-			}
-
-			return childItems;
-		}		
-
-		public virtual void InvokeItem(string path)
-		{
-			IStoreItem item = GetItem(path);
-			item.InvokeItem();
+				foreach (IStoreItem childItem in parentItem)
+				{
+					if (Provider.Stopping)
+					{
+						break;
+					}
+					childItems.Add(childItem);
+				}
+				return childItems;
+			}			
 		}
 
 		public abstract IStoreItem GetItem(string path);

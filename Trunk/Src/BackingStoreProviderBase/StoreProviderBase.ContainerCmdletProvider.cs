@@ -179,44 +179,45 @@ namespace Nivot.PowerShell
 				path = NormalizePath(path);
 				copyPath = NormalizePath(copyPath);
 
-				IStoreItem source = StoreObjectModel.GetItem(path);
-				IStoreItem destination = StoreObjectModel.GetItem(copyPath);
-
-				// FIXME: is this redundant?
-				Debug.Assert((source != null) && (destination != null), "source and/or destination invalid!");
-
-				string sourceTypeName = source.GetType().Name;
-				string destinationTypeName = destination.GetType().Name;
-				WriteVerbose(String.Format("Copying from {0} to {1}", sourceTypeName, destinationTypeName));
-
-				if (ShouldProcess(copyPath, "Copy"))
+				using (IStoreItem source = StoreObjectModel.GetItem(path))
 				{
-					// TODO: implement FastCopy override
-
-					try
+					using (IStoreItem destination = StoreObjectModel.GetItem(copyPath))
 					{
-						// try to copy
-						bool success = destination.AddChildItem(source);
+						// FIXME: is this redundant?
+						Debug.Assert((source != null) && (destination != null), "source and/or destination invalid!");
 
-						if (!success)
-						{
-							// non-terminating error, continue with next record
-							WriteError(
-								StoreProviderErrorRecord.NotImplemented(
-									String.Format("Copy operation from type {0} to type {1} is undefined.",
-										sourceTypeName, destinationTypeName)));
+						string sourceTypeName = source.GetType().Name;
+						string destinationTypeName = destination.GetType().Name;
+						WriteVerbose(String.Format("Copying from {0} to {1}", sourceTypeName, destinationTypeName));
+
+						if (ShouldProcess(copyPath, "Copy"))
+						{							
+							try
+							{
+								// try to copy
+								bool success = destination.AddChildItem(source);
+
+								if (!success)
+								{
+									// non-terminating error, continue with next record
+									WriteError(
+										StoreProviderErrorRecord.NotImplemented(
+											String.Format("Copy operation from type {0} to type {1} is undefined.",
+											              sourceTypeName, destinationTypeName)));
+								}
+								else
+								{
+									// success
+									WriteVerbose("Copy successful.");
+								}
+							}
+							catch (BackingStoreException ex)
+							{
+								// native application failure
+								WriteVerbose("Exception: " + ex.ToString());
+								ThrowTerminatingError(new ErrorRecord(ex, "StoreError", ErrorCategory.NotSpecified, null));
+							}
 						}
-						else
-						{
-							// success
-							WriteVerbose("Copy successful.");
-						}
-					}
-					catch (BackingStoreException ex)
-					{
-						// native application failure
-						WriteVerbose("Exception: " + ex.ToString());
-						ThrowTerminatingError(new ErrorRecord(ex, "StoreError", ErrorCategory.NotSpecified, null));
 					}
 				}
 			}
@@ -235,32 +236,36 @@ namespace Nivot.PowerShell
                     return;
                 }
 
-				string parentPath = GetParentPath(path, null); // FIXME: assumes PSDriveInfo != null
+				// FIXME: assumes PSDriveInfo != null  (???)
+				string parentPath = GetParentPath(path, null);
 
-				IStoreItem parentItem = StoreObjectModel.GetItem(NormalizePath(parentPath)); // TODO: remove
-				IStoreItem childItem = StoreObjectModel.GetItem(NormalizePath(path)); // TODO: remove
-				Debug.Assert((parentItem != null) && (childItem != null)); // FIXME: redundant/itemexists?
-				
-                string parentTypeName = parentItem.GetType().Name;
-				string childTypeName = childItem.GetType().Name;
-
-				if (ShouldProcess(path, "Remove"))
+				using (IStoreItem parentItem = StoreObjectModel.GetItem(NormalizePath(parentPath)))
 				{
-					bool success = parentItem.RemoveChildItem(childItem);
-
-					if (!success)
+					using (IStoreItem childItem = StoreObjectModel.GetItem(NormalizePath(path)))
 					{
-						// FIXME: should be WriteVerbose maybe?
-						WriteWarning(String.Format("Failed: {0} does not have a Remover for type {1}",
-						                           parentTypeName, childTypeName));
+						Debug.Assert((parentItem != null) && (childItem != null)); // FIXME: redundant/itemexists?
 
-						// non-terminating error, continue with next record
-						WriteError(StoreProviderErrorRecord.NotImplemented("Remove-Item"));
-					}
-					else
-					{
-						// success
-						WriteVerbose("Remove complete.");
+						string parentTypeName = parentItem.GetType().Name;
+						string childTypeName = childItem.GetType().Name;
+
+						if (ShouldProcess(path, "Remove"))
+						{
+							bool success = parentItem.RemoveChildItem(childItem);
+
+							if (!success)
+							{
+								WriteVerbose(String.Format("Failed: {0} does not have a Remover for type {1}",
+									parentTypeName, childTypeName));
+
+								// non-terminating error, continue with next record
+								WriteError(StoreProviderErrorRecord.NotImplemented("Remove-Item"));
+							}
+							else
+							{
+								// success
+								WriteVerbose("Remove complete.");
+							}
+						}
 					}
 				}
 			}			

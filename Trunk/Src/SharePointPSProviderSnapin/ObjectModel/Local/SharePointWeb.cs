@@ -50,6 +50,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             yield return new SharePointUsers(NativeObject.Users);
 
             // default child item for SPWebCollection is SPWeb
+			// note: don't need to use SharePointWebs() wrapper here
             foreach (SPWeb web in NativeObject.Webs)
             {
                 yield return new SharePointWeb(web);

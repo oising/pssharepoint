@@ -90,7 +90,8 @@ namespace Nivot.PowerShell
             }
             else
             {
-                Provider.WriteDebug(String.Format("The SwitchParameter {0} on {1} has not been defined!", name, GetType().Name));
+				// expected when this object is constructed the first time to obtain the parameters
+                Provider.WriteDebug(String.Format("The SwitchParameter {0} on {1} has not been defined in this context.", name, GetType().Name));
             }
 
 		    return result;
@@ -113,7 +114,8 @@ namespace Nivot.PowerShell
             }
             else
             {
-                Provider.WriteDebug(String.Format("The Parameter {0} on {1} has not been defined!", name, GetType().Name));
+				// expected when this object is constructed the first time to obtain the parameters
+                Provider.WriteDebug(String.Format("The Parameter {0} on {1} has not been defined in this context.", name, GetType().Name));
             }
 
 		    return value;

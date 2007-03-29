@@ -43,7 +43,10 @@ namespace Nivot.PowerShell
             WriteDebug("IsValidPath: " + path);
             path = NormalizePath(path);
 
-            return StoreObjectModel.IsValidPath(path);
+			using (EnterContext())
+			{
+				return StoreObjectModel.IsValidPath(path);
+			}
         }
 
         protected override void GetItem(string path)
@@ -56,12 +59,7 @@ namespace Nivot.PowerShell
                 try
                 {
                     IStoreItem item = StoreObjectModel.GetItem(path);
-
-                    // FIXME: redundant? itemexists called first?
-                    Debug.Assert(item != null);
-
                     PSObject output = item.GetPSObject();
-
                     WriteItemObject(output, path, item.IsContainer);
                 }
                 catch (Exception ex)
@@ -86,11 +84,14 @@ namespace Nivot.PowerShell
             WriteDebug("ItemExists: " + path);
             path = NormalizePath(path);
 
-            using (EnterContext())
+			using (EnterContext())
             {
+				bool exists = false;
+
                 try
                 {
-                    return StoreObjectModel.ItemExists(path);
+                    exists = StoreObjectModel.ItemExists(path);
+                	WriteDebug("Exists: " + exists);
                 }
                 catch (Exception ex)
                 {
@@ -98,7 +99,7 @@ namespace Nivot.PowerShell
                         new ErrorRecord(ex, String.Format("ItemExists('{0}')", path),
                                         ErrorCategory.NotSpecified, null));
                 }
-                return false;
+                return exists;
             }
         }
 
@@ -117,8 +118,10 @@ namespace Nivot.PowerShell
 
             using (EnterContext())
             {
-                IStoreItem item = StoreObjectModel.GetItem(path);
-                item.InvokeItem();
+				using (IStoreItem item = StoreObjectModel.GetItem(path))
+				{
+					item.InvokeItem();
+				}
             }
         }
 
