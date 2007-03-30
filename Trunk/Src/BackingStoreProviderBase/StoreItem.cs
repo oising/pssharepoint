@@ -61,7 +61,10 @@ namespace Nivot.PowerShell
             AddActions = new Dictionary<Type, Delegate>();
             RemoveActions = new Dictionary<Type, Delegate>();
 
-            Provider.WriteDebug("Constructing " + GetType().Name);            
+            string name = GetType().Name;           
+            Provider.WriteDebug("Constructing " + name);
+            
+            StoreItemTracker.IncrNewObject(name);
         }
 
 		/// <summary>
@@ -349,6 +352,8 @@ namespace Nivot.PowerShell
 
 		public abstract bool IsContainer { get; }
 
+        // TODO: this should probably be virtual with default of pipe|tabcomplete
+        // as overriding to expose tab-complete only objects is probably less common
 		public abstract StoreItemOptions ItemOptions { get; }
 
 	    public virtual CacheItemPriority CachePriority
@@ -382,17 +387,18 @@ namespace Nivot.PowerShell
 
 		#region IDisposable Members
 
-		public virtual void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
-            Debug.WriteLine(String.Format("Dispose({0})", disposing), GetType().Name);
-
             // not already called?
 			if (!IsDisposed)
 			{
-				// explicit call?
+                string name = GetType().Name;
+
+                // explicit call?
 				if (disposing)
 				{
-				    Provider.WriteDebug(GetType().Name + ".Dispose(true)");
+				    StoreItemTracker.IncrDispose(name);
+				    Debug.WriteLine("Dispose()", name);
 
                     // explicit dispose called: safe to assume NativeObject has not
 					// been disposed through finalization
@@ -400,9 +406,15 @@ namespace Nivot.PowerShell
 					{
 						((IDisposable)NativeObject).Dispose();
 					    
-                        // free the native object (null for ref types, default value for structs)
+                        // clear the native object ref
                         NativeObject = default(TNative);
 					}
+				}
+                else
+				{
+				    // finalizing
+                    StoreItemTracker.IncrFinalize(name);
+				    Debug.WriteLine("Finalize()", name);
 				}
 				IsDisposed = true;
 			}
@@ -427,6 +439,9 @@ namespace Nivot.PowerShell
 			}
 		}
 
+        /// <summary>
+        /// Finalizer
+        /// </summary>
 		~StoreItem()
 		{            
 			Dispose(false);

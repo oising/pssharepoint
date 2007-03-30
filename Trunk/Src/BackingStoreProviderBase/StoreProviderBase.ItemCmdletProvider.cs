@@ -35,6 +35,7 @@ namespace Nivot.PowerShell
         
         // get-item
         // item-exists
+        // invoke-item
 
         #region ItemCmdletProvider Overrides
 

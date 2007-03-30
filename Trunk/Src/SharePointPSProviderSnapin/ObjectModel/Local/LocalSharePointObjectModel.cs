@@ -26,112 +26,106 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal sealed class LocalSharePointObjectModel : SharePointObjectModel, IDisposable
-	{
-		private bool m_isDisposed = false;
-		private SPSite m_site;	// FIXME: gcroot?
-		
-		internal LocalSharePointObjectModel(Uri siteCollectionUrl)
-		{			
-			m_site = new SPSite(siteCollectionUrl.ToString());
+    internal sealed class LocalSharePointObjectModel : SharePointObjectModel
+    {
+        private SPSite m_site;	// FIXME: gcroot?
 
-			try
-			{
-				// Attempt to open a web: this will trigger an
-				// error if the url is not a valid sharepoint site.
-				using (SPWeb web = m_site.OpenWeb())
-				{
-					Provider.WriteVerbose("OpenWeb() succeeded: got " + web.Name);
-				}
-			}
-			catch
-			{
-				Provider.ThrowTerminatingError(
-					SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid SiteCollection: Cannot open SPWeb."));
-			}
-		}
+        internal LocalSharePointObjectModel(Uri siteCollectionUrl)
+        {
+            m_site = new SPSite(siteCollectionUrl.ToString());
 
-		internal LocalSharePointObjectModel(SPSite site)
-		{
-			m_site = site;
-		}
+            try
+            {
+                // Attempt to open a web: this will trigger an error if the url is not a valid sharepoint site.
+                using (SPWeb web = m_site.OpenWeb())
+                {
+                    Provider.WriteVerbose("OpenWeb() succeeded: got " + web.Name);
+                }
+            }
+            catch
+            {
+                Provider.ThrowTerminatingError(
+                    SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid SiteCollection: Cannot open SPWeb."));
+            }
+        }
 
-		internal SPSite SiteCollection
-		{
-			get
-			{
-				EnsureNotDisposed();
-				return m_site;
-			}
-		}
+        internal LocalSharePointObjectModel(SPSite site)
+        {
+            m_site = site;
+        }
 
-		internal override Version SharePointVersion
-		{
-			get
-			{
-				return SharePointUtils.GetSharePointVersion();
-			}
-		}
+        internal SPSite SiteCollection
+        {
+            get
+            {
+                EnsureNotDisposed();
+                return m_site;
+            }
+        }
 
-		public override IStoreItem GetItem(string path)
-		{
-			EnsureNotDisposed();
-		    Debug.Assert((path.IndexOf("http:") == -1),
-		                 String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
+        internal override Version SharePointVersion
+        {
+            get
+            {
+                return SharePointUtils.GetSharePointVersion();
+            }
+        }
+
+        public override IStoreItem GetItem(string path)
+        {
+            EnsureNotDisposed();
+            Debug.Assert((path.IndexOf("http:") == -1),
+                         String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
 
             char separator = Provider.ProviderInfo.PathSeparator;
 
-			// always a minimum of '\'
-			string[] chunks = path.Split(separator);
+            // always a minimum of '\'
+            string[] chunks = path.Split(separator);
 
-			// start at SPSite
-			IStoreItem storeItem = new SharePointSite(m_site);
+            // start at SPSite
+            IStoreItem storeItem = new SharePointSite(m_site);
 
-			if (path == separator.ToString())
-			{			    
-				return storeItem; // at root
-			}
+            if (path == separator.ToString())
+            {
+                return storeItem; // at root
+            }            
 
             // index into object hierarchy
-			foreach (string chunk in chunks)
-			{
-				if (chunk == String.Empty)
-				{
-					// skip first chunk
-					continue;
-				}
+            foreach (string chunk in chunks)
+            {
+                if (chunk == String.Empty)
+                {
+                    // skip first chunk
+                    continue;
+                }
 
-				// use indexer to find this chunk
-				storeItem = storeItem[chunk];
-				
-				if (storeItem == null)
-				{
-					return null;
-				}
-			}
-			return storeItem;
-		}
+                // use indexer to find this chunk
+                using (IStoreItem parentItem = storeItem) {                 
+                    storeItem = parentItem[chunk];
+                }
 
-		#region IDisposable Members
+                if (storeItem == null)
+                {
+                    return null;
+                }                
+            }
+            return storeItem;
+        }
 
-		private void EnsureNotDisposed()
-		{
-			if (m_isDisposed)
-			{
-				throw new ObjectDisposedException("LocalSharePointObjectModel");
-			}
-		}
-
-		public void Dispose()
-		{
-			if (m_site != null)
-			{
-				m_site.Dispose();
-				m_site = null;
-				m_isDisposed = true;
-			}
-		}
-
-		#endregion
-	}
+        protected override void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing)
+                {
+                    if (m_site != null)
+                    {
+                        m_site.Dispose();
+                        m_site = null;
+                    }
+                }
+            }
+            base.Dispose(disposing);
+        }
+    }
 }

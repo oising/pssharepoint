@@ -67,7 +67,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             }
         }
 
-        public override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (m_reader != null)
             {
