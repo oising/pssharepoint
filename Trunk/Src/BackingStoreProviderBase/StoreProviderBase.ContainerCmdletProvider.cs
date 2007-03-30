@@ -55,12 +55,6 @@ namespace Nivot.PowerShell
 				{
 					foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
 					{
-						// be nice to sigbreak
-						if (base.Stopping)
-						{
-							return;
-						}
-
 						// should we send this item to pipeline? -Force will always send item to pipeline
 						if (((item.ItemOptions & StoreItemOptions.ShouldPipeItem) == StoreItemOptions.ShouldPipeItem) || this.Force)
 						{
@@ -77,6 +71,16 @@ namespace Nivot.PowerShell
 								}
 							}
 						}
+                        else
+						{
+						    item.Dispose();
+						}
+                        
+                        // be nice to sigbreak
+                        if (base.Stopping)
+                        {
+                            return;
+                        }
 					}
 				}
 				catch (Exception ex)
@@ -115,11 +119,15 @@ namespace Nivot.PowerShell
 							return;
 						}
 
-						// should we tab complete / output name for this item?
-						if ((item.ItemOptions & StoreItemOptions.ShouldTabComplete) == StoreItemOptions.ShouldTabComplete)
-						{
-							WriteItemObject(item.ChildName, MakePath(path, item.ChildName), item.IsContainer);
-						}
+                        using (item)
+                        {
+                            // should we tab complete / output name for this item?
+                            if ((item.ItemOptions & StoreItemOptions.ShouldTabComplete) ==
+                                StoreItemOptions.ShouldTabComplete)
+                            {
+                                WriteItemObject(item.ChildName, MakePath(path, item.ChildName), item.IsContainer);
+                            }
+                        }
 					}
 				}
 				catch (Exception ex)
