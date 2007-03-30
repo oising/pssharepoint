@@ -61,8 +61,8 @@ namespace Nivot.PowerShell
 							return;
 						}
 
-						// should we send this item to pipeline?
-						if ((item.ItemOptions & StoreItemOptions.ShouldPipeItem) == StoreItemOptions.ShouldPipeItem)
+						// should we send this item to pipeline? -Force will always send item to pipeline
+						if (((item.ItemOptions & StoreItemOptions.ShouldPipeItem) == StoreItemOptions.ShouldPipeItem) || this.Force)
 						{
 							string itemPath = MakePath(path, item.ChildName);						    
                             PSObject output = item.GetPSObject();
