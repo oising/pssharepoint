@@ -79,7 +79,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			    //output.Properties.Add(nativeItem);
 
                 // no longer need native object
-                Dispose(true);
+                Dispose();
 			}
 
         	return output;

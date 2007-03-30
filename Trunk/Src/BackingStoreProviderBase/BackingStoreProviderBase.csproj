@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -44,6 +45,7 @@
   <ItemGroup>
     <Compile Include="BackingStoreException.cs" />
     <Compile Include="Commands\ClearStoreItemCacheCommand.cs" />
+    <Compile Include="Commands\GetStoreItemTrackerCommand.cs" />
     <Compile Include="DynamicParameterBuilder.cs" />
     <Compile Include="StoreProviderBase.IDynamicPropertyCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.IPropertyCmdletProvider.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="StoreProviderErrorRecord.cs" />
     <Compile Include="StoreProviderInfo.cs" />
     <Compile Include="StoreProviderMethods.cs" />
+    <Compile Include="StoreItemTracker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

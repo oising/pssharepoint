@@ -32,7 +32,10 @@ namespace Nivot.PowerShell
 	/// 
 	/// </summary>
 	public abstract partial class StoreProviderBase
-	{        
+	{
+
+        // move-item
+
 		#region NavigationCmdletProvider Overrides
 
 		protected override bool IsItemContainer(string path)

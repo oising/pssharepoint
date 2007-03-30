@@ -31,13 +31,15 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	/// <summary>
 	/// Base factory class for getting access to the SharePoint Object Model, either local or remote.
 	/// </summary>
-	internal abstract class SharePointObjectModel : IStoreObjectModel
+	internal abstract class SharePointObjectModel : IStoreObjectModel, IDisposable
 	{
 		// FIXME: needs to understand provider-qualified paths
 		// e.g. 
 		//   sharepoint::\\server\site\web (virtual server qualified, search local [then remote])
 		//   sharepoint::[\]site\web (default server, local)
 		private static Regex s_pathRegex;
+
+        protected bool IsDisposed = false;
 
 		static SharePointObjectModel()
 		{
@@ -134,5 +136,46 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		public abstract IStoreItem GetItem(string path);
 
 		#endregion
-	}
+
+        #region IDisposable Members
+
+        protected void EnsureNotDisposed()
+        {
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                string name = GetType().Name;
+
+                if (disposing)
+                {
+                    Debug.WriteLine("Dispose()", name);
+                }
+                else
+                {
+                    Debug.WriteLine("Finalize()", name);
+                }
+                IsDisposed = true;
+            }            
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~SharePointObjectModel()
+        {
+            Dispose(false);
+        }
+
+        #endregion
+    }
 }

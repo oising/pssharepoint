@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\DisposeObjectCommand.cs" />
     <Compile Include="Commands\ExportListItemCommand.cs" />
     <Compile Include="Commands\GetSPVirtualServerCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="ObjectModel\Local\SharePointAlert.cs" />
     <Compile Include="ObjectModel\Local\SharePointGroup.cs" />
     <Compile Include="ObjectModel\Local\SharePointList.cs" />
-    <Compile Include="SharePointPSSnapin.cs">
+    <Compile Include="SharePointSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ObjectModel\SharePointObjectModel.cs" />

@@ -16,18 +16,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using Nivot.PowerShell.Commands;
+using Nivot.PowerShell.SharePoint.Commands;
 
 namespace Nivot.PowerShell.SharePoint
 {
+    /// <summary>
+    /// Using CustomPSSnapIn in order to register cmdlets from separate, dependent assemblies.
+    /// </summary>
 	[RunInstaller(true)]
-	public class SharePointPSSnapIn : PSSnapIn
-	{
+	public class SharePointPSSnapIn : CustomPSSnapIn
+	{        
 		public override string Name
 		{
-			get { return "Nivot.PowerShell.SharePoint"; }
+			get { return "SharePoint"; }
 		}
 
 		public override string Vendor
@@ -40,7 +47,37 @@ namespace Nivot.PowerShell.SharePoint
 			get { return "Exposes a Windows SharePoint Services SiteCollection to Windows PowerShell 1.0"; }
 		}
 
-        public override string[] Formats
+        public override Collection<CmdletConfigurationEntry> Cmdlets
+        {
+            get
+            {
+                Collection<CmdletConfigurationEntry> cmdlets = new Collection<CmdletConfigurationEntry>();
+                
+                // from nivot.powershell.backingstoreprovider assembly
+                cmdlets.Add(new CmdletConfigurationEntry("Get-StoreItemTracker", typeof (GetStoreItemTrackerCommand), null));
+
+                // from nivot.powershell.sharepoint assembly
+                cmdlets.Add(new CmdletConfigurationEntry("Get-SPVirtualServer", typeof (GetSPVirtualServerCommand), null));
+                cmdlets.Add(new CmdletConfigurationEntry("Dispose-Object", typeof (DisposeObjectCommand), null));
+
+                return cmdlets;
+            }
+        }
+
+        public override Collection<ProviderConfigurationEntry> Providers
+        {
+            get
+            {
+                Collection<ProviderConfigurationEntry> providers = new Collection<ProviderConfigurationEntry>();
+
+                // from nivot.powershell.sharepoint assembly
+                providers.Add(new ProviderConfigurationEntry("SharePoint", typeof (SharePointProvider), null));
+                
+                return providers;
+            }
+        }
+
+        public override Collection<FormatConfigurationEntry> Formats
         {
             get
             {
@@ -48,7 +85,7 @@ namespace Nivot.PowerShell.SharePoint
             }
         }
 
-        public override string[] Types
+        public override Collection<TypeConfigurationEntry> Types
         {
             get
             {
