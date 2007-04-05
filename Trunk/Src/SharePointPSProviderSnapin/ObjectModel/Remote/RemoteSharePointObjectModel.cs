@@ -26,7 +26,7 @@ namespace Nivot.PowerShell.SharePoint
 	/// TODO: wire up web services ;)
 	/// <remarks>Not everyone wants to install the 2.0 runtime on their sharepoint box</remarks>
 	/// </summary>
-	internal class RemoteSharePointObjectModel : SharePointObjectModel, IDisposable
+	internal class RemoteSharePointObjectModel : SharePointObjectModel
 	{
 		internal RemoteSharePointObjectModel(Uri siteCollectionUrl)
 		{
@@ -57,13 +57,5 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{			
-		}
-
-		#endregion
 	}
 }
