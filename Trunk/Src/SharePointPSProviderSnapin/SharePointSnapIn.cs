@@ -34,7 +34,7 @@ namespace Nivot.PowerShell.SharePoint
 	{        
 		public override string Name
 		{
-			get { return "SharePoint"; }
+			get { return "Nivot.PowerShell.SharePoint"; }
 		}
 
 		public override string Vendor
@@ -44,7 +44,7 @@ namespace Nivot.PowerShell.SharePoint
 
 		public override string Description
 		{
-			get { return "Exposes a Windows SharePoint Services SiteCollection to Windows PowerShell 1.0"; }
+			get { return "Exposes a Windows SharePoint Services Site Collection to Windows PowerShell 1.0"; }
 		}
 
         public override Collection<CmdletConfigurationEntry> Cmdlets

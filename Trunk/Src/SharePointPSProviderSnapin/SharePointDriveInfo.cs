@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management.Automation;
 using System.Text;
 
@@ -33,13 +34,19 @@ namespace Nivot.PowerShell.SharePoint
 		
 		protected bool IsDisposed = false;
 
-		internal SharePointDriveInfo(string name, ProviderInfo provider, Uri siteCollectionUrl, string description, PSCredential credential, bool remote)
-			: base(name, provider, siteCollectionUrl.ToString(), description, credential)
-		{
+        internal SharePointDriveInfo(string name, ProviderInfo provider, Uri siteCollectionUrl, string description, PSCredential credential, bool remote)
+            : base(name, provider, StripProtocol(siteCollectionUrl), description, credential)
+		{            
 			m_sharePointObjectModel = SharePointObjectModel.GetSharePointObjectModel(siteCollectionUrl, remote);
 			m_isRemote = remote;
-			m_virtualServer = siteCollectionUrl.Host;
+            m_virtualServer = siteCollectionUrl.Host;
 		}
+
+        private static string StripProtocol(Uri root)
+        {
+            string url = root.ToString();
+            return url.Replace("http://", String.Empty).Replace("https://", String.Empty);
+        }
 
 		internal SharePointObjectModel ObjectModel
 		{
@@ -100,17 +107,16 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			if (!IsDisposed)
 			{
+			    Debug.WriteLine("Dispose(" + disposing + ")", "SharePointDriveInfo");
 				if (disposing)
 				{
-					if (m_sharePointObjectModel is IDisposable)
+					if (m_sharePointObjectModel != null)
 					{
-						((IDisposable) m_sharePointObjectModel).Dispose();
+						m_sharePointObjectModel.Dispose();
 						m_sharePointObjectModel = null;
-					}
-					IsDisposed = true;
+					}					
 				}
-				// unmanaged
-				// ...
+                IsDisposed = true;
 			}
 		}
 

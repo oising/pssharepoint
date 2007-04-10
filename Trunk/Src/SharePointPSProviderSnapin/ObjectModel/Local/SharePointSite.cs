@@ -21,6 +21,10 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
+    /// <summary>
+    /// SPSite wrapper
+    /// <remarks>Not used unless this build treats the Rootweb as the root path</remarks>
+    /// </summary>
     internal class SharePointSite : StoreItem<SPSite>
     {
         public SharePointSite(SPSite site)

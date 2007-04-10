@@ -21,43 +21,43 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-	internal class SharePointGroup : StoreItem<SPGroup>
-	{
-		public SharePointGroup(SPGroup group)
-			: base(group)
-		{
-		    RegisterAdder<SPUser>(AddUser);
-		    RegisterRemover<SPUser>(RemoveUser);
-			RegisterAdder<SPGroup>(AddGroup);
-		}
+    internal class SharePointGroup : StoreItem<SPGroup>
+    {
+        public SharePointGroup(SPGroup group)
+            : base(group)
+        {
+            RegisterAdder<SPUser>(AddUser);
+            RegisterRemover<SPUser>(RemoveUser);
+            RegisterAdder<SPGroup>(AddGroup);
+        }
 
-		public override IEnumerator<IStoreItem> GetEnumerator()
-		{
-			// pseudo containers
-			yield return new SharePointRoles(NativeObject.Roles);
-			yield return new SharePointUsers(NativeObject.Users);
+        public override IEnumerator<IStoreItem> GetEnumerator()
+        {
+            // pseudo containers
+            yield return new SharePointRoles(NativeObject.Roles);
+            yield return new SharePointUsers(NativeObject.Users);
 
-			// default child item for SPGroup is SPUser
-			foreach (SPUser user in NativeObject.Users)
-			{
-				yield return new SharePointUser(user);
-			}
-		}
+            // default child item for SPGroup is SPUser
+            foreach (SPUser user in NativeObject.Users)
+            {
+                yield return new SharePointUser(user);
+            }
+        }
 
-		public override bool IsContainer
-		{
-			get { return true; }
-		}
+        public override bool IsContainer
+        {
+            get { return true; }
+        }
 
-		public override string ChildName
-		{
-			get { return NativeObject.Name; }
-		}
+        public override string ChildName
+        {
+            get { return NativeObject.Name; }
+        }
 
-		public override StoreItemOptions ItemOptions
-		{
-			get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
-		}
+        public override StoreItemOptions ItemOptions
+        {
+            get { return StoreItemOptions.ShouldTabComplete | StoreItemOptions.ShouldPipeItem; }
+        }
 
         private void AddUser(SPUser user)
         {
@@ -76,5 +76,5 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
                 AddUser(user);
             }
         }
-	}
+    }
 }

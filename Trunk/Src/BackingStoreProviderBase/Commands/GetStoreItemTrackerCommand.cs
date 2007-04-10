@@ -43,12 +43,12 @@ namespace Nivot.PowerShell.Commands
 
                     output.Properties.Add(new PSNoteProperty("StoreItem", itemName));
                     output.Properties.Add(new PSNoteProperty("Constructed", constructed));
-                    output.Properties.Add(new PSNoteProperty("Explicitly Disposed", disposed ));
-                    output.Properties.Add(new PSNoteProperty("Finalized", finalized));
+                    output.Properties.Add(new PSNoteProperty("Disposed", disposed )); // explicit disposal
+                    output.Properties.Add(new PSNoteProperty("Finalized", finalized)); // finalizer disposal
                     output.Properties.Add(new PSNoteProperty("Total", constructed - (disposed + finalized)));
                     
                     WriteObject(output);
-                }                
+                }
             }
         }
     }

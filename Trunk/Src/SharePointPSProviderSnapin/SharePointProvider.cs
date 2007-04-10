@@ -63,28 +63,29 @@ namespace Nivot.PowerShell.SharePoint
 				}
 
 				string root = drive.Root;
-
-				if (String.IsNullOrEmpty(root))
+                
+                if (String.IsNullOrEmpty(root))
 				{
 					WriteError(SharePointErrorRecord.ArgumentNullOrEmpty("Root"));
 					return null;
 				}
 
-				if (!Uri.IsWellFormedUriString(root, UriKind.Absolute))
-				{
-					WriteError(
-						SharePointErrorRecord.InvalidOperationError(
-							"RootNotWellFormedUri", "Site collection Root is not a well formed Uri."));
-					return null;
-				}
+                if (root.StartsWith("http://") || root.StartsWith("https://"))
+                {
+                    WriteError(
+                        SharePointErrorRecord.ArgumentError(
+                            "Invalid root syntax: instead of http://server/site/web, use server/site/web."));
+                    return null;
+                }
 
 				SharePointDriveInfo driveInfo = null;
 
 				try
 				{
-					Uri siteCollectionUrl = new Uri(root);
-					driveInfo =
-						new SharePointDriveInfo(drive.Name, ProviderInfo, siteCollectionUrl, "SharePoint Drive", Credential,
+				    Uri siteCollectionUrl = new Uri("http://" + root);
+
+                    driveInfo =
+                        new SharePointDriveInfo(drive.Name, ProviderInfo, siteCollectionUrl, "SharePoint Drive", Credential,
 						                        ParamRemoteIsSet);
 
 					WriteVerbose("PSDriveInfo.Root = " + driveInfo.Root);
@@ -95,7 +96,7 @@ namespace Nivot.PowerShell.SharePoint
 				    
                     WriteVerbose(ex.ToString());
 
-					string message = String.Format("Unable to open site collection at {0} : {1}.", root, ex.Message);
+                    string message = String.Format("Unable to open site collection at http://{0} : {1}.", root, ex.Message);
 					WriteError(new ErrorRecord(new ArgumentException(
 					                           	message, ex), "NewDrive", ErrorCategory.OpenError, null));
 
@@ -110,6 +111,7 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			DynamicParameterBuilder parameters = new DynamicParameterBuilder();
 			parameters.AddSwitchParam("Remote");
+		    parameters.AddSwitchParam("SSL"); // TODO: implement this
 
 			return parameters.GetDictionary();
 		}

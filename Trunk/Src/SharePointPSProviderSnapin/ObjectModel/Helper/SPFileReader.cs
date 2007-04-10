@@ -24,11 +24,19 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel.Helper
             EnsureNotDisposed();
 
             List<byte> blocks = new List<byte>();
-            for (int index = 0; index < readCount; index++)
+            
+            byte[] bytes = new byte[readCount];          
+            checked
             {
-                ReadByte(blocks);
+                m_stream.Read(bytes, (int)m_stream.Position, (int) readCount);
             }
-
+            blocks.AddRange(bytes);
+                        
+            //for (int index = 0; index < readCount; index++)
+            //{
+            //    ReadByte(blocks);
+            //}
+            
             return blocks;
         }
 
@@ -44,10 +52,10 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel.Helper
             Dispose();
         }
 
-        private void ReadByte(List<byte> blocks)
-        {            
-            blocks.Add((byte)m_stream.ReadByte());
-        }
+        //private void ReadByte(List<byte> blocks)
+        //{            
+        //    blocks.Add((byte)m_stream.ReadByte());
+        //}
 
         private void EnsureNotDisposed()
         {

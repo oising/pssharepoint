@@ -23,5 +23,13 @@ namespace Nivot.PowerShell
 
 			return record;
 		}
+
+        internal static ErrorRecord InvalidArgument(string message)
+        {
+            ArgumentException exception = new ArgumentException(message);
+            ErrorRecord record = new ErrorRecord(exception, "InvalidArgument", ErrorCategory.InvalidArgument, null);
+
+            return record;
+        }
     }
 }
