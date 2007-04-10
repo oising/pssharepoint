@@ -33,10 +33,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	/// </summary>
 	internal abstract class SharePointObjectModel : IStoreObjectModel, IDisposable
 	{
-		// FIXME: needs to understand provider-qualified paths
-		// e.g. 
-		//   sharepoint::\\server\site\web (virtual server qualified, search local [then remote])
-		//   sharepoint::[\]site\web (default server, local)
 		private static Regex s_pathRegex;
 
         protected bool IsDisposed = false;

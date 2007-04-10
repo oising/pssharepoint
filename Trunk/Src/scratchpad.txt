@@ -41,3 +41,8 @@
 			return null;
 		}
 		*/
+		
+- InitializeDefaultDrives should mount all virtual servers that are in a ready state. each virtual server mounted would show a hierarchy of sites, and only sites. From within a site, spmount.ps1 will mount the site collection?
+
+
+		

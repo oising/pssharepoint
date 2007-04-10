@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Commands\DisposeObjectCommand.cs" />
     <Compile Include="Commands\ExportListItemCommand.cs" />
+    <Compile Include="Commands\GetSPUser.cs" />
     <Compile Include="Commands\GetSPVirtualServerCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
     <Compile Include="Commands\MountSPSiteCommand.cs" />
@@ -106,6 +107,8 @@
     <Compile Include="ObjectModel\Local\SharePointWeb.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FormatData\SharePoint.Format.ps1xml" />
+    <None Include="Scripts\Get-SPSite.ps1" />
     <None Include="Scripts\install.ps1" />
     <None Include="Scripts\SharePoint.Format.ps1xml" />
     <None Include="Properties\Settings.settings">
@@ -113,6 +116,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Scripts\SharePoint.Types.ps1xml" />
+    <None Include="TypeData\SharePoint.Types.ps1xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="changelog.txt" />
@@ -126,10 +130,6 @@
       <Project>{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}</Project>
       <Name>BackingStoreProviderBase</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FormatData\" />
-    <Folder Include="TypeData\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

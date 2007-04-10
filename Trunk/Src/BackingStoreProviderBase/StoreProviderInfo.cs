@@ -14,11 +14,11 @@ namespace Nivot.PowerShell
 		{			
 		}
 
-		public virtual bool UseCaseSensitivePaths
+		public virtual StringComparison PathComparison
 		{
 			get
 			{
-				return false;
+			    return StringComparison.OrdinalIgnoreCase;
 			}
 		}
 
@@ -26,7 +26,7 @@ namespace Nivot.PowerShell
 	    {
 	        get
 	        {
-                return true;
+                return false;
 	        }
 	    }
 

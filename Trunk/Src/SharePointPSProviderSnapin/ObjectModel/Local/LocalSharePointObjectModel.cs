@@ -1,3 +1,5 @@
+#define __ROOTWEB
+
 #region BSD License Header
 
 /*
@@ -45,7 +47,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             catch
             {
                 Provider.ThrowTerminatingError(
-                    SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid SiteCollection: Cannot open SPWeb."));
+                    SharePointErrorRecord.InvalidOperationError("InvalidSite", "Invalid site collection root: cannot open SPWeb."));
             }
         }
 
@@ -82,9 +84,12 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             // always a minimum of '\'
             string[] chunks = path.Split(separator);
 
+#if __ROOTWEB
+            IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
+#else
             // start at SPSite
             IStoreItem storeItem = new SharePointSite(m_site);
-
+#endif
             if (path == separator.ToString())
             {
                 return storeItem; // at root

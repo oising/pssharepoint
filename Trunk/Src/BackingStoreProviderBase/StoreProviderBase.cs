@@ -28,105 +28,112 @@ using System.Text.RegularExpressions;
 namespace Nivot.PowerShell
 {
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public abstract partial class StoreProviderBase : NavigationCmdletProvider		
-	{
+    /// <summary>
+    /// 
+    /// </summary>
+    public abstract partial class StoreProviderBase : NavigationCmdletProvider
+    {
         /// <summary>
         /// 
         /// </summary>
-		public new StoreProviderInfo ProviderInfo
-		{
-			get
-			{				
-				return (StoreProviderInfo) base.ProviderInfo;
-			}
-		}
+        public new StoreProviderInfo ProviderInfo
+        {
+            get
+            {
+                return (StoreProviderInfo)base.ProviderInfo;
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
-	    public RuntimeDefinedParameterDictionary RuntimeDynamicParameters
-	    {
-	        get
-	        {
-	            object parameters = this.DynamicParameters;
-	            WriteDebug("DynamicParameters null: " + (parameters == null));
+        public RuntimeDefinedParameterDictionary RuntimeDynamicParameters
+        {
+            get
+            {
+                object parameters = this.DynamicParameters;
+                WriteDebug("DynamicParameters null: " + (parameters == null));
 
                 return parameters as RuntimeDefinedParameterDictionary;
-	        }
-	    }
+            }
+        }
 
-		/// <summary>
-		/// Provides a handle to the runtime object model of the backing store
-		/// </summary>
-		public abstract IStoreObjectModel StoreObjectModel { get; }
+        /// <summary>
+        /// Provides a handle to the runtime object model of the backing store
+        /// </summary>
+        public abstract IStoreObjectModel StoreObjectModel { get; }
 
         /// <summary>
         /// Sets the <see cref="ThreadStaticAttribute"/> decorated static member StoreProviderContext&lt;TProvider&gt;.Current to this instance for use as a temporary reference for other classes to acccess this provider's instance methods. 
         /// </summary>
         /// <returns>Returns an <see cref="IDisposable"/> "Cookie" that when disposed, frees the static GCRoot holding this provider instance.</returns>
-		protected StoreProviderContext.Cookie EnterContext()
-		{
-			return StoreProviderContext.Enter(this);
-		}
+        protected StoreProviderContext.Cookie EnterContext()
+        {
+            return StoreProviderContext.Enter(this);
+        }
 
-		private RuntimeDefinedParameterDictionary GetDynamicParametersForMethod(StoreProviderMethods method, string path, params object[] context)
-		{
-			WriteDebug(String.Format("GetDynamicParametersForMethod {0} for path {1}", method, path));
+        private RuntimeDefinedParameterDictionary GetDynamicParametersForMethod(StoreProviderMethods method, string path, params object[] context)
+        {
+            WriteDebug(String.Format("GetDynamicParametersForMethod {0} for path {1}", method, path));
 
             RuntimeDefinedParameterDictionary parameters = null;
 
             using (EnterContext())
             {
                 // new-item is special-cased
-				if (method == StoreProviderMethods.NewItem)
-				{                    
-					// dynamic properties are defined on the parent of the new item
-					// since properties are normally provided by the context object
-					// of the target path (which doesn't exist yet).
-					path = GetParentPath(path, null);
-				}
+                if (method == StoreProviderMethods.NewItem)
+                {
+                    // dynamic properties are defined on the parent of the new item
+                    // since properties are normally provided by the context object
+                    // of the target path (which doesn't exist yet).
+                    path = GetParentPath(path, null);
+                }
 
-				// read dynamic property information from the context object
+                // read dynamic property information from the context object
                 using (IStoreItem item = StoreObjectModel.GetItem(path))
                 {
-                    IDynamicParametersProvider parameterProvider = item as IDynamicParametersProvider;
-                    if (parameterProvider != null)
+                    if (item != null)
                     {
-                        int count = 0;
-
-                        parameters = parameterProvider.GetDynamicParameters(method);
-                        if (parameters != null)
+                        IDynamicParametersProvider parameterProvider = item as IDynamicParametersProvider;
+                        if (parameterProvider != null)
                         {
-                            count = parameters.Count;
+                            int count = 0;
+
+                            parameters = parameterProvider.GetDynamicParameters(method);
+                            if (parameters != null)
+                            {
+                                count = parameters.Count;
+                            }
+                            WriteDebug(String.Format("{0} assigned {1} dynamic parameter(s).", method, count));
                         }
-                        WriteDebug(String.Format("{0} assigned {1} dynamic parameter(s).", method, count));
+                        else
+                        {
+                            WriteDebug(
+                                String.Format("{0} does not implement IDynamicParametersProvider.", item.GetType().Name));
+                        }
                     }
-					else
+                    else
                     {
-                        WriteDebug(
-                            String.Format("{0} does not implement IDynamicParametersProvider.", item.GetType().Name));
+                        WriteDebug(String.Format("GetDynamicParametersForMethod: path {0} does not exist.", path));
                     }
                 }
             }
 
             return parameters;
-		}
+        }
 
-		#region Helper Methods
+        #region Helper Methods
 
-		/// <summary>
-		/// Fix up whatever sort of path string Msh has thrown us
-		/// <remarks>FIXME: assumes we're drive-qualified</remarks>
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		private string NormalizePath(string path)
-		{			
-			if (!String.IsNullOrEmpty(path))
-			{
+        /// <summary>
+        /// Fix up whatever sort of path string Msh has thrown us
+        /// <remarks>FIXME: assumes we're drive-qualified</remarks>
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private string NormalizePath(string path)
+        {
+            if (!String.IsNullOrEmpty(path))
+            {
                 // are we working via a drive?
                 if (this.PSDriveInfo != null)
                 {
@@ -136,16 +143,16 @@ namespace Nivot.PowerShell
                 {
                     path = NormalizeDrivelessPath(path);
                 }
-			}
+            }
 
-			// ensure drive is rooted
-			if (path == String.Empty)
-			{
-				path = ProviderInfo.PathSeparator.ToString();
-			}
+            // ensure drive is rooted
+            if (path == String.Empty)
+            {
+                path = ProviderInfo.PathSeparator.ToString();
+            }
 
-			return path;
-		}
+            return path;
+        }
 
         protected virtual string NormalizePathOnDrive(string path)
         {
@@ -156,7 +163,18 @@ namespace Nivot.PowerShell
             if (path.StartsWith(driveRoot))
             {
                 path = path.Replace(driveRoot, String.Empty); // strip it
+                WriteDebug("Stripped root from path");
             }
+
+            // else ?
+
+            // is provider qualified?
+            if (SessionState.Path.IsProviderQualified(path))
+            {
+                path = path.Substring(path.IndexOf("::") + 2);
+                WriteDebug("Stripped provider from path");
+            }
+
 
             return path;
         }
@@ -169,25 +187,29 @@ namespace Nivot.PowerShell
             return null;
         }
 
-	    /*
-				private bool IsDrive(string path) {
-					bool isDrive = (path == String.Format(this.PSDriveInfo.Root + ":" + PathSeparator));
-					Dump("IsDrive {0} : {1}", path, isDrive);
+        /*
+                private bool IsDrive(string path) {
+                    bool isDrive = (path == String.Format(this.PSDriveInfo.Root + ":" + PathSeparator));
+                    Dump("IsDrive {0} : {1}", path, isDrive);
 
-					return isDrive;
-				}
+                    return isDrive;
+                }
 
-				private string EnsureDriveIsRooted(string path) {
-					Dump("EnsureDriveIsRooted {0}", path);
-					if (!path.StartsWith(PathSeparator)) {
-						return PathSeparator + path;
-					}
-					Dump("EnsureDriveIsRooted returning {0}", path);
+                private string EnsureDriveIsRooted(string path) {
+                    Dump("EnsureDriveIsRooted {0}", path);
+                    if (!path.StartsWith(PathSeparator)) {
+                        return PathSeparator + path;
+                    }
+                    Dump("EnsureDriveIsRooted returning {0}", path);
 				
-					return path;
-				}
-		*/
+                    return path;
+                }
+        */
 
-		#endregion
-	}
+        private bool ArePathsEquivalent(string pathA, string pathB)
+        {
+            return NormalizePath(pathA).Equals(NormalizePath(pathB), ProviderInfo.PathComparison);
+        }
+        #endregion
+    }
 }

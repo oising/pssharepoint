@@ -56,6 +56,11 @@ namespace Nivot.PowerShell
 		{
 			WriteDebug(String.Format("MoveItem: {0} -> {1}", path, destination));
 
+            if (ArePathsEquivalent(path, destination))
+            {
+                ThrowTerminatingError(StoreProviderErrorRecord.InvalidArgument("source and destination are the same."));
+            }
+
 			using (EnterContext())
 			{
 				if (ShouldProcess(destination, "Move"))

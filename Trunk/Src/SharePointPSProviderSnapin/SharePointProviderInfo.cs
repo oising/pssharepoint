@@ -11,9 +11,12 @@ namespace Nivot.PowerShell.SharePoint
 		{			
 		}
 
-		public override bool UseCaseSensitivePaths
-		{
-			get { return true; }
-		}
+        public override bool EnableItemCaching
+        {
+            get
+            {
+                return true;
+            }
+        }
 	}
 }
