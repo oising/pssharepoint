@@ -121,6 +121,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 				{
 					if (Provider.Stopping)
 					{
+					    childItem.Dispose(); // prevent leak
 						break;
 					}
 					childItems.Add(childItem);
