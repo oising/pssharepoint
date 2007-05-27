@@ -6,7 +6,7 @@ using System.Text;
 namespace Nivot.PowerShell.SharePoint.Commands
 {
 	[Cmdlet(VerbsCommunications.Read, "SPFile")]
-	public class ReadSPFileCommand : Cmdlet
+	class ReadSPFileCommand : Cmdlet
 	{
 
 	}

@@ -25,7 +25,7 @@ namespace Nivot.PowerShell.SharePoint.Commands
 			}
 		}
 
-		protected override void BeginProcessing()
+		protected override void EndProcessing()
 		{
 			foreach (SPVirtualServer virtualServer in SharePointUtils.GetSPVirtualServers(m_state))
 			{

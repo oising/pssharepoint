@@ -27,7 +27,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Nivot.PowerShell.SharePoint.Commands
 {
-	internal class NativeMethods
+	internal static class NativeMethods
 	{
 		#region DllImports
 

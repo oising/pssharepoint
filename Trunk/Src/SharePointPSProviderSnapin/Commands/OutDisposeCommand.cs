@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management.Automation;
 using System.Text;
 
 namespace Nivot.PowerShell.SharePoint.Commands
 {
-    [Cmdlet("Dispose", "Object")]
-    public class DisposeObjectCommand : Cmdlet
+    [Cmdlet(VerbsData.Out, "Dispose")]
+    public class OutDisposeCommand : Cmdlet
     {
         private PSObject[] m_inputObjects;
 
@@ -27,10 +28,18 @@ namespace Nivot.PowerShell.SharePoint.Commands
         {
             foreach (PSObject psObj in m_inputObjects)
             {
-                IDisposable disposable = psObj.BaseObject as IDisposable;
-                if (disposable != null)
+                try
                 {
-                    disposable.Dispose();
+                    IDisposable disposable = psObj.BaseObject as IDisposable;
+                    if (disposable != null)
+                    {
+                        disposable.Dispose();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex, "OutDisposeCommand");
+                    WriteError(new ErrorRecord(ex, "DisposeError", ErrorCategory.InvalidOperation, psObj));
                 }
             }
         }

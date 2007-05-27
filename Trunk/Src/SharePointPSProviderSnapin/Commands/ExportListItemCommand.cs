@@ -22,7 +22,7 @@ using System.Management.Automation.Provider;
 
 namespace Nivot.PowerShell.SharePoint.Commands
 {
-	[Cmdlet(VerbsData.Export, "listitem")]
+	[Cmdlet(VerbsData.Export, "ListItem")]
 	internal class ExportListItemCommand : Cmdlet
 	{
 	}

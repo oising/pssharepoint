@@ -6,7 +6,7 @@ Todo:
 	
 Outstanding bugs/features:
 	* doesn't recognize sps areas, gets access denied, but can still navigate stuff
-	* path resolution is not case-sensitive; need to allow for case-sensitive behaviour 
+	* path resolution is not case-sensitive; need to allow for case-sensitive behaviour (FIXED)
 	* only supports drive-qualified operation, need to implement SharePoint::\\server\path\ syntax
 
 Ideas:
@@ -17,6 +17,10 @@ Cmdlets:
 
 CHANGELOG:
 
+20070526
+========
+    * the last year's worth of changes are logged in TFS now, on codeplex. This list is just for historic purposes.
+    
 20060428
 ========
 	* added some dynamic assembly loading code to SharePointObjectModel, courtesy of http://blog.magenic.com/brante/archive/2006/01/03/2183.aspx

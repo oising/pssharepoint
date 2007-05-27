@@ -58,7 +58,7 @@ namespace Nivot.PowerShell.SharePoint
 
                 // from nivot.powershell.sharepoint assembly
                 cmdlets.Add(new CmdletConfigurationEntry("Get-SPVirtualServer", typeof (GetSPVirtualServerCommand), null));
-                cmdlets.Add(new CmdletConfigurationEntry("Dispose-Object", typeof (DisposeObjectCommand), null));
+                cmdlets.Add(new CmdletConfigurationEntry("Out-Dispose", typeof (OutDisposeCommand), null));
 
                 return cmdlets;
             }
@@ -81,7 +81,10 @@ namespace Nivot.PowerShell.SharePoint
         {
             get
             {
-                return base.Formats;
+                Collection<FormatConfigurationEntry> formats = new Collection<FormatConfigurationEntry>();
+                formats.Add(new FormatConfigurationEntry(@"FormatData\SharePoint.Format.ps1xml"));
+                
+                return formats;
             }
         }
 
