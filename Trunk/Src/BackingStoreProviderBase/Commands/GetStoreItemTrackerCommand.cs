@@ -23,7 +23,7 @@ namespace Nivot.PowerShell.Commands
             }
         }
 
-        protected override void BeginProcessing()
+        protected override void EndProcessing()
         {
             if (m_shouldReset)
             {
