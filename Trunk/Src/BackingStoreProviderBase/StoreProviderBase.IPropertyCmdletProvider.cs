@@ -160,7 +160,7 @@ namespace Nivot.PowerShell
 		/// An instance of <see cref="System.Management.Automation.PSObject"/>
 		/// representing the properties that were set should be passed 
 		/// to the 
-		/// <see cref="System.Management.Automation.CmdletProvider.WritePropertyObject"/> 
+		/// <see cref="CmdletProvider.WritePropertyObject"/> 
 		/// method. 
 		/// 
 		/// <paramref name="propertyValue"/> is a property bag containing the 
@@ -169,7 +169,7 @@ namespace Nivot.PowerShell
 		/// information.
 		/// 
 		/// This method should call 
-		/// <see cref="System.Management.Automation.CmdletProvider.ShouldProcess"/>
+		/// <see cref="CmdletProvider.ShouldProcess"/>
 		/// and check its return value before making any changes to the store 
 		/// this provider is working upon.
 		/// </remarks>
@@ -249,7 +249,7 @@ namespace Nivot.PowerShell
 		/// By default, overrides of this method should not clear properties 
 		/// from objects that are generally hidden from the user unless the 
 		/// Force property is set to true. An error should be sent to the 
-		/// <see cref="System.Management.Automation.CmdletProvider.WriteError"/>
+		/// <see cref="CmdletProvider.WriteError"/>
 		/// method if the path represents an item that is hidden from the user 
 		/// and Force is set to false.
 		/// 
@@ -261,11 +261,11 @@ namespace Nivot.PowerShell
 		/// An instance of <see cref="System.Management.Automation.PSObject"/>
 		/// representing the properties that were cleared should be passed 
 		/// to the 
-		/// <see cref="System.Management.Automation.CmdletProvider.WritePropertyObject"/> 
+		/// <see cref="CmdletProvider.WritePropertyObject"/> 
 		/// method. 
 		/// 
 		/// This method should call 
-		/// <see cref="System.Management.Automation.CmdletProvider.ShouldProcess"/> 
+		/// <see cref="CmdletProvider.ShouldProcess"/> 
 		/// and check its return value before making any changes to the store this provider is
 		/// working upon.
 		/// </remarks>

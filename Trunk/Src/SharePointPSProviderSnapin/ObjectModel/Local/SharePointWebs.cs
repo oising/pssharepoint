@@ -25,27 +25,27 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	/// This class will never be used since the !Webs container is implicit with this provider's paths.
 	/// <remarks>This is here only for completeness' sake and to explain where !Webs really is used.</remarks>
 	/// </summary>
-	internal class SharePointWebs : StoreItem<SPWebCollection>
-	{
-		public SharePointWebs(SPWebCollection webs)
-			: base(webs)
-		{
-			Debug.Assert(false, "SharePointWebs");
-		}
+    //internal class SharePointWebs : StoreItem<SPWebCollection>
+    //{
+    //    public SharePointWebs(SPWebCollection webs)
+    //        : base(webs)
+    //    {
+    //        Debug.Assert(false, "SharePointWebs");
+    //    }
 
-		public override bool IsContainer
-		{
-			get { return true; }
-		}
+    //    public override bool IsContainer
+    //    {
+    //        get { return true; }
+    //    }
 
-		public override string ChildName
-		{
-			get { return "!Webs"; }
-		}
+    //    public override string ChildName
+    //    {
+    //        get { return "!Webs"; }
+    //    }
 
-		public override StoreItemOptions ItemOptions
-		{
-			get { return StoreItemOptions.None; }
-		}
-	}
+    //    public override StoreItemOptions ItemOptions
+    //    {
+    //        get { return StoreItemOptions.None; }
+    //    }
+    //}
 }

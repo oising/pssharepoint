@@ -53,13 +53,14 @@ namespace Nivot.PowerShell
 			{
 				try
 				{
-					foreach (IStoreItem item in StoreObjectModel.GetChildItems(path))
+				    Collection<IStoreItem> childItems = StoreObjectModel.GetChildItems(path);
+					foreach (IStoreItem item in childItems)
 					{
 						// should we send this item to pipeline? -Force will always send item to pipeline
 						if (((item.ItemOptions & StoreItemOptions.ShouldPipeItem) == StoreItemOptions.ShouldPipeItem) || this.Force)
 						{
 							string itemPath = MakePath(path, item.ChildName);						    
-                            PSObject output = item.GetPSObject();
+                            object output = item.GetOutputObject();
 
                             WriteItemObject(output, itemPath, item.IsContainer);
 
@@ -97,7 +98,7 @@ namespace Nivot.PowerShell
             WriteDebug("GetChildItemsDynamicParameters: " + path);
             path = NormalizePath(path);
 			
-			return GetDynamicParametersForMethod(StoreProviderMethods.GetChildItems, path, recurse);
+			return GetDynamicParametersForMethod(StoreProviderMethods.GetChildItems, path);
         }
 
 		// FIXME: ignoring returnAllContainers
@@ -169,7 +170,7 @@ namespace Nivot.PowerShell
 			WriteDebug(String.Format("NewItemDynamicParameters: new {0} in {1} ; value ({2})", path, itemTypeName, newItemValue));
 			path = NormalizePath(path);
 
-			return GetDynamicParametersForMethod(StoreProviderMethods.NewItem, path, itemTypeName, newItemValue);
+			return GetDynamicParametersForMethod(StoreProviderMethods.NewItem, path);
 		}
 
 		protected override void CopyItem(string path, string copyPath, bool recurse)

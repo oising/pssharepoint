@@ -33,15 +33,11 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	/// </summary>
 	internal abstract class SharePointObjectModel : IStoreObjectModel, IDisposable
 	{
-		private static Regex s_pathRegex;
+		private readonly static Regex s_pathRegex = new Regex(
+            @"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?",
+            (RegexOptions.IgnoreCase | RegexOptions.Compiled));
 
-        protected bool IsDisposed = false;
-
-		static SharePointObjectModel()
-		{
-			RegexOptions options = (RegexOptions.IgnoreCase | RegexOptions.Compiled);			
-			s_pathRegex = new Regex(@"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?", options);
-		}
+        protected bool IsDisposed;
 
 		protected static SharePointProvider Provider
 		{
@@ -70,6 +66,16 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 		{
 			get;
 		}
+
+        protected static void EnsureNotNullOrEmpty(string item)
+        {
+            if (String.IsNullOrEmpty(item))
+            {
+                ArgumentException ex = new ArgumentException(item + " is null or empty.");
+                Provider.ThrowTerminatingError(
+                    new ErrorRecord(ex, "ArgNullOrEmpty", ErrorCategory.InvalidArgument, item));
+            }
+        }
 
 		#region IStoreObjectModel Members
 
