@@ -113,7 +113,7 @@ namespace Nivot.PowerShell.SharePoint
 			parameters.AddSwitchParam("Remote");
 		    parameters.AddSwitchParam("SSL"); // TODO: implement this
 
-			return parameters.GetDictionary();
+			return parameters.ParameterDictionary;
 		}
 
 		protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)

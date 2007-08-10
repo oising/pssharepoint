@@ -35,27 +35,27 @@ namespace Nivot.PowerShell.SharePoint
 
 		internal override Version SharePointVersion
 		{
-			get { throw new Exception("The method or operation is not implemented."); }
+			get { throw new NotImplementedException("The method or operation is not implemented."); }
 		}
 
 		public override bool ItemExists(string path)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
 		public override IStoreItem GetItem(string path)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
 		public override Collection<IStoreItem> GetChildItems(string path)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
 		public override bool HasChildItems(string path)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel.Helper
 {
     sealed class SPFileReader : IContentReader, IDisposable
     {
-        private bool m_isDisposed = false;
+        private bool m_isDisposed;
         private readonly MemoryStream m_stream;
 
         internal SPFileReader(SPFile file)

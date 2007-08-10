@@ -36,7 +36,7 @@ namespace Nivot.PowerShell
         /// <summary>
         /// 
         /// </summary>
-        public new StoreProviderInfo ProviderInfo
+        public new virtual StoreProviderInfo ProviderInfo
         {
             get
             {
@@ -72,7 +72,7 @@ namespace Nivot.PowerShell
             return StoreProviderContext.Enter(this);
         }
 
-        private RuntimeDefinedParameterDictionary GetDynamicParametersForMethod(StoreProviderMethods method, string path, params object[] context)
+        private RuntimeDefinedParameterDictionary GetDynamicParametersForMethod(StoreProviderMethods method, string path)
         {
             WriteDebug(String.Format("GetDynamicParametersForMethod {0} for path {1}", method, path));
 
@@ -104,7 +104,7 @@ namespace Nivot.PowerShell
                             {
                                 count = parameters.Count;
                             }
-                            WriteDebug(String.Format("{0} assigned {1} dynamic parameter(s).", method, count));
+                            WriteDebug(String.Format("{0}: assigned {1} dynamic parameter(s).", method, count));
                         }
                         else
                         {
@@ -132,6 +132,8 @@ namespace Nivot.PowerShell
         /// <returns></returns>
         private string NormalizePath(string path)
         {
+            WriteDebug("NormalizePath: " + path);
+
             if (!String.IsNullOrEmpty(path))
             {
                 // are we working via a drive?
@@ -145,36 +147,46 @@ namespace Nivot.PowerShell
                 }
             }
 
-            // ensure drive is rooted
-            if (path == String.Empty)
-            {
-                path = ProviderInfo.PathSeparator.ToString();
-            }
+            path = EnsureDriveIsRooted(path);
+
+            Debug.Assert(path != String.Empty, "path != String.Empty");
+
+            //// ensure drive is rooted
+            //if (path == String.Empty)
+            //{
+            //    path = ProviderInfo.PathSeparator.ToString();
+            //}
 
             return path;
         }
 
+        private static string EnsureDriveIsRooted(string path)
+        {                        
+            string text = path;
+            int index = path.IndexOf(':');
+            if ((index != -1) && ((index + 1) == path.Length))
+            {
+                text = path + '\\';
+            }
+            return text;
+        }
+
         protected virtual string NormalizePathOnDrive(string path)
-        {
-            // flip slashes; remove a trailing slash, if any.
-            string driveRoot = this.PSDriveInfo.Root.Replace('/', '\\').TrimEnd('\\');
+        {            
+            //if (!String.IsNullOrEmpty(this.PSDriveInfo.Root))
+            //{
+            //    // flip slashes; remove a trailing slash, if any.
+            //    string driveRoot = this.PSDriveInfo.Root.Replace('/', '\\').TrimEnd('\\');
 
-            // is drive qualified?
-            if (path.StartsWith(driveRoot))
-            {
-                path = path.Replace(driveRoot, String.Empty); // strip it
-                WriteDebug("Stripped root from path");
-            }
-
+            //    // is drive qualified?
+            //    if (path.StartsWith(driveRoot))
+            //    {
+            //        EnsureDriveIsRooted(path);                 
+            //        path = path.Replace(driveRoot, String.Empty); // strip it
+            //        WriteDebug("Stripped root from path");
+            //    }
+            //}
             // else ?
-
-            // is provider qualified?
-            if (SessionState.Path.IsProviderQualified(path))
-            {
-                path = path.Substring(path.IndexOf("::") + 2);
-                WriteDebug("Stripped provider from path");
-            }
-
 
             return path;
         }
@@ -185,6 +197,13 @@ namespace Nivot.PowerShell
                 new ErrorRecord(new NotImplementedException("Driveless path support not implemented."), "DriveLessPath",
                                 ErrorCategory.NotImplemented, path));
             return null;
+
+            // is provider qualified?
+            //if (SessionState.Path.IsProviderQualified(path))
+            //{
+            //    path = path.Substring(path.IndexOf("::") + 2);
+            //    WriteDebug("Stripped provider from path");
+            //}
         }
 
         /*

@@ -8,7 +8,7 @@ namespace Nivot.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "StoreItemTracker")]
     public class GetStoreItemTrackerCommand : Cmdlet
     {
-        private bool m_shouldReset = false;
+        private bool m_shouldReset; // = false;
 
         [Parameter(Mandatory = false)]
         public SwitchParameter Reset

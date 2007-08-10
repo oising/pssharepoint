@@ -12,7 +12,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	class SharePointFile : StoreItem<SPFile>, IContentReader
 	{       
-	    private IContentReader m_reader = null;
+	    private IContentReader m_reader;
 
 		public SharePointFile(SPFile file) : base(file)
 		{
@@ -69,12 +69,18 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
         protected override void Dispose(bool disposing)
         {
-            if (m_reader != null)
+            try
             {
-                m_reader.Dispose();
-                m_reader = null;
+                if (m_reader != null)
+                {
+                    m_reader.Dispose();
+                    m_reader = null;
+                }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

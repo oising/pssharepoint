@@ -12,8 +12,8 @@ namespace Nivot.PowerShell.SharePoint.Commands
 		private const string ObjectParameterSet = "Object";
 		private const string UrlParameterSet = "Url";
 
-		private SPSite[] m_sites = null;
-		private Uri[] m_urls = null;
+		private SPSite[] m_sites;
+		private Uri[] m_urls;
 
 		[Parameter(Mandatory = false, ValueFromPipeline = true, ParameterSetName = ObjectParameterSet)]
 		public SPSite[] Site

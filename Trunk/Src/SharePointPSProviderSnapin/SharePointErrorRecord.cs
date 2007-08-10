@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Nivot.PowerShell.SharePoint
 {
-	internal class SharePointErrorRecord
+	internal static class SharePointErrorRecord
 	{
 		internal static ErrorRecord ArgumentNullOrEmpty(string argument)
 		{

@@ -44,6 +44,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
                     Provider.WriteVerbose("OpenWeb() succeeded: got " + web.Name);
                 }
             }
+            // FIXME: catch only OpenWeb thrown exceptions
             catch
             {
                 Provider.ThrowTerminatingError(
@@ -76,6 +77,8 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
         public override IStoreItem GetItem(string path)
         {
             EnsureNotDisposed();
+            EnsureNotNullOrEmpty(path);
+
             Debug.Assert((path.IndexOf("http:") == -1),
                          String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
 
@@ -119,18 +122,24 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 
         protected override void Dispose(bool disposing)
         {
-            if (!IsDisposed)
+            try
             {
-                if (disposing)
+                if (!IsDisposed)
                 {
-                    if (m_site != null)
+                    if (disposing)
                     {
-                        m_site.Dispose();
-                        m_site = null;
+                        if (m_site != null)
+                        {
+                            m_site.Dispose();
+                            m_site = null;
+                        }
                     }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

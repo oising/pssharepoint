@@ -42,7 +42,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			get { return false; }
 		}
 
-        public override PSObject GetPSObject()
+        public override object GetOutputObject()
         {
             PSObject output;
 

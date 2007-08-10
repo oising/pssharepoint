@@ -152,13 +152,13 @@ namespace Nivot.PowerShell
         }
 
         /// <summary>
-        /// Gets the PSObject wrapped native backing-store object this wrapper exposes. This method is called to obtain the object to write to the pipeline.
+        /// Gets the native backing-store object this wrapper exposes. This method is called to obtain the object to write to the pipeline.
         /// <remarks>This method should be overridden in derived classes to facilitate decoration of the output object. </remarks>
         /// </summary>
-        /// <returns>A PSObject wrapping the native backing-store object.</returns>
-        public virtual PSObject GetPSObject()
+        /// <returns>The native backing-store object.</returns>
+        public virtual object GetOutputObject()
         {
-            return new PSObject(NativeObject);
+            return NativeObject;
         }
 
         #region IDynamicParametersProvider Members
@@ -180,7 +180,7 @@ namespace Nivot.PowerShell
         /// <param name="parameters"></param>
         void IDynamicParametersProvider.SetDynamicParameters(StoreProviderMethods method, RuntimeDefinedParameterDictionary parameters)
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new NotImplementedException("The method or operation is not implemented.");
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Nivot.PowerShell
         /// <param name="method"></param>
         void IDynamicParametersProvider.ClearDynamicParameters(StoreProviderMethods method)
         {
-            throw new Exception("The method or operation is not implemented.");
+            throw new NotImplementedException("The method or operation is not implemented.");
         }
 
         #endregion
@@ -338,7 +338,7 @@ namespace Nivot.PowerShell
             if (addAction != null)
             {
                 try
-                {
+                {                    
                     // try to add item
                     addAction.DynamicInvoke(item.NativeObject);
                     return true;
@@ -384,6 +384,9 @@ namespace Nivot.PowerShell
             throw new NotImplementedException("The method or operation is not implemented.");
         }
 
+        /// <summary>
+        /// The underlying native backing-store object
+        /// </summary>
         object IStoreItem.NativeObject
         {
             get
@@ -393,14 +396,30 @@ namespace Nivot.PowerShell
             }
         }
 
+        /// <summary>
+        /// Final path chunk identifying this item, e.g. "web" in "/site/web"
+        /// <remarks>Assumes ChildName is unique in its namespace, as is expected in filesystem-like providers.</remarks>
+        /// </summary>
         public abstract string ChildName { get; }
 
+        /// <summary>
+        /// Can we set-location to this item?
+        /// </summary>
         public abstract bool IsContainer { get; }
 
-        // TODO: this should probably be virtual with default of pipe|tabcomplete
-        // as overriding to expose tab-complete only objects is probably less common
-        public abstract StoreItemOptions ItemOptions { get; }
+        ///<summary>
+        ///
+        /// Flags for how the provider should treat this item, e.g. tab-complete only, don't tab-complete, pipe only etc.
+        /// 
+        ///</summary>
+        public virtual StoreItemOptions ItemOptions
+        {
+            get { return StoreItemOptions.ShouldPipeItem | StoreItemOptions.ShouldTabComplete; }
+        }
 
+        /// <summary>
+        /// If this item is cacheable, this denotes its cache priority.
+        /// </summary>
         public virtual CacheItemPriority CachePriority
         {
             get

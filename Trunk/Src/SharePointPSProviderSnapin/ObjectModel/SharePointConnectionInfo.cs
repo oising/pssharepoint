@@ -7,9 +7,9 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	// NOT USED
 	internal class SharePointConnectionInfo
 	{
-		private Uri m_siteCollectionUrl;
-		private Version m_sharePointVersion;
-		private bool m_isRemote;
+		private readonly Uri m_siteCollectionUrl;
+		private readonly Version m_sharePointVersion;
+        private readonly bool m_isRemote;
 
 		public Uri SiteCollectionUrl
 		{

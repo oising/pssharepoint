@@ -28,11 +28,11 @@ namespace Nivot.PowerShell.SharePoint
 {	
 	public class SharePointDriveInfo : PSDriveInfo, IDisposable
 	{
-		private SharePointObjectModel m_sharePointObjectModel = null;
-		private string m_virtualServer;
-		private bool m_isRemote = true;
+		private SharePointObjectModel m_sharePointObjectModel;
+		private readonly string m_virtualServer;
+		private readonly bool m_isRemote;
 		
-		protected bool IsDisposed = false;
+		protected bool IsDisposed;
 
         internal SharePointDriveInfo(string name, ProviderInfo provider, Uri siteCollectionUrl, string description, PSCredential credential, bool remote)
             : base(name, provider, StripProtocol(siteCollectionUrl), description, credential)

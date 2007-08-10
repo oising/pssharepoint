@@ -10,12 +10,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
 	internal static class SharePointUtils
 	{
-		internal static SPGlobalAdmin s_admin;
-		
-		static SharePointUtils()
-		{
-			s_admin = new SPGlobalAdmin();
-		}
+        internal static SPGlobalAdmin s_admin = new SPGlobalAdmin();				
 
 		internal static IEnumerable<SPVirtualServer> GetSPVirtualServers(SPVirtualServerState state)
 		{

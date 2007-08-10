@@ -60,7 +60,7 @@ namespace Nivot.PowerShell
                 try
                 {
                     IStoreItem item = StoreObjectModel.GetItem(path);
-                    PSObject output = item.GetPSObject();
+                    object output = item.GetOutputObject();
                     WriteItemObject(output, path, item.IsContainer);
                 }
                 catch (Exception ex)
