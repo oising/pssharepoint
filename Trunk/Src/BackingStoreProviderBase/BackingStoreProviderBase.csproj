@@ -47,6 +47,10 @@
     <Compile Include="Commands\ClearStoreItemCacheCommand.cs" />
     <Compile Include="Commands\GetStoreItemTrackerCommand.cs" />
     <Compile Include="DynamicParameterBuilder.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ProviderSupport\FileSystem\FileSystemDirectory.cs" />
+    <Compile Include="ProviderSupport\FileSystem\FileSystemFile.cs" />
+    <Compile Include="ProviderSupport\FileSystem\FileSystemTarget.cs" />
     <Compile Include="StoreProviderBase.IDynamicPropertyCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.IPropertyCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.IContentCmdletProvider.cs" />
