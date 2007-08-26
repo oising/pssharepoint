@@ -90,7 +90,7 @@ namespace Nivot.PowerShell.SharePoint
 
 					WriteVerbose("PSDriveInfo.Root = " + driveInfo.Root);
 				}
-                catch (UriFormatException ex)
+                catch (UriFormatException)
                 {
                     WriteError(
                         SharePointErrorRecord.ArgumentError(
