@@ -35,18 +35,12 @@ namespace Nivot.PowerShell.SharePoint
 		protected bool IsDisposed;
 
         internal SharePointDriveInfo(string name, ProviderInfo provider, Uri siteCollectionUrl, string description, PSCredential credential, bool remote)
-            : base(name, provider, StripProtocol(siteCollectionUrl), description, credential)
+            : base(name, provider, SharePointObjectModel.ToRootString(siteCollectionUrl), description, credential)
 		{            
 			m_sharePointObjectModel = SharePointObjectModel.GetSharePointObjectModel(siteCollectionUrl, remote);
 			m_isRemote = remote;
             m_virtualServer = siteCollectionUrl.Host;
 		}
-
-        private static string StripProtocol(Uri root)
-        {
-            string url = root.ToString();
-            return url.Replace("http://", String.Empty).Replace("https://", String.Empty);
-        }
 
 		internal SharePointObjectModel ObjectModel
 		{

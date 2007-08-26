@@ -85,52 +85,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             return storeItem;
         }
 
-//        public override IStoreItem GetItem(string path)
-//        {
-//            EnsureNotDisposed();
-//            EnsureNotNullOrEmpty(path);
-
-//            Debug.Assert((path.IndexOf("http:") == -1),
-//                         String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
-
-//            char separator = Provider.ProviderInfo.PathSeparator;
-
-//            // always a minimum of '\'
-//            string[] chunks = path.Split(separator);
-
-//#if __ROOTWEB
-//            IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
-//#else
-//            // start at SPSite
-//            IStoreItem storeItem = new SharePointSite(m_site);
-//#endif
-//            if (path == separator.ToString())
-//            {
-//                return storeItem; // at root
-//            }            
-
-//            // index into object hierarchy
-//            foreach (string chunk in chunks)
-//            {
-//                if (chunk == String.Empty)
-//                {
-//                    // skip first chunk
-//                    continue;
-//                }
-
-//                // use indexer to find this chunk
-//                using (IStoreItem parentItem = storeItem) {                 
-//                    storeItem = parentItem[chunk];
-//                }
-
-//                if (storeItem == null)
-//                {
-//                    return null;
-//                }                
-//            }
-//            return storeItem;
-//        }
-
         protected override void Dispose(bool disposing)
         {
             try
