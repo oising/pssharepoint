@@ -70,19 +70,19 @@ namespace Nivot.PowerShell.SharePoint
 					return null;
 				}
 
-                if (root.StartsWith("http://") || root.StartsWith("https://"))
-                {
-                    WriteError(
-                        SharePointErrorRecord.ArgumentError(
-                            "Invalid root syntax: instead of http://server/site/web, use server/site/web."));
-                    return null;
-                }
+                //if (root.StartsWith("http://") || root.StartsWith("https://"))
+                //{
+                //    WriteError(
+                //        SharePointErrorRecord.ArgumentError(
+                //            "Invalid root syntax: instead of http://server/site/web, use server/site/web."));
+                //    return null;
+                //}
 
 				SharePointDriveInfo driveInfo = null;
 
 				try
 				{
-				    Uri siteCollectionUrl = new Uri("http://" + root);
+				    Uri siteCollectionUrl = new Uri(root);
 
                     driveInfo =
                         new SharePointDriveInfo(drive.Name, ProviderInfo, siteCollectionUrl, "SharePoint Drive", Credential,
@@ -90,6 +90,14 @@ namespace Nivot.PowerShell.SharePoint
 
 					WriteVerbose("PSDriveInfo.Root = " + driveInfo.Root);
 				}
+                catch (UriFormatException ex)
+                {
+                    WriteError(
+                        SharePointErrorRecord.ArgumentError(
+                            "Invalid root syntax: please use a valid Url."));
+                    
+                    return null;
+                }
 				catch (Exception ex)
 				{
 					Trace.WriteLine(ex, "NewDrive");
