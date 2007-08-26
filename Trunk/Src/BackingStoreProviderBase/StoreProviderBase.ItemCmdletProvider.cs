@@ -42,17 +42,26 @@ namespace Nivot.PowerShell
         protected override bool IsValidPath(string path)
         {
             WriteDebug("IsValidPath: " + path);
-            path = NormalizePath(path);
+            
+            // Check if the path is null or empty.
+            if (String.IsNullOrEmpty(path))
+            {
+                WriteDebug("Invalid Path: null or empty.");
+                return false;
+            }
 
-			using (EnterContext())
-			{
-				return StoreObjectModel.IsValidPath(path);
-			}
+            path = NormalizePath(path);
+            
+            using (EnterContext())
+            {
+                return StoreObjectModel.IsValidPath(path);
+            }
         }
 
         protected override void GetItem(string path)
         {
             WriteDebug("GetItem: " + path);
+            string fullPath = path; // needed for correct PSPath
             path = NormalizePath(path);
 
             using (EnterContext())
@@ -61,7 +70,7 @@ namespace Nivot.PowerShell
                 {
                     IStoreItem item = StoreObjectModel.GetItem(path);
                     object output = item.GetOutputObject();
-                    WriteItemObject(output, path, item.IsContainer);
+                    WriteItemObject(output, fullPath, item.IsContainer);
                 }
                 catch (Exception ex)
                 {
@@ -83,6 +92,12 @@ namespace Nivot.PowerShell
         protected override bool ItemExists(string path)
         {
             WriteDebug("ItemExists: " + path);
+
+            //if (IsPathDrive(path))
+            //{
+            //    return true;
+            //}
+
             path = NormalizePath(path);
 
 			using (EnterContext())
@@ -135,5 +150,6 @@ namespace Nivot.PowerShell
         }
 
         #endregion
-	}
+
+    }
 }

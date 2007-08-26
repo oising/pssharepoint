@@ -47,6 +47,8 @@ namespace Nivot.PowerShell
 		protected override void GetChildItems(string path, bool recurse)
 		{
 		    WriteDebug("GetChildItems: " + path);
+            
+            string fullPath = path; // FIXED: needed for PSPath            
             path = NormalizePath(path); 
 
 			using (EnterContext())
@@ -59,7 +61,7 @@ namespace Nivot.PowerShell
 						// should we send this item to pipeline? -Force will always send item to pipeline
 						if (((item.ItemOptions & StoreItemOptions.ShouldPipeItem) == StoreItemOptions.ShouldPipeItem) || this.Force)
 						{
-							string itemPath = MakePath(path, item.ChildName);						    
+							string itemPath = MakePath(fullPath, item.ChildName); // FIXED: was 'path'
                             object output = item.GetOutputObject();
 
                             WriteItemObject(output, itemPath, item.IsContainer);
@@ -105,6 +107,7 @@ namespace Nivot.PowerShell
 		protected override void GetChildNames(string path, ReturnContainers returnContainers)
 		{
 		    WriteDebug("GetChildNames: " + path);
+            string fullPath = path; // FIXED: needed for PSPath
             path = NormalizePath(path); 
 
 			using (EnterContext())
@@ -126,7 +129,8 @@ namespace Nivot.PowerShell
                             if ((item.ItemOptions & StoreItemOptions.ShouldTabComplete) ==
                                 StoreItemOptions.ShouldTabComplete)
                             {
-                                WriteItemObject(item.ChildName, MakePath(path, item.ChildName), item.IsContainer);
+                                string itemPath = MakePath(fullPath, item.ChildName); // FIXED: was 'path'
+                                WriteItemObject(item.ChildName, itemPath, item.IsContainer);
                             }
                         }
 					}

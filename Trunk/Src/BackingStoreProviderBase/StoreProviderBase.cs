@@ -124,6 +124,22 @@ namespace Nivot.PowerShell
 
         #region Helper Methods
 
+        private bool IsPathDrive(string path)
+        {
+            // Remove the drive name and first path separator.  If the 
+            // path is reduced to nothing, it is a drive. Also if its
+            // just a drive then there wont be any path separators
+            string root = StoreObjectModel.Root;
+            string pathSeparator = this.ProviderInfo.PathSeparator.ToString();
+
+            if (String.IsNullOrEmpty(path.Replace(root, String.Empty)) ||
+                String.IsNullOrEmpty(path.Replace(root + pathSeparator, String.Empty)))
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Fix up whatever sort of path string Msh has thrown us
         /// <remarks>FIXME: assumes we're drive-qualified</remarks>
@@ -134,96 +150,60 @@ namespace Nivot.PowerShell
         {
             WriteDebug("NormalizePath: " + path);
 
-            if (!String.IsNullOrEmpty(path))
-            {
-                // are we working via a drive?
-                if (this.PSDriveInfo != null)
+            string result = path;
+
+            Debug.Assert(this.StoreObjectModel != null, "StoreObjectModel != null");
+
+            // get basics
+            string root = StoreObjectModel.Root;
+            string separator = ProviderInfo.PathSeparator.ToString();
+            WriteDebug(String.Format("Root: {0}; Separator: {1}", root, separator));
+
+            if (! String.IsNullOrEmpty(path))
+            {                
+                // ensure trailing slash on path
+                if (! path.EndsWith(separator))
                 {
-                    path = NormalizePathOnDrive(path);
+                    path += separator;
                 }
-                else
+
+                // strip out root, if needed.
+                if (! String.IsNullOrEmpty(root))
                 {
-                    path = NormalizeDrivelessPath(path);
+                    WriteDebug("Stripping root.");
+                    path = path.Replace(root + separator, String.Empty);
                 }
+
+                // flip slashes
+                result = path.Replace("/", separator);
             }
 
-            path = EnsureDriveIsRooted(path);
+            //path = EnsureDriveIsRooted(path);
 
-            Debug.Assert(path != String.Empty, "path != String.Empty");
+            //Debug.Assert(path != String.Empty, "path != String.Empty");
 
             //// ensure drive is rooted
-            //if (path == String.Empty)
-            //{
-            //    path = ProviderInfo.PathSeparator.ToString();
-            //}
-
-            return path;
-        }
-
-        private static string EnsureDriveIsRooted(string path)
-        {                        
-            string text = path;
-            int index = path.IndexOf(':');
-            if ((index != -1) && ((index + 1) == path.Length))
+            if (result == String.Empty)
             {
-                text = path + '\\';
+                WriteDebug("Path is empty: ensuring rooted.");
+                result = ProviderInfo.PathSeparator.ToString();
             }
-            return text;
+
+            WriteDebug("NormalizePath: returning " + result);
+
+            return result;
         }
 
-        protected virtual string NormalizePathOnDrive(string path)
-        {            
-            //if (!String.IsNullOrEmpty(this.PSDriveInfo.Root))
-            //{
-            //    // flip slashes; remove a trailing slash, if any.
-            //    string driveRoot = this.PSDriveInfo.Root.Replace('/', '\\').TrimEnd('\\');
-
-            //    // is drive qualified?
-            //    if (path.StartsWith(driveRoot))
-            //    {
-            //        EnsureDriveIsRooted(path);                 
-            //        path = path.Replace(driveRoot, String.Empty); // strip it
-            //        WriteDebug("Stripped root from path");
-            //    }
-            //}
-            // else ?
-
-            return path;
-        }
-
-        protected virtual string NormalizeDrivelessPath(string path)
-        {
-            ThrowTerminatingError(
-                new ErrorRecord(new NotImplementedException("Driveless path support not implemented."), "DriveLessPath",
-                                ErrorCategory.NotImplemented, path));
-            return null;
-
-            // is provider qualified?
-            //if (SessionState.Path.IsProviderQualified(path))
-            //{
-            //    path = path.Substring(path.IndexOf("::") + 2);
-            //    WriteDebug("Stripped provider from path");
-            //}
-        }
-
-        /*
-                private bool IsDrive(string path) {
-                    bool isDrive = (path == String.Format(this.PSDriveInfo.Root + ":" + PathSeparator));
-                    Dump("IsDrive {0} : {1}", path, isDrive);
-
-                    return isDrive;
-                }
-
-                private string EnsureDriveIsRooted(string path) {
-                    Dump("EnsureDriveIsRooted {0}", path);
-                    if (!path.StartsWith(PathSeparator)) {
-                        return PathSeparator + path;
-                    }
-                    Dump("EnsureDriveIsRooted returning {0}", path);
-				
-                    return path;
-                }
-        */
+        //private static string EnsureDriveIsRooted(string path)
+        //{                        
+        //    string text = path;
+        //    int index = path.IndexOf(':');
+        //    if ((index != -1) && ((index + 1) == path.Length))
+        //    {
+        //        text = path + '\\';
+        //    }
+        //    return text;
+        //}
 
         private bool ArePathsEquivalent(string pathA, string pathB)
         {
