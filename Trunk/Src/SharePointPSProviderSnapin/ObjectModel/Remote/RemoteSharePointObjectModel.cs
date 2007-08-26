@@ -28,10 +28,15 @@ namespace Nivot.PowerShell.SharePoint
 	/// </summary>
 	internal class RemoteSharePointObjectModel : SharePointObjectModel
 	{
-		internal RemoteSharePointObjectModel(Uri siteCollectionUrl)
+		internal RemoteSharePointObjectModel(Uri siteCollectionUrl) : base(siteCollectionUrl)
 		{
 			Provider.ThrowTerminatingError(SharePointErrorRecord.NotImplementedError("Remote instance not supported yet."));
 		}
+
+        protected override IStoreItem GetRootStoreItem()
+        {
+            throw new NotImplementedException("The method or operation is not implemented.");
+        }
 
 		internal override Version SharePointVersion
 		{

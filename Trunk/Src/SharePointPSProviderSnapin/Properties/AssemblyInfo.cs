@@ -25,12 +25,12 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly : AssemblyTitle("SharePoint PSProvider Snapin for PSH 1.0 RTM")]
+[assembly : AssemblyTitle("SharePoint PSProvider SnapIn")]
 [assembly : AssemblyDescription("PSProvider for MSSPAT WSS & SPS 2003")]
 [assembly : AssemblyConfiguration("")]
 [assembly : AssemblyCompany("Nivot Inc")]
 [assembly : AssemblyProduct("SharePoint PSProvider Snapin")]
-[assembly : AssemblyCopyright("Copyright © Nivot Inc 2006")]
+[assembly : AssemblyCopyright("Copyright © Nivot Inc 2006 - 2007")]
 [assembly : AssemblyTrademark("Licensed under the BSD License")]
 [assembly : AssemblyCulture("")]
 
@@ -54,5 +54,5 @@ using System.Security;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly : AssemblyVersion("0.5.4.0")]
-[assembly : AssemblyFileVersion("0.5.4.0")]
+[assembly : AssemblyVersion("0.6.0.0")]
+[assembly : AssemblyFileVersion("0.6.0.0")]

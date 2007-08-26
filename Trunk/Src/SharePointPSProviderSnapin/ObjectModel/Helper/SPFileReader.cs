@@ -9,7 +9,7 @@ using Microsoft.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel.Helper
 {
-    sealed class SPFileReader : IContentReader, IDisposable
+    sealed class SPFileReader : IContentReader
     {
         private bool m_isDisposed;
         private readonly MemoryStream m_stream;
