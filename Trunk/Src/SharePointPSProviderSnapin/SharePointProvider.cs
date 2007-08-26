@@ -70,14 +70,6 @@ namespace Nivot.PowerShell.SharePoint
 					return null;
 				}
 
-                //if (root.StartsWith("http://") || root.StartsWith("https://"))
-                //{
-                //    WriteError(
-                //        SharePointErrorRecord.ArgumentError(
-                //            "Invalid root syntax: instead of http://server/site/web, use server/site/web."));
-                //    return null;
-                //}
-
 				SharePointDriveInfo driveInfo = null;
 
 				try
