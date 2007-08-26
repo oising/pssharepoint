@@ -45,7 +45,7 @@ namespace Nivot.PowerShell.Commands
                     output.Properties.Add(new PSNoteProperty("Constructed", constructed));
                     output.Properties.Add(new PSNoteProperty("Disposed", disposed )); // explicit disposal
                     output.Properties.Add(new PSNoteProperty("Finalized", finalized)); // finalizer disposal
-                    output.Properties.Add(new PSNoteProperty("Total", constructed - (disposed + finalized)));
+                    output.Properties.Add(new PSNoteProperty("Alive", constructed - (disposed + finalized)));
                     
                     WriteObject(output);
                 }
