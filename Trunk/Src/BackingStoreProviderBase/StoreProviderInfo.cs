@@ -39,6 +39,7 @@ namespace Nivot.PowerShell
 	        }
 	    }
 
+        [Obsolete("Path separator should always be '\\'")]
 		public virtual char PathSeparator
 		{
 			get
