@@ -24,17 +24,13 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	/// Base factory class for getting access to the SharePoint Object Model, either local or remote.
 	/// </summary>
 	internal abstract class SharePointObjectModel : IndexerObjectModelBase<SharePointProvider>
-	{
-        //private readonly string m_root = null;
+	{        
         private readonly Uri m_internalRoot = null;
 
 		private readonly static Regex s_pathRegex = new Regex(
             @"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?",
             (RegexOptions.IgnoreCase | RegexOptions.Compiled));
-
-        //protected bool IsDisposed;
-
-        // TODO: change Uri to string; this will save a half dozen ToString calls
+        
         protected SharePointObjectModel(Uri siteCollectionUrl) : base(ToRootString(siteCollectionUrl))
         {
             m_internalRoot = siteCollectionUrl;
@@ -53,14 +49,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	    {
             get { return m_internalRoot; }
 	    }
-
-        //protected static SharePointProvider Provider
-        //{
-        //    get
-        //    {
-        //        return StoreProviderContext.Current as SharePointProvider;
-        //    }
-        //}
 
 		internal static SharePointObjectModel GetSharePointObjectModel(Uri siteCollectionUrl, bool remote)
 		{
@@ -82,18 +70,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			get;
 		}
 
-        //protected static void EnsureNotNullOrEmpty(string item)
-        //{
-        //    if (String.IsNullOrEmpty(item))
-        //    {
-        //        ArgumentException ex = new ArgumentException(item + " is null or empty.");
-        //        Provider.ThrowTerminatingError(
-        //            new ErrorRecord(ex, "ArgNullOrEmpty", ErrorCategory.InvalidArgument, item));
-        //    }
-        //}
-
-        //protected abstract IStoreItem GetRootStoreItem();
-
 		#region IStoreObjectModel Members
 
 		public override bool IsValidPath(string path)
@@ -101,152 +77,6 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			return s_pathRegex.IsMatch(path);
 		}
 
-        //public virtual bool HasChildItems(string path)
-        //{
-        //    Provider.WriteVerbose("SharePointObjectModel::HasChildItems called for path " + path);
-
-        //    using (IStoreItem item = GetItem(path))
-        //    {
-        //        // slight optimization
-        //        if (item.IsContainer)
-        //        {
-        //            foreach (IStoreItem childItem in item)
-        //            {
-        //                using (childItem)
-        //                {
-        //                    return true;
-        //                }
-        //            }
-        //        }
-        //        return false;
-        //    }
-        //}
-
-        //public virtual bool ItemExists(string path)
-        //{
-        //    bool itemExists;
-
-        //    using (IStoreItem item = GetItem(path))
-        //    {
-        //        itemExists = (item != null);				
-        //    }
-
-        //    return itemExists;
-        //}
-
-        //public virtual Collection<IStoreItem> GetChildItems(string path)
-        //{
-        //    using (IStoreItem parentItem = GetItem(path))
-        //    {				
-        //        Collection<IStoreItem> childItems = new Collection<IStoreItem>();
-
-        //        foreach (IStoreItem childItem in parentItem)
-        //        {
-        //            if (Provider.Stopping)
-        //            {
-        //                childItem.Dispose(); // prevent leak
-        //                break;
-        //            }
-        //            childItems.Add(childItem);
-        //        }
-        //        return childItems;
-        //    }			
-        //}
-
-		//public abstract IStoreItem GetItem(string path);
-
-        //public virtual IStoreItem GetItem(string path)
-        //{
-        //    EnsureNotDisposed();
-        //    EnsureNotNullOrEmpty(path);
-
-        //    //Debug.Assert((path.IndexOf("http:") == -1),
-        //    //             String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
-
-        //    char separator = Provider.ProviderInfo.PathSeparator;
-
-        //    // always a minimum of '\'
-        //    string[] chunks = path.Split(separator);
-
-        //    // get the root item to start the search from
-        //    IStoreItem storeItem = GetRootStoreItem();
-
-        //    if (path == separator.ToString())
-        //    {
-        //        return storeItem; // at root
-        //    }            
-
-        //    // index into object hierarchy
-        //    foreach (string chunk in chunks)
-        //    {
-        //        if (chunk == String.Empty)
-        //        {
-        //            // skip first chunk
-        //            continue;
-        //        }
-
-        //        // use indexer to find this chunk
-        //        using (IStoreItem parentItem = storeItem) {                 
-        //            storeItem = parentItem[chunk];
-        //        }
-
-        //        if (storeItem == null)
-        //        {
-        //            return null;
-        //        }                
-        //    }
-        //    return storeItem;    
-        //}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //public virtual string Root
-        //{
-        //    get { return m_root; }
-        //}
-
 		#endregion
-
-        #region IDisposable Members
-
-        //protected void EnsureNotDisposed()
-        //{
-        //    if (IsDisposed)
-        //    {
-        //        throw new ObjectDisposedException(GetType().Name);
-        //    }
-        //}
-
-        //protected virtual void Dispose(bool disposing)
-        //{
-        //    if (!IsDisposed)
-        //    {
-        //        string name = GetType().Name;
-
-        //        if (disposing)
-        //        {
-        //            Debug.WriteLine("Dispose()", name);
-        //        }
-        //        else
-        //        {
-        //            Debug.WriteLine("Finalize()", name);
-        //        }
-        //        IsDisposed = true;
-        //    }            
-        //}
-
-        //public void Dispose()
-        //{
-        //    Dispose(true);
-        //    GC.SuppressFinalize(this);
-        //}
-
-        //~SharePointObjectModel()
-        //{
-        //    Dispose(false);
-        //}
-
-        #endregion
     }
 }
