@@ -51,6 +51,7 @@
     <Compile Include="ProviderSupport\FileSystem\FileSystemDirectory.cs" />
     <Compile Include="ProviderSupport\FileSystem\FileSystemFile.cs" />
     <Compile Include="ProviderSupport\FileSystem\FileSystemTarget.cs" />
+    <Compile Include="ObjectModel\IndexerObjectModelBase.cs" />
     <Compile Include="StoreProviderBase.IDynamicPropertyCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.IPropertyCmdletProvider.cs" />
     <Compile Include="StoreProviderBase.IContentCmdletProvider.cs" />
@@ -82,6 +83,9 @@
     <Compile Include="StoreProviderInfo.cs" />
     <Compile Include="StoreProviderMethods.cs" />
     <Compile Include="StoreItemTracker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

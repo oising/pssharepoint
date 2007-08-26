@@ -9,7 +9,7 @@ using System.Security;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BackingStoreProviderBase")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Licensed under Gnu LGPL 2.1")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nivot Inc.")]
 [assembly: AssemblyProduct("BackingStoreProviderBase")]
