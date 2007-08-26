@@ -25,9 +25,17 @@ using System.Management.Automation.Provider;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#region License: GNU Library General Public License (LGPL)
+// LGPL Version 2.1, February 1999
+// See included License.txt
+
+// Author: Oisin Grehan
+// Contact: oising@gmail.com
+// Company: Nivot Inc
+#endregion
+
 namespace Nivot.PowerShell
 {
-
 	/// <summary>
 	/// 
 	/// </summary>

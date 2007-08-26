@@ -1,3 +1,12 @@
+#region License: GNU Library General Public License (LGPL)
+// LGPL Version 2.1, February 1999
+// See included License.txt
+
+// Author: Oisin Grehan
+// Contact: oising@gmail.com
+// Company: Nivot Inc
+#endregion
+
 // original author: Jachym Kouba (pscx project)
 
 using System;
