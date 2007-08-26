@@ -57,7 +57,6 @@
   <ItemGroup>
     <Compile Include="Commands\OutDisposeCommand.cs" />
     <Compile Include="Commands\ExportListItemCommand.cs" />
-    <Compile Include="Commands\GetSPUser.cs" />
     <Compile Include="Commands\GetSPVirtualServerCommand.cs" />
     <Compile Include="Commands\ImportListItemCommand.cs" />
     <Compile Include="Commands\MountSPSiteCommand.cs" />
@@ -109,15 +108,17 @@
     <Compile Include="ObjectModel\Local\SharePointWeb.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FormatData\SharePoint.Format.ps1xml" />
+    <Content Include="FormatData\SharePoint.Format.ps1xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\install.ps1" />
-    <None Include="Scripts\SharePoint.Format.ps1xml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Scripts\SharePoint.Types.ps1xml" />
-    <None Include="TypeData\SharePoint.Types.ps1xml" />
+    <Content Include="TypeData\SharePoint.Types.ps1xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="changelog.txt" />

@@ -33,11 +33,21 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 	/// </summary>
 	internal abstract class SharePointObjectModel : IStoreObjectModel, IDisposable
 	{
+	    private readonly string m_root = null;
+
 		private readonly static Regex s_pathRegex = new Regex(
             @"(\\(?:[^!\\]+\\?)*)(?:(!users|!groups|!roles|!alerts|!lists)\\?([^!\\]+)?)?",
             (RegexOptions.IgnoreCase | RegexOptions.Compiled));
 
         protected bool IsDisposed;
+
+        // TODO: change Uri to string; this will save a half dozen ToString calls
+        protected SharePointObjectModel(Uri siteCollectionUrl)
+        {
+            string url = siteCollectionUrl.ToString();           
+            m_root = url.Replace("https://", String.Empty).Replace("http://", String.Empty);
+            m_root = m_root.Replace("/", @"\");
+        }
 
 		protected static SharePointProvider Provider
 		{
@@ -76,6 +86,8 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
                     new ErrorRecord(ex, "ArgNullOrEmpty", ErrorCategory.InvalidArgument, item));
             }
         }
+
+	    protected abstract IStoreItem GetRootStoreItem();
 
 		#region IStoreObjectModel Members
 
@@ -136,7 +148,60 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 			}			
 		}
 
-		public abstract IStoreItem GetItem(string path);
+		//public abstract IStoreItem GetItem(string path);
+
+        public virtual IStoreItem GetItem(string path)
+        {
+            EnsureNotDisposed();
+            EnsureNotNullOrEmpty(path);
+
+            //Debug.Assert((path.IndexOf("http:") == -1),
+            //             String.Format("StoreObjectModel.GetItem(path) : path '{0}' has not been normalized!", path));
+
+            char separator = Provider.ProviderInfo.PathSeparator;
+
+            // always a minimum of '\'
+            string[] chunks = path.Split(separator);
+
+            // get the root item to start the search from
+            IStoreItem storeItem = GetRootStoreItem();
+
+            if (path == separator.ToString())
+            {
+                return storeItem; // at root
+            }            
+
+            // index into object hierarchy
+            foreach (string chunk in chunks)
+            {
+                if (chunk == String.Empty)
+                {
+                    // skip first chunk
+                    continue;
+                }
+
+                // use indexer to find this chunk
+                using (IStoreItem parentItem = storeItem) {                 
+                    storeItem = parentItem[chunk];
+                }
+
+                if (storeItem == null)
+                {
+                    return null;
+                }                
+            }
+            return storeItem;
+
+    
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+	    public virtual string Root
+	    {
+            get { return m_root; }
+	    }
 
 		#endregion
 
