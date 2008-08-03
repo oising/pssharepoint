@@ -1,26 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPSSnapin", "SharePointPSProviderSnapin\SharePointPSSnapin.csproj", "{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackingStoreProviderBase", "BackingStoreProviderBase\BackingStoreProviderBase.csproj", "{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2336F939-2BE4-44C0-9D4E-4343F73A9FA3}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
 		scratchpad.txt = scratchpad.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPSSnapin", "SharePointPSProviderSnapin\SharePointPSSnapin.csproj", "{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackingStoreProviderBase", "BackingStoreProviderBase\BackingStoreProviderBase.csproj", "{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
