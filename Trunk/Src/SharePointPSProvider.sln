@@ -14,29 +14,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nivot.PowerShell.SharePoint
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointObjectModel", "SharePointObjectModel\SharePointObjectModel.csproj", "{35B99B03-C523-4E01-AF57-EC3CE000CAC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPSSnapin", "SharePointPSProviderSnapin\SharePointPSSnapin.csproj", "{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs01.codeplex.com/
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = SharePointPSProviderSnapin\\SharePointPSSnapin.csproj
-		SccProjectName1 = SharePointPSProviderSnapin
-		SccLocalPath1 = SharePointPSProviderSnapin
-		SccProjectUniqueName2 = SharePointPSProvider\\Nivot.PowerShell.SharePoint.csproj
-		SccProjectName2 = SharePointPSProvider
-		SccLocalPath2 = SharePointPSProvider
-		SccProjectUniqueName3 = SharePoint11ObjectModel\\Nivot.PowerShell.SharePoint.Office11.csproj
-		SccProjectName3 = SharePoint11ObjectModel
-		SccLocalPath3 = SharePoint11ObjectModel
-		SccProjectUniqueName4 = SharePoint12ObjectModel\\Nivot.PowerShell.SharePoint.Office12.csproj
-		SccProjectName4 = SharePoint12ObjectModel
-		SccLocalPath4 = SharePoint12ObjectModel
-		SccProjectUniqueName5 = SharePointObjectModel\\SharePointObjectModel.csproj
-		SccProjectName5 = SharePointObjectModel
-		SccLocalPath5 = SharePointObjectModel
+		SccProjectUniqueName1 = SharePointPSProvider\\Nivot.PowerShell.SharePoint.csproj
+		SccProjectName1 = SharePointPSProvider
+		SccLocalPath1 = SharePointPSProvider
+		SccProjectUniqueName2 = SharePoint11ObjectModel\\Nivot.PowerShell.SharePoint.Office11.csproj
+		SccProjectName2 = SharePoint11ObjectModel
+		SccLocalPath2 = SharePoint11ObjectModel
+		SccProjectUniqueName3 = SharePoint12ObjectModel\\Nivot.PowerShell.SharePoint.Office12.csproj
+		SccProjectName3 = SharePoint12ObjectModel
+		SccLocalPath3 = SharePoint12ObjectModel
+		SccProjectUniqueName4 = SharePointObjectModel\\SharePointObjectModel.csproj
+		SccProjectName4 = SharePointObjectModel
+		SccLocalPath4 = SharePointObjectModel
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,10 +54,6 @@ Global
 		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
