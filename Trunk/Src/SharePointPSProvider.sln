@@ -6,36 +6,63 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		scratchpad.txt = scratchpad.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPSSnapin", "SharePointPSProviderSnapin\SharePointPSSnapin.csproj", "{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nivot.PowerShell.SharePoint", "SharePointPSProvider\Nivot.PowerShell.SharePoint.csproj", "{88361834-06E6-4BB1-B981-994C58D44A61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackingStoreProviderBase", "BackingStoreProviderBase\BackingStoreProviderBase.csproj", "{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nivot.PowerShell.SharePoint.Office11", "SharePoint11ObjectModel\Nivot.PowerShell.SharePoint.Office11.csproj", "{7E2F6B75-7DA5-433C-BF4E-714D9BF2C960}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nivot.PowerShell.SharePoint.Office12", "SharePoint12ObjectModel\Nivot.PowerShell.SharePoint.Office12.csproj", "{E51DBDC4-2D3D-4337-9471-4C89301C0FE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointObjectModel", "SharePointObjectModel\SharePointObjectModel.csproj", "{35B99B03-C523-4E01-AF57-EC3CE000CAC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointPSSnapin", "SharePointPSProviderSnapin\SharePointPSSnapin.csproj", "{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs01.codeplex.com/
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = SharePointPSProviderSnapin\\SharePointPSSnapin.csproj
 		SccProjectName1 = SharePointPSProviderSnapin
 		SccLocalPath1 = SharePointPSProviderSnapin
-		SccProjectUniqueName2 = BackingStoreProviderBase\\BackingStoreProviderBase.csproj
-		SccProjectName2 = BackingStoreProviderBase
-		SccLocalPath2 = BackingStoreProviderBase
+		SccProjectUniqueName2 = SharePointPSProvider\\Nivot.PowerShell.SharePoint.csproj
+		SccProjectName2 = SharePointPSProvider
+		SccLocalPath2 = SharePointPSProvider
+		SccProjectUniqueName3 = SharePoint11ObjectModel\\Nivot.PowerShell.SharePoint.Office11.csproj
+		SccProjectName3 = SharePoint11ObjectModel
+		SccLocalPath3 = SharePoint11ObjectModel
+		SccProjectUniqueName4 = SharePoint12ObjectModel\\Nivot.PowerShell.SharePoint.Office12.csproj
+		SccProjectName4 = SharePoint12ObjectModel
+		SccLocalPath4 = SharePoint12ObjectModel
+		SccProjectUniqueName5 = SharePointObjectModel\\SharePointObjectModel.csproj
+		SccProjectName5 = SharePointObjectModel
+		SccLocalPath5 = SharePointObjectModel
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88361834-06E6-4BB1-B981-994C58D44A61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88361834-06E6-4BB1-B981-994C58D44A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88361834-06E6-4BB1-B981-994C58D44A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88361834-06E6-4BB1-B981-994C58D44A61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2F6B75-7DA5-433C-BF4E-714D9BF2C960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2F6B75-7DA5-433C-BF4E-714D9BF2C960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2F6B75-7DA5-433C-BF4E-714D9BF2C960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2F6B75-7DA5-433C-BF4E-714D9BF2C960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E51DBDC4-2D3D-4337-9471-4C89301C0FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E51DBDC4-2D3D-4337-9471-4C89301C0FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E51DBDC4-2D3D-4337-9471-4C89301C0FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E51DBDC4-2D3D-4337-9471-4C89301C0FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51AAA67F-C628-4003-9A86-5A1CF20EFC7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFC7F8C5-A981-4D14-AC5F-0ECCCA579176}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
