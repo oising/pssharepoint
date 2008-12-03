@@ -8,8 +8,8 @@
     <ProjectGuid>{88361834-06E6-4BB1-B981-994C58D44A61}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharePointPSProvider</RootNamespace>
-    <AssemblyName>SharePointPSProvider</AssemblyName>
+    <RootNamespace>Nivot.PowerShell.SharePoint</RootNamespace>
+    <AssemblyName>Nivot.PowerShell.SharePoint</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
