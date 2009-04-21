@@ -41,9 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Imports\HubKey\HubKey.Web.Services.SharePoint.dll</HintPath>
     </Reference>
-    <Reference Include="Nivot.PowerShell.BackingStoreProvider, Version=1.0.2947.30407, Culture=neutral, PublicKeyToken=21257ce7cdf88373, processorArchitecture=MSIL">
+    <Reference Include="Nivot.PowerShell.BackingStoreProvider, Version=0.8.0.0, Culture=neutral, PublicKeyToken=21257ce7cdf88373, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\PSBackingStore\bin\Debug\Nivot.PowerShell.BackingStoreProvider.dll</HintPath>
+      <HintPath>..\..\Imports\BackingStoreProvider\Nivot.PowerShell.BackingStoreProvider.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
