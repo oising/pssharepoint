@@ -17,7 +17,7 @@ namespace Nivot.PowerShell.SharePoint
             }
             else
             {
-                return new LocalSharePointObjectModel(siteCollectionUrl);
+                return new Sts2LocalSharePointObjectModel(siteCollectionUrl);
             }
         }
 

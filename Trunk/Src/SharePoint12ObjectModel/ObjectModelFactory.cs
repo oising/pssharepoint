@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HubKey.Web.Services.SharePoint;
+using Nivot.PowerShell.SharePoint.ObjectModel;
 
 namespace Nivot.PowerShell.SharePoint
 {
@@ -10,7 +12,14 @@ namespace Nivot.PowerShell.SharePoint
 
         public SharePointObjectModel GetInstance(Uri siteCollectionUrl, bool remote)
         {
-            throw new NotImplementedException();
+            if (remote)
+            {
+                return new Sts3RemoteSharePointObjectModel(siteCollectionUrl);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion

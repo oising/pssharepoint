@@ -8,7 +8,7 @@
     <ProjectGuid>{E51DBDC4-2D3D-4337-9471-4C89301C0FE9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nivot.PowerShell.SharePoint</RootNamespace>
+    <RootNamespace>Nivot.PowerShell.SharePoint.ObjectModel</RootNamespace>
     <AssemblyName>Nivot.PowerShell.SharePoint.Office12</AssemblyName>
     <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -37,6 +37,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HubKey.Web.Services.SharePoint, Version=1.0.0.3, Culture=neutral, PublicKeyToken=99bf056b91ae7ec0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Imports\HubKey\HubKey.Web.Services.SharePoint.dll</HintPath>
+    </Reference>
     <Reference Include="Nivot.PowerShell.BackingStoreProvider, Version=1.0.2947.30407, Culture=neutral, PublicKeyToken=21257ce7cdf88373, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\PSBackingStore\bin\Debug\Nivot.PowerShell.BackingStoreProvider.dll</HintPath>
@@ -44,6 +48,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +59,17 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SharePointFile.cs" />
+    <Compile Include="SharePointFiles.cs" />
+    <Compile Include="SharePointFolder.cs" />
+    <Compile Include="SharePointFolders.cs" />
+    <Compile Include="SharePointList.cs" />
+    <Compile Include="SharePointListItem.cs" />
+    <Compile Include="SharePointLists.cs" />
+    <Compile Include="Sts3RemoteSharePointObjectModel.cs" />
+    <Compile Include="SharePointSite.cs" />
+    <Compile Include="SharePointWeb.cs" />
+    <Compile Include="SharePointWebs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="nivot.snk" />
@@ -72,4 +88,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)\*.* C:\projects\powershell\PSSharePoint\Bin\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -1,4 +1,4 @@
-#define __ROOTWEB
+﻿#define __ROOTWEB
 
 #region BSD License Header
 
@@ -17,16 +17,17 @@
 #endregion
 
 using System;
-using Microsoft.SharePoint;
-using Nivot.PowerShell.ObjectModel;
+
+using HubKey.Web.Services.SharePoint;
 
 namespace Nivot.PowerShell.SharePoint.ObjectModel
 {
-    internal class LocalSharePointObjectModel : SharePointObjectModel
+    internal class Sts3RemoteSharePointObjectModel : SharePointObjectModel
     {
-        private SPSite m_site;        
+        private SPSite m_site;
 
-        internal LocalSharePointObjectModel(Uri siteCollectionUrl) : base(siteCollectionUrl, StsVersion.Sts2)
+        internal Sts3RemoteSharePointObjectModel(Uri siteCollectionUrl)
+            : base(siteCollectionUrl, StsVersion.Sts3)
         {
             m_site = new SPSite(siteCollectionUrl.ToString());
 
@@ -38,7 +39,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
                     Provider.WriteVerbose("OpenWeb() succeeded: got " + web.Name);
                 }
             }
-            // FIXME: catch only OpenWeb thrown exceptions
+                // FIXME: catch only OpenWeb thrown exceptions
             catch
             {
                 Provider.ThrowTerminatingError(
@@ -46,7 +47,8 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
             }
         }
 
-        internal LocalSharePointObjectModel(SPSite site) : base(new Uri(site.Url), StsVersion.Sts2)
+        internal Sts3RemoteSharePointObjectModel(SPSite site)
+            : base(new Uri(site.Url), StsVersion.Sts3)
         {
             m_site = site;
         }
@@ -64,7 +66,8 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
         {
             get
             {
-                return SharePointUtils.GetSharePointVersion();
+                //return SharePointUtils.GetSharePointVersion();
+                return new Version("12.0.0.0");
             }
         }
 
@@ -73,7 +76,7 @@ namespace Nivot.PowerShell.SharePoint.ObjectModel
 #if __ROOTWEB
             IStoreItem storeItem = new SharePointWeb(m_site.RootWeb);
 #else
-            // start at SPSite
+    // start at SPSite
             IStoreItem storeItem = new SharePointSite(m_site);
 #endif
             return storeItem;

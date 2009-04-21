@@ -15,6 +15,8 @@
 #endregion
 
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -64,19 +66,43 @@ namespace Nivot.PowerShell.SharePoint
 	    }
 
 		internal static SharePointObjectModel GetSharePointObjectModel(Uri siteCollectionUrl, StsVersion version, bool remote)
-		{			
-            SharePointObjectModel objectModel;
-			
-			if (remote)
-			{
-				//objectModel = new RemoteSharePointObjectModel(siteCollectionUrl);
-			    throw new NotImplementedException("Cannot connect to remote servers, yet.");
-			}
-			else
-			{
-			    objectModel = GetLocalSharePointObjectModel(siteCollectionUrl, version);
-			}
-			return objectModel;
+		{			            
+		    string assemblyFile;
+
+            switch (version)
+            {
+                case StsVersion.Sts2:
+                    assemblyFile = SharePointConstants.Sts2AssemblyFile;
+                    break;
+
+                case StsVersion.Sts3:
+                    assemblyFile = SharePointConstants.Sts3AssemblyFile;
+                    break;
+
+                default:
+                    throw new NotSupportedException("StsVersion not supported.");
+            }
+            
+		    ISharePointObjectModelFactory factory;
+
+            try
+            {
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
+                assemblyFile = Path.Combine(
+                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                                            assemblyFile);
+
+                factory = (ISharePointObjectModelFactory)
+                  AppDomain.CurrentDomain.CreateInstanceFromAndUnwrap(
+                      assemblyFile, SharePointConstants.FactoryTypeName);
+            }
+            finally
+            {
+                AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+            }
+
+		    return factory.GetInstance(siteCollectionUrl, remote);
 		}
 
 		public abstract Version SharePointVersion
@@ -84,42 +110,9 @@ namespace Nivot.PowerShell.SharePoint
 			get;
 		}
         
-        private static SharePointObjectModel GetLocalSharePointObjectModel(Uri siteCollectionUrl, StsVersion version)
-        {
-            //return null;
-            
-            // TODO: dynamically load 2003 or 2007 object models
-
-            try
-            {
-                // new ResolveEventHandler(...)
-                //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
-                if (version == StsVersion.Sts2)
-                {
-                    //return new LocalSharePointObjectModel(siteCollectionUrl, version);
-
-                    ISharePointObjectModelFactory factory = (ISharePointObjectModelFactory)
-                                                        AppDomain.CurrentDomain.CreateInstanceAndUnwrap(
-                                                            SharePointConstants.Sts2ObjectModelAssemblyName,
-                                                            "Nivot.PowerShell.SharePoint.ObjectModelFactory");
-
-                    return factory.GetInstance(siteCollectionUrl, false);
-                }
-                else
-                {
-                    // version 3.0
-                    return null;
-                }
-            }
-            finally
-            {
-                //AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;    
-            }
-        }
-
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {            
+        {
+            Debug.WriteLine("Resolving " + args.Name);
             return Assembly.Load(new AssemblyName(args.Name));
         }
 

@@ -69,6 +69,10 @@
   <ItemGroup>
     <None Include="nivot.snk" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FormatData\" />
+    <Folder Include="TypeData\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -77,4 +81,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)\*.* C:\projects\powershell\PSSharePoint\Bin\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

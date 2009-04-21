@@ -8,7 +8,7 @@
     <ProjectGuid>{7E2F6B75-7DA5-433C-BF4E-714D9BF2C960}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nivot.PowerShell.SharePoint</RootNamespace>
+    <RootNamespace>Nivot.PowerShell.SharePoint.ObjectModel</RootNamespace>
     <AssemblyName>Nivot.PowerShell.SharePoint.Office11</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -58,7 +58,7 @@
     </Compile>
     <Compile Include="Helper\SharePointUtils.cs" />
     <Compile Include="Helper\SPFileReader.cs" />
-    <Compile Include="LocalSharePointObjectModel.cs" />
+    <Compile Include="Sts2LocalSharePointObjectModel.cs" />
     <Compile Include="ObjectModelFactory.cs" />
     <Compile Include="SharePointAlert.cs" />
     <Compile Include="SharePointAlerts.cs" />
@@ -102,4 +102,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)\*.* C:\projects\powershell\PSSharePoint\Bin\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

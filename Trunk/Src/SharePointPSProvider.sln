@@ -14,9 +14,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nivot.PowerShell.SharePoint
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePointObjectModel", "SharePointObjectModel\SharePointObjectModel.csproj", "{35B99B03-C523-4E01-AF57-EC3CE000CAC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontPageRPC", "FrontPageRPC\FrontPageRPC.csproj", "{E4C0BB1B-0234-4D3F-80D4-483BD89E4387}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs01.codeplex.com/
 		SccLocalPath0 = .
@@ -32,6 +34,9 @@ Global
 		SccProjectUniqueName4 = SharePointObjectModel\\SharePointObjectModel.csproj
 		SccProjectName4 = SharePointObjectModel
 		SccLocalPath4 = SharePointObjectModel
+		SccProjectUniqueName5 = FrontPageRPC\\FrontPageRPC.csproj
+		SccProjectName5 = FrontPageRPC
+		SccLocalPath5 = FrontPageRPC
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +59,10 @@ Global
 		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35B99B03-C523-4E01-AF57-EC3CE000CAC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4C0BB1B-0234-4D3F-80D4-483BD89E4387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4C0BB1B-0234-4D3F-80D4-483BD89E4387}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4C0BB1B-0234-4D3F-80D4-483BD89E4387}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4C0BB1B-0234-4D3F-80D4-483BD89E4387}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
