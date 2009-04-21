@@ -1,0 +1,58 @@
+================================================================================
+End User License Agreement
+--------------------------------------------------------------------------------
+
+HubKey SharePoint API
+Copyright 2008 HubKey, LLC. (http://www.hubkey.com)
+
+HUBKEY LLC ("HUBKEY") LICENSES THIS BETA SOFTWARE TO YOU SUBJECT TO THE TERMS 
+CONTAINED IN THIS END USER LICENSE AGREEMENT ("EULA"). READ THE TERMS OF THIS 
+EULA CAREFULLY. BY INSTALLING, COPYING OR OTHERWISE USING THE SOFTWARE, YOU 
+AGREE TO BE BOUND BY THE TERMS OF THIS EULA. IF YOU DO NOT AGREE TO THE TERMS OF 
+THIS EULA, YOU MUST NOT INSTALL, COPY OR USE THE SOFTWARE AND MUST DESTROY ANY
+COPIES OF THE SOFTWARE IN YOUR POSSESSION OR CONTROL.
+
+
+This software is provided under the Attribution-Noncommercial-No Derivative 
+Works 3.0 United States. For the full licence see 
+http://creativecommons.org/licenses/by-nc-nd/3.0/us/
+
+You are free:
+
+   * to Share — to copy, distribute, display, and perform the work Under the 
+   following conditions: 
+   
+   * Attribution. You must attribute the work in the manner specified by the 
+     author or licensor (but not in any way that suggests that they endorse you
+     or your use of the work). 
+   * Noncommercial. You may not use this work for commercial purposes. 
+   * No Derivative Works. You may not alter, transform, or build upon this work. 
+   * For any reuse or distribution, you must make clear to others the license 
+     terms of this work. 
+   * Any of the above conditions can be waived if you get permission from the 
+     copyright holder. 
+   * Nothing in this license impairs or restricts the author's moral rights.
+
+The above copyright notice and permission notice shall be included in all copies 
+or derivatives of this software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. IN NO 
+EVENT WILL HUBKEY OR ITS SUPPLIERS BE LIABLE TO YOU FOR ANY CONSEQUENTIAL, 
+INCIDENTAL OR SPECIAL DAMAGES, INCLUDING ANY LOST PROFITS OR LOST SAVINGS, EVEN 
+IF A HUBKEY REPRESENTATIVE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, 
+OR FOR ANY CLAIM BY ANY THIRD PARTY. YOU ASSUME ALL RISK ASSOCIATED WITH THE 
+QUALITY, PERFORMANCE, INSTALLATION AND USE OF THE SOFTWARE INCLUDING, BUT NOT 
+LIMITED TO, THE RISKS OF PROGRAM ERRORS, DAMAGE TO EQUIPMENT, LOSS OF DATA OR 
+SOFTWARE PROGRAMS, OR UNAVAILABILITY OR INTERRUPTION OF OPERATIONS. YOU ARE 
+SOLELY RESPONSIBLE FOR DETERMINING THE APPROPRIATENESS OF USE OF THE SOFTWARE 
+AND ASSUME ALL RISKS ASSOCIATED WITH ITS USE.                                         
+
+--------------------------------------------------------------------------------
+*** WARNING: This is Beta test software, and as such, WILL CONTAIN BUGS AND MAY 
+CAUSE DATA LOSS. ***
+================================================================================

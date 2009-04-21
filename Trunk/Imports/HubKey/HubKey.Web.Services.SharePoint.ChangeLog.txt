@@ -1,0 +1,26 @@
+This document can be found online at: http://www.hubkey.com/downloads/HubKey.Web.Services.SharePoint.ChangeLog.txt
+Updates to this document will be tweeted! Follow http://twitter.com/txs8311
+
+2008-12-22	txs8311
+  Released HubKey.Web.Services.SharePoint, Version=1.0.0.0
+  Download URL: http://www.hubkey.com/downloads/HubKey.Web.Services.SharePoint.1.0.0.0.zip
+
+2009-01-05	txs8311
+  Released HubKey.Web.Services.SharePoint, Version=1.0.0.1
+  Download URL: http://www.hubkey.com/downloads/HubKey.Web.Services.SharePoint.1.0.0.1.zip
+    BUGFIX:	Fixed issue with SPWeb.GetListItem(), SPWeb.GetFile(), SPWeb.GetFolder()
+
+2009-01-06	txs8311
+  Released HubKey.Web.Services.SharePoint, Version=1.0.0.2
+  Download URL: http://www.hubkey.com/downloads/HubKey.Web.Services.SharePoint.1.0.0.2.zip
+    BUGFIX:	Fixed second issue with SPWeb.GetFolder() when web contains childwebs
+    FEATURE:	SPList.Folders is now implemented
+
+2009-02-06	txs8311
+  Released HubKey.Web.Services.SharePoint, Version=1.0.0.3
+  Download URL: http://www.hubkey.com/downloads/HubKey.Web.Services.SharePoint.1.0.0.3.zip
+    BUGFIX:	SPView.Update() error when using a cloned view.
+    BUGFIX:	SPWeb.GetFolder() now treats urls starting with "/" as web relative.
+    FEATURE:	Upcast of SPField now handled.
+    FEATURE:	SPSite and SPWeb now implement IDisposable for code compatability.
+    FEATURE:	Demo application released.

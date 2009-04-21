@@ -15,14 +15,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
+
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-
-using Nivot.PowerShell.SharePoint.ObjectModel;
 
 namespace Nivot.PowerShell.SharePoint
 {
@@ -71,11 +67,11 @@ namespace Nivot.PowerShell.SharePoint
 					return null;
 				}
 
-				SharePointDriveInfo driveInfo = null;
+				SharePointDriveInfo driveInfo;
 
 				try
 				{
-				    Uri siteCollectionUrl = new Uri(root);
+				    var siteCollectionUrl = new Uri(root);
 
                     driveInfo =
                         new SharePointDriveInfo(drive.Name, ProviderInfo, siteCollectionUrl, "SharePoint Drive", Credential, ParamStsVersion, ParamRemoteIsSet);
@@ -114,7 +110,7 @@ namespace Nivot.PowerShell.SharePoint
 
 		protected override object NewDriveDynamicParameters()
 		{
-			DynamicParameterBuilder parameters = new DynamicParameterBuilder();
+			var parameters = new DynamicParameterBuilder();
 		    parameters.AddStringParam("Version", true);
 			parameters.AddSwitchParam("Remote");
 		    parameters.AddSwitchParam("SSL"); // TODO: implement this
@@ -126,7 +122,7 @@ namespace Nivot.PowerShell.SharePoint
 		{
 			if (drive == null)
 			{
-				ArgumentNullException argEx = new ArgumentNullException("drive");
+				var argEx = new ArgumentNullException("drive");
 				WriteError(new ErrorRecord(argEx, "NullDrive",
 				                           ErrorCategory.InvalidArgument, drive));
 
@@ -158,7 +154,7 @@ namespace Nivot.PowerShell.SharePoint
                 {
                     return (StsVersion) Enum.Parse(typeof (StsVersion), (string) value, true);
                 }
-	            throw new ArgumentOutOfRangeException("StsVersion",
+	            throw new ArgumentOutOfRangeException("StsVe" + "rsion",
                     String.Format("Invalid version '{0}'; valid values are Sts2 or Sts3.", value));
 	        }
 	    }
