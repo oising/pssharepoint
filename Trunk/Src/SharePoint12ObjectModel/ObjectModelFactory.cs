@@ -18,7 +18,7 @@ namespace Nivot.PowerShell.SharePoint
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException("Local Object Model access for Sts3 not implemented. Use -remote switch to use web service interface.");
             }
         }
 
